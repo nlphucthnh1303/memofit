@@ -3,7 +3,9 @@ const prisma = new PrismaClient({});
 
 exports.getUsers = async (req, res) => {
   try {
-    const users = await prisma.users.findMany();
+    const users = await prisma.users.findMany({
+      where: { is_delete: "0" },
+    });
     res.status(200).json(users);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -14,7 +16,7 @@ exports.getUser = async (req, res) => {
   try {
     const { id } = req.params;
     const user = await prisma.users.findUnique({
-      where: { id: parseInt(id) },
+      where: { id: parseInt(id), is_delete: "0" },
     });
     if (!user) {
       return res.status(404).json({ message: "User not found" });
@@ -45,7 +47,7 @@ exports.updateUser = async (req, res) => {
     const { id } = req.params;
     const data = req.body;
     const user = await prisma.users.update({
-      where: { id: parseInt(id) },
+      where: { id: parseInt(id), is_delete: "0" },
       data,
     });
     res.status(200).json(user);
@@ -57,8 +59,9 @@ exports.updateUser = async (req, res) => {
 exports.deleteUser = async (req, res) => {
   try {
     const { id } = req.params;
-    const user = await prisma.users.delete({
-      where: { id: parseInt(id) },
+    const user = await prisma.users.update({
+      where: { id: parseInt(id), is_delete: "0" },
+      data: { is_delete: "1" },
     });
     res.status(200).json(user);
   } catch (error) {

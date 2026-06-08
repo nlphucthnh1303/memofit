@@ -13,7 +13,8 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/users", require("./routes/users.route"));
-
+app.use("/api/collections", require("./routes/collections.route"));
+app.use("/api/vocabularies", require("./routes/vocabularies.route"));
 app.use((err, req, res, next) => {
   res.status(500).send("Something went wrong!");
 });
