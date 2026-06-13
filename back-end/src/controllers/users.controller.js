@@ -6,7 +6,10 @@ exports.getUsers = async (req, res) => {
     const users = await prisma.users.findMany({
       where: { is_delete: "0" },
     });
-    res.status(200).json(users);
+    res.status(200).json({
+      message: "Users retrieved successfully",
+      data: users,
+    });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -21,7 +24,10 @@ exports.getUser = async (req, res) => {
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
-    res.status(200).json(user);
+    res.status(200).json({
+      message: "User retrieved successfully",
+      data: user,
+    });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -36,7 +42,10 @@ exports.createUser = async (req, res) => {
         password_hash,
       },
     });
-    res.status(201).json(user);
+    res.status(201).json({
+      message: "User created successfully",
+      data: user,
+    });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -50,7 +59,10 @@ exports.updateUser = async (req, res) => {
       where: { id: parseInt(id), is_delete: "0" },
       data,
     });
-    res.status(200).json(user);
+    res.status(200).json({
+      message: "User updated successfully",
+      data: user,
+    });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -63,7 +75,10 @@ exports.deleteUser = async (req, res) => {
       where: { id: parseInt(id), is_delete: "0" },
       data: { is_delete: "1" },
     });
-    res.status(200).json(user);
+    res.status(200).json({
+      message: "User deleted successfully",
+      data: user,
+    });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

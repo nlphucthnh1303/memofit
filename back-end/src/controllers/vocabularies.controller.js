@@ -7,7 +7,10 @@ exports.getVocabularies = async (req, res) => {
     const vocabularies = await prisma.vocabularies.findMany({
       where: { is_delete: "0" },
     });
-    res.status(200).json(vocabularies);
+    res.status(200).json({
+      message: "Vocabularies retrieved successfully",
+      data: vocabularies,
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal Server Error" });
@@ -23,7 +26,10 @@ exports.getVocabulary = async (req, res) => {
     if (!vocabulary) {
       return res.status(404).json({ error: "Vocabulary not found" });
     }
-    res.status(200).json(vocabulary);
+    res.status(200).json({
+      message: "Vocabulary retrieved successfully",
+      data: vocabulary,
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal Server Error" });
@@ -114,7 +120,10 @@ exports.updateVocabulary = async (req, res) => {
         audio_example_path,
       },
     });
-    res.status(200).json(vocabulary);
+    res.status(200).json({
+      message: "Vocabulary updated successfully",
+      data: vocabulary,
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal Server Error" });
@@ -128,7 +137,10 @@ exports.deleteVocabulary = async (req, res) => {
       where: { id: parseInt(id), is_delete: "0" },
       data: { is_delete: "1" },
     });
-    res.status(200).json(vocabulary);
+    res.status(200).json({
+      message: "Vocabulary deleted successfully",
+      data: vocabulary,
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal Server Error" });

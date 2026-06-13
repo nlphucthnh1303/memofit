@@ -6,7 +6,10 @@ exports.getCollections = async (req, res) => {
     const collections = await prisma.collections.findMany({
       where: { is_delete: "0" },
     });
-    res.status(200).json(collections);
+    res.status(200).json({
+      message: "Collections retrieved successfully",
+      data: collections,
+    });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -21,7 +24,10 @@ exports.getCollection = async (req, res) => {
     if (!collection) {
       return res.status(404).json({ error: "Collection not found" });
     }
-    res.status(200).json(collection);
+    res.status(200).json({
+      message: "Collection retrieved successfully",
+      data: collection,
+    });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -38,7 +44,10 @@ exports.createCollection = async (req, res) => {
         cover_image,
       },
     });
-    res.status(201).json(collection);
+    res.status(201).json({
+      message: "Collection created successfully",
+      data: collection,
+    });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -52,7 +61,10 @@ exports.updateCollection = async (req, res) => {
       where: { id: parseInt(req.params.id), is_delete: "0" },
       data,
     });
-    res.status(200).json(collection);
+    res.status(200).json({
+      message: "Collection updated successfully",
+      data: collection,
+    });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -65,7 +77,10 @@ exports.deleteCollection = async (req, res) => {
       where: { id: parseInt(req.params.id), is_delete: "0" },
       data: { is_delete: "1" },
     });
-    res.status(200).json(collection);
+    res.status(200).json({
+      message: "Collection deleted successfully",
+      data: collection,
+    });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
