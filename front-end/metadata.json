@@ -1,0 +1,6 @@
+{
+  "name": "Responsive Web Application",
+  "description": "A responsive Angular application with Tailwind CSS and Flaticon.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

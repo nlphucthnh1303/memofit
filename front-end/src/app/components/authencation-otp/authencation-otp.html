@@ -1,0 +1,26 @@
+<div class="flex items-center justify-center min-h-screen bg-slate-100/50 p-4">
+  <div class="w-full max-w-sm bg-white p-8 rounded-3xl shadow-sm border border-slate-200">
+    <h1 class="font-sans text-2xl font-bold text-blue-700 text-center mb-8">Memofit</h1>
+    
+    <h2 class="font-sans text-xl font-semibold text-slate-900 mb-2">Xác thực OTP</h2>
+    <p class="font-sans text-sm text-slate-600 mb-6 leading-relaxed">Mã xác minh đã được gửi đến email: user.learner@example.com</p>
+
+    <form [formGroup]="otpForm" (ngSubmit)="onSubmit()" class="flex flex-col gap-6 items-center">
+      <div class="flex gap-2">
+        <input type="text" maxlength="1" class="w-12 h-14 text-center text-xl font-mono border-2 border-slate-200 rounded-xl focus:border-blue-500 focus:outline-none">
+        <input type="text" maxlength="1" class="w-12 h-14 text-center text-xl font-mono border-2 border-slate-200 rounded-xl focus:border-blue-500 focus:outline-none">
+        <input type="text" maxlength="1" class="w-12 h-14 text-center text-xl font-mono border-2 border-slate-200 rounded-xl focus:border-blue-500 focus:outline-none">
+        <input type="text" maxlength="1" class="w-12 h-14 text-center text-xl font-mono border-2 border-slate-200 rounded-xl focus:border-blue-500 focus:outline-none">
+        <input type="text" maxlength="1" class="w-12 h-14 text-center text-xl font-mono border-2 border-slate-200 rounded-xl focus:border-blue-500 focus:outline-none">
+        <input type="text" maxlength="1" class="w-12 h-14 text-center text-xl font-mono border-2 border-slate-200 rounded-xl focus:border-blue-500 focus:outline-none">
+      </div>
+
+      <button type="submit"
+        class="w-full bg-blue-700 text-white py-3.5 rounded-xl font-sans font-semibold hover:bg-blue-800 flex items-center justify-center gap-2 transition duration-200">
+        Xác thực
+      </button>
+
+      <p class="font-sans text-sm text-slate-600">Bạn chưa nhận được mã? <a href="#" class="font-semibold text-blue-600">Gửi lại mã (58s)</a></p>
+    </form>
+  </div>
+</div>

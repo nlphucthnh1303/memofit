@@ -1,0 +1,322 @@
+<div class="flex min-h-[100dvh] bg-slate-50 font-sans md:pb-0 pb-[72px]">
+  <app-sidebar></app-sidebar>
+  
+  <main class="flex-1 w-full flex flex-col h-[100dvh] overflow-hidden relative">
+    <!-- Top Header -->
+    <header class="flex justify-between items-center px-4 md:px-10 py-4 md:py-6 border-b border-slate-200 bg-white z-10 shrink-0 min-h-[64px] md:min-h-auto">
+      <h2 class="text-xl md:text-2xl font-bold text-blue-700">Tạo câu hỏi</h2>
+      <div class="flex items-center gap-3 md:gap-6">
+        <div class="relative w-48 md:w-80">
+          <i class="fi fi-rr-search absolute left-3 md:left-4 top-1/2 transform -translate-y-1/2 text-slate-400 text-sm md:text-base"></i>
+          <input type="search" placeholder="Tìm kiếm..." class="w-full bg-slate-50 border border-slate-200 pl-9 md:pl-11 pr-3 md:pr-4 py-2 md:py-2.5 rounded-full text-xs md:text-sm font-sans focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all placeholder:text-slate-400">
+        </div>
+        <button class="relative text-slate-600 hover:text-slate-900 transition-colors p-1 md:p-2 min-h-[44px] min-w-[44px]">
+          <i class="fi fi-rr-bell text-lg md:text-xl"></i>
+          <span class="absolute top-[10px] md:top-1.5 right-[10px] md:right-2 w-2 h-2 rounded-full bg-red-500 border-2 border-white"></span>
+        </button>
+      </div>
+    </header>
+
+    <div class="flex-1 overflow-y-auto w-full pb-20 md:pb-0">
+      <div class="p-4 md:p-10 max-w-[1240px] mx-auto min-h-full flex flex-col">
+        <!-- Configuration Form -->
+        <div class="flex flex-col xl:flex-row gap-8 xl:gap-12 flex-1">
+          <!-- Column 1: Chọn nguồn dữ liệu -->
+          <div class="w-full xl:w-2/3 min-w-0 flex flex-col">
+            <h3 class="text-lg md:text-xl font-bold text-slate-900 mb-1">1. Chọn bộ sưu tập</h3>
+            <p class="text-slate-500 text-xs md:text-sm mb-4 md:mb-6">Chọn nội dung bạn muốn luyện tập</p>
+            
+            <div class="flex bg-slate-100/80 p-1 md:p-1.5 rounded-xl w-full md:w-fit mb-4 md:mb-6">
+              <button class="flex-1 md:flex-none px-2 md:px-6 py-2 min-h-[44px] rounded-lg text-xs md:text-sm transition-colors text-center"
+                      [class.bg-white]="sourceType() === 'collection'"
+                      [class.text-blue-700]="sourceType() === 'collection'"
+                      [class.font-semibold]="sourceType() === 'collection'"
+                      [class.shadow-sm]="sourceType() === 'collection'"
+                      [class.text-slate-500]="sourceType() !== 'collection'"
+                      [class.hover:text-slate-800]="sourceType() !== 'collection'"
+                      (click)="sourceType.set('collection')">Chọn theo bộ sưu tập</button>
+              <button class="flex-1 md:flex-none px-2 md:px-6 py-2 min-h-[44px] rounded-lg text-xs md:text-sm transition-colors text-center"
+                      [class.bg-white]="sourceType() === 'words'"
+                      [class.text-blue-700]="sourceType() === 'words'"
+                      [class.font-semibold]="sourceType() === 'words'"
+                      [class.shadow-sm]="sourceType() === 'words'"
+                      [class.text-slate-500]="sourceType() !== 'words'"
+                      [class.hover:text-slate-800]="sourceType() !== 'words'"
+                      (click)="sourceType.set('words')">Chọn từ vựng cụ thể</button>
+            </div>
+            
+            @if (sourceType() === 'collection') {
+              <!-- State A: Grid of collections -->
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 flex-1">
+                 @for (col of collections; track col.id) {
+                    <div class="border rounded-2xl p-5 cursor-pointer relative group transition-all"
+                         [class.border-blue-400]="selectedCollectionId() === col.id"
+                         [class.bg-blue-50/50]="selectedCollectionId() === col.id"
+                         [class.border-slate-200]="selectedCollectionId() !== col.id"
+                         [class.hover:border-slate-300]="selectedCollectionId() !== col.id"
+                         (click)="toggleCollection(col.id)">
+                       
+                       @if (selectedCollectionId() === col.id) {
+                          <div class="absolute top-4 right-4 text-blue-600 bg-white rounded-md w-5 h-5 flex items-center justify-center text-xs shadow-sm border border-blue-200">
+                             <i class="fi fi-rr-check"></i>
+                          </div>
+                       } @else {
+                          <div class="absolute top-4 right-4 border border-slate-200 bg-white rounded-md w-5 h-5 group-hover:border-slate-300"></div>
+                       }
+                       
+                       <h4 class="font-bold text-slate-900 mb-1.5 pr-8">{{ col.title }}</h4>
+                       <p class="text-[13px] text-slate-500">{{ col.description }}</p>
+                    </div>
+                 }
+              </div>
+            } @else {
+              <!-- State B: Specific words -->
+              <div class="flex-1 flex flex-col min-h-0">
+                 <div class="relative mb-5 shrink-0">
+                   <i class="fi fi-rr-search absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400"></i>
+                   <input type="search" placeholder="Tìm kiếm từ vựng (v.d: technology, environment...)" class="w-full bg-white border border-slate-200 pl-11 pr-4 py-3 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all placeholder:text-slate-400">
+                 </div>
+                 
+                 <div class="flex justify-between items-center mb-3 shrink-0">
+                   <span class="font-mono text-xs font-bold text-slate-500 uppercase tracking-widest">Danh sách từ vựng</span>
+                   <span class="bg-blue-100 text-blue-800 text-[11px] font-bold px-2.5 py-1 rounded-md font-mono">Đã chọn {{ selectedWordsCount }} từ</span>
+                 </div>
+                 
+                 <div class="overflow-y-auto flex-1 rounded-xl border border-slate-200 bg-white">
+                    @for (word of words; track word.id) {
+                       <div class="flex items-center gap-4 p-4 border-b border-slate-100 hover:bg-slate-50 transition-colors cursor-pointer" (click)="toggleWord(word.id)">
+                          <div class="shrink-0 w-5 h-5 rounded-md border flex items-center justify-center transition-colors"
+                               [class.bg-blue-600]="word.selected" [class.border-blue-600]="word.selected"
+                               [class.border-slate-300]="!word.selected" [class.bg-white]="!word.selected">
+                             @if (word.selected) {
+                               <i class="fi fi-rr-check text-white text-[10px] mt-0.5"></i>
+                             }
+                          </div>
+                          <div class="flex-1 min-w-0">
+                             <div class="font-bold text-[15px] text-slate-900 truncate">{{ word.target }}</div>
+                             <div class="text-[13px] text-slate-500 truncate">{{ word.meaning }}</div>
+                          </div>
+                          <div class="shrink-0 bg-slate-100 text-slate-500 text-[10px] font-mono font-bold uppercase px-2 py-1 rounded">
+                             {{ word.collection }}
+                          </div>
+                       </div>
+                    }
+                 </div>
+              </div>
+            }
+          </div>
+          
+          <!-- Column 2: Chọn dạng câu hỏi -->
+          <div class="flex-1 min-w-0">
+            <h3 class="text-xl font-bold text-slate-900 mb-1">2. Chọn dạng câu hỏi</h3>
+            <p class="text-slate-500 text-sm mb-6">Lựa chọn phương pháp kiểm tra</p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+               @for (type of questionTypes; track type.id) {
+                  <div class="border rounded-2xl p-5 cursor-pointer relative group transition-all flex flex-col gap-4 bg-white hover:border-blue-300"
+                       [class.border-blue-600]="selectedQuestionType() === type.id"
+                       [class.bg-blue-50]="selectedQuestionType() === type.id"
+                       [class.bg-opacity-30]="selectedQuestionType() === type.id"
+                       [class.shadow-sm]="selectedQuestionType() === type.id"
+                       [class.border-slate-200]="selectedQuestionType() !== type.id"
+                       (click)="selectedQuestionType.set(type.id)">
+                       
+                     <div class="flex items-center justify-between">
+                       <div class="w-12 h-12 rounded-xl flex items-center justify-center shrink-0 transition-colors"
+                            [class.bg-blue-100]="selectedQuestionType() === type.id"
+                            [class.text-blue-700]="selectedQuestionType() === type.id"
+                            [class.bg-slate-100]="selectedQuestionType() !== type.id"
+                            [class.text-slate-500]="selectedQuestionType() !== type.id">
+                          <i class="fi {{ type.icon }} text-xl"></i>
+                       </div>
+                       
+                       <div class="w-5 h-5 rounded border flex items-center justify-center transition-colors"
+                            [class.border-blue-600]="selectedQuestionType() === type.id"
+                            [class.bg-blue-600]="selectedQuestionType() === type.id"
+                            [class.border-slate-300]="selectedQuestionType() !== type.id">
+                         @if (selectedQuestionType() === type.id) {
+                            <i class="fi fi-rr-check text-white text-[10px]"></i>
+                         }
+                       </div>
+                     </div>
+                     
+                     <div>
+                        <h4 class="font-bold text-[15px] text-slate-900 mb-1" [class.text-blue-900]="selectedQuestionType() === type.id">{{ type.title }}</h4>
+                        <div class="text-[11px] font-mono text-slate-500 tracking-wider uppercase">{{ type.subtitle }}</div>
+                     </div>
+                  </div>
+               }
+            </div>
+          </div>
+        </div>
+        
+        <!-- Bottom Configuration Row -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8 mt-6 md:mt-10 shrink-0">
+           <!-- Card 1: Số lượng câu hỏi -->
+           <div class="bg-white border border-slate-200 rounded-2xl p-5 md:p-7 shadow-sm flex flex-col justify-between">
+              <div class="flex flex-wrap gap-2 justify-between items-center mb-4 md:mb-6">
+                 <h4 class="font-bold text-sm md:text-[15px] text-slate-900">Số lượng câu hỏi</h4>
+                 <div class="flex items-center gap-2">
+                    <input type="number" min="5" max="50" [value]="questionCount()" (input)="onTypeQuestionCount($event)" class="w-16 h-8 text-center bg-blue-50 border border-blue-100 text-blue-800 text-sm font-bold rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all">
+                    <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">câu</span>
+                 </div>
+              </div>
+              
+              <div class="flex items-center gap-4 mb-4">
+                 <span class="text-xs font-mono text-slate-400">5</span>
+                 <input type="range" min="5" max="50" [value]="questionCount()" (input)="onTypeQuestionCount($event)" class="flex-1 w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-600">
+                 <span class="text-xs font-mono text-slate-400">50</span>
+              </div>
+              
+              <p class="text-[13px] text-slate-500">Số lượng câu hỏi sẽ ảnh hưởng đến thời gian làm bài dự kiến.</p>
+           </div>
+           
+           <!-- Card 2: Thời gian làm bài -->
+           <div class="bg-white border border-slate-200 rounded-2xl p-5 md:p-7 shadow-sm">
+              <div class="flex flex-wrap gap-2 justify-between items-center mb-4 md:mb-6">
+                 <h4 class="font-bold text-sm md:text-[15px] text-slate-900">Thời gian làm bài</h4>
+                 <span class="bg-blue-100 text-blue-800 text-xs font-bold px-3 py-1.5 rounded-md">{{ timeLimit() }} phút</span>
+              </div>
+              
+              <div class="flex items-center gap-4 mb-4 md:mb-6">
+                 <span class="text-xs font-mono text-slate-400">5</span>
+                 <input type="range" min="5" max="60" [value]="timeLimit()" (input)="onTypeTimeLimit($event)" class="flex-1 w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-600">
+                 <span class="text-xs font-mono text-slate-400">60</span>
+              </div>
+              
+              <div class="flex flex-wrap gap-2">
+                 <button class="px-4 py-1.5 rounded-full text-[13px] font-semibold transition-colors flex-[1_0_auto]"
+                         [class.bg-blue-700]="timeLimit() === 5" [class.text-white]="timeLimit() === 5" [class.bg-slate-100]="timeLimit() !== 5" [class.text-slate-600]="timeLimit() !== 5" [class.hover:bg-slate-200]="timeLimit() !== 5"
+                         (click)="setTimeLimit(5)">5 phút</button>
+                 <button class="px-4 py-1.5 rounded-full text-[13px] font-semibold transition-colors flex-[1_0_auto]"
+                         [class.bg-blue-700]="timeLimit() === 10" [class.text-white]="timeLimit() === 10" [class.bg-slate-100]="timeLimit() !== 10" [class.text-slate-600]="timeLimit() !== 10" [class.hover:bg-slate-200]="timeLimit() !== 10"
+                         (click)="setTimeLimit(10)">10 phút</button>
+                 <button class="px-4 py-1.5 rounded-full text-[13px] font-semibold transition-colors flex-[1_0_auto]"
+                         [class.bg-blue-700]="timeLimit() === 20" [class.text-white]="timeLimit() === 20" [class.bg-slate-100]="timeLimit() !== 20" [class.text-slate-600]="timeLimit() !== 20" [class.hover:bg-slate-200]="timeLimit() !== 20"
+                         (click)="setTimeLimit(20)">20 phút</button>
+                 <button class="px-4 py-1.5 rounded-full text-[13px] font-semibold transition-colors bg-slate-100 text-slate-600 hover:bg-slate-200 flex-[1_0_auto]">Không giới hạn</button>
+              </div>
+           </div>
+        </div>
+        
+        <!-- Submit Button -->
+        <div class="mt-8 shrink-0">
+           <button class="w-full bg-blue-700 text-white py-4 rounded-2xl font-bold text-lg hover:bg-blue-800 transition-colors shadow-md flex justify-center items-center gap-2"
+                   (click)="openReviewModal()">
+              <i class="fi fi-rr-sparkles"></i> Tạo câu hỏi với AI
+           </button>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- Modal Duyệt câu hỏi -->
+@if (showReviewModal()) {
+  <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex flex-col items-center justify-end md:justify-center p-0 md:p-4">
+    <!-- Bottom Sheet on mobile, Centered Modal on desktop -->
+    <div class="bg-slate-50/95 rounded-t-3xl md:rounded-3xl shadow-2xl w-full max-w-3xl max-h-[90vh] flex flex-col font-sans overflow-hidden border border-slate-200/50 mb-0 md:mb-auto transform transition-transform">
+      <div class="w-12 h-1.5 bg-slate-200 rounded-full mx-auto mt-3 mb-1 md:hidden"></div>
+      
+      <!-- Modal Header -->
+      <div class="px-5 md:px-8 py-4 md:py-6 bg-white border-b border-slate-200 flex justify-between items-start shrink-0 relative z-10 shadow-sm">
+        <div class="w-full pr-8">
+           <h2 class="text-lg md:text-xl font-bold text-slate-900 mb-4">Duyệt câu hỏi</h2>
+           <div class="mb-4">
+              <input type="text" placeholder="Nhập tiêu đề cho đề thi này..." value="Bài kiểm tra Từ vựng - Tuần 1" class="w-full border-none px-0 py-2 bg-transparent focus:outline-none focus:ring-0 text-lg md:text-xl font-semibold text-blue-700 placeholder:text-slate-300">
+              <div class="h-[1px] w-full bg-slate-200"></div>
+           </div>
+           <div>
+              <textarea placeholder="Mô tả ngắn gọn về nội dung đề thi..." rows="1" class="w-full border-none px-0 py-2 bg-transparent focus:outline-none focus:ring-0 text-[13px] md:text-sm text-slate-600 placeholder:text-slate-400 resize-none overflow-hidden min-h-[40px]"></textarea>
+           </div>
+        </div>
+        <button class="text-slate-400 hover:text-slate-800 transition-colors p-2 min-h-[44px] min-w-[44px] absolute right-4 top-4" (click)="closeReviewModal()">
+          <i class="fi fi-rr-cross text-lg"></i>
+        </button>
+      </div>
+      
+      <!-- Modal Body (Scrollable) -->
+      <div class="flex-1 overflow-y-auto p-4 md:p-8 bg-slate-50">
+        
+        <!-- Questions List -->
+        <div class="space-y-4">
+           <!-- Card 1: Multiple Choice -->
+           <div class="bg-white border border-slate-200 rounded-2xl p-5 md:p-6 shadow-sm group">
+              <div class="flex justify-between items-start mb-4">
+                 <div class="bg-blue-50 text-blue-700 text-[10px] font-mono font-bold uppercase px-2.5 py-1 rounded tracking-wide">
+                    Trắc nghiệm
+                 </div>
+                 <div class="flex gap-4">
+                    <button class="text-slate-300 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100"><i class="fi fi-rr-trash"></i></button>
+                 </div>
+              </div>
+              <p class="font-bold text-slate-900 text-[15px] mb-5 focus:outline-none focus:ring-2 focus:ring-blue-100 rounded px-1 -ml-1 transition-all" contenteditable="true">
+                 Từ nào sau đây mô tả một từ được viết giống hệt từ khác nhưng có ý nghĩa khác?
+              </p>
+              
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                 <div class="border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-200 transition-all cursor-text flex focus-within:ring-2 focus-within:ring-blue-200" contenteditable="true">A) Synonym</div>
+                 <div class="border border-blue-600 bg-blue-50 rounded-xl px-4 py-3 text-sm font-bold text-blue-800 flex justify-between items-center cursor-text focus-within:ring-2 focus-within:ring-blue-200" contenteditable="true">
+                    B) Homonym
+                    <i class="fi fi-rr-check text-blue-600 float-right mt-0.5 pointer-events-none" contenteditable="false"></i>
+                 </div>
+                 <div class="border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-700 focus-within:ring-2 focus-within:ring-blue-200 transition-all cursor-text" contenteditable="true">C) Antonym</div>
+                 <div class="border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-700 focus-within:ring-2 focus-within:ring-blue-200 transition-all cursor-text" contenteditable="true">D) Metonym</div>
+              </div>
+           </div>
+           
+           <!-- Card 2: Fill in blank -->
+           <div class="bg-white border border-slate-200 rounded-2xl p-5 md:p-6 shadow-sm group">
+              <div class="flex justify-between items-start mb-4">
+                 <div class="bg-blue-50 text-blue-700 text-[10px] font-mono font-bold uppercase px-2.5 py-1 rounded tracking-wide">
+                    Điền vào chỗ trống
+                 </div>
+                 <div class="flex gap-4">
+                    <button class="text-slate-300 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100"><i class="fi fi-rr-trash"></i></button>
+                 </div>
+              </div>
+              <p class="text-slate-900 text-[15px] mb-5 leading-relaxed focus:outline-none focus:ring-2 focus:ring-blue-100 rounded px-1 -ml-1 transition-all" contenteditable="true">
+                 The explorer found the map quite <span class="font-bold">_______</span> (ambiguous), leading him into the wrong valley.
+              </p>
+              
+              <div class="flex items-center gap-3 text-sm">
+                 <span class="text-slate-500 font-mono text-xs">Đáp án:</span>
+                 <span class="bg-blue-100 text-blue-900 font-bold px-3 py-1.5 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-300 transition-all cursor-text min-w-[50px] inline-block" contenteditable="true">ambiguous</span>
+              </div>
+           </div>
+        </div>
+      </div>
+      
+      <!-- Modal Footer -->
+      <div class="bg-white px-5 md:px-8 py-4 md:py-5 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between shrink-0 md:rounded-b-3xl gap-4 sm:gap-0">
+         <div class="flex items-center gap-6 w-full sm:w-auto mb-4 sm:mb-0 justify-center sm:hidden">
+            <div class="flex flex-col items-center gap-1.5">
+               <span class="bg-blue-100 text-blue-800 text-[10px] font-bold px-2 py-0.5 rounded uppercase font-mono">15 câu</span>
+               <div class="w-32 h-1 bg-slate-200 rounded-full overflow-hidden">
+                  <div class="w-4/5 h-full bg-blue-500"></div>
+               </div>
+            </div>
+         </div>
+         
+         <div class="flex flex-row gap-3 w-full sm:w-auto">
+            <button class="flex-1 sm:flex-none px-6 md:px-8 py-3 min-h-[44px] rounded-xl font-bold bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 transition-colors text-xs md:text-sm" (click)="closeReviewModal()">
+               Hủy bỏ
+            </button>
+            <button class="flex-[2] sm:flex-none justify-center px-6 md:px-8 py-3 min-h-[44px] rounded-xl font-bold bg-blue-700 hover:bg-blue-800 text-white transition-colors shadow-sm text-xs md:text-sm flex items-center gap-2">
+               <i class="fi fi-rr-check-circle"></i> Phê duyệt
+            </button>
+         </div>
+         
+         <div class="hidden sm:flex items-center gap-6">
+            <div class="flex flex-col items-end gap-1.5">
+               <span class="bg-blue-100 text-blue-800 text-[10px] font-bold px-2 py-0.5 rounded uppercase font-mono">15 câu</span>
+               <div class="w-32 h-1 bg-slate-200 rounded-full overflow-hidden">
+                  <div class="w-4/5 h-full bg-blue-500"></div>
+               </div>
+            </div>
+         </div>
+      </div>
+      
+    </div>
+  </div>
+}
