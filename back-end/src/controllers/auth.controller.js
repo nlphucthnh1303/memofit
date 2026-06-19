@@ -3,6 +3,7 @@ const nodemailer = require("nodemailer");
 const bcrypt = require("bcrypt");
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
+const moment = require("moment-timezone");
 
 const transporter = nodemailer.createTransport({
   service: "gmail",
@@ -31,7 +32,7 @@ exports.register = async (req, res) => {
     });
 
     if (existingUser) {
-      return res.status(400).json({ message: "User already exists" });
+      return res.status(400).json({ message: "Người dùng đã tồn tại" });
     }
 
     password_hash = await bcrypt.hash(password, 10);
@@ -45,10 +46,12 @@ exports.register = async (req, res) => {
         current_streak: 0,
         longest_streak: 0,
         last_active_date: new Date(),
+        is_delete: "0",
+        isOtpVerify: false,
       },
     });
 
-    res.status(201).json({ message: "User created successfully", data: user });
+    res.status(201).json({ message: "Tạo người dùng thành công", data: user });
   } catch (error) {
     console.error("Error registering user:", error);
     res.status(500).json({ error: error.message });
@@ -64,13 +67,15 @@ exports.login = async (req, res) => {
     const password_hash = await bcrypt.hash(password, 10);
 
     if (!user) {
-      return res.status(404).json({ message: "User not found" });
+      return res.status(404).json({ message: "Không tìm thấy người dùng" });
     }
 
     const isMatch = await bcrypt.compare(password, user.password_hash);
 
     if (!isMatch) {
-      return res.status(401).json({ message: "Invalid credentials" });
+      return res
+        .status(401)
+        .json({ message: "Thông tin đăng nhập không hợp lệ" });
     }
 
     const token = jwt.sign(
@@ -79,13 +84,30 @@ exports.login = async (req, res) => {
       { expiresIn: "7d" },
     );
     res.status(200).json({
-      message: "Login successful",
+      message: "Đăng nhập thành công",
       token: token,
       user: {
         id: user.id,
         username: user.username,
         email: user.email,
       },
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+exports.checkAuth = async (req, res) => {
+  try {
+    const token = req.headers["authorization"];
+    if (!token) return res.status(401).json({ message: "Bạn chưa đăng nhập!" });
+    jwt.verify(token, "SECRET_KEY_CUA_SERVER", (err, decodedUser) => {
+      if (err)
+        return res.status(403).json({ message: "Token giả mạo hoặc hết hạn!" });
+      res.status(200).json({
+        message: "Đăng nhập thành công",
+        data: decodedUser,
+      });
     });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -99,16 +121,14 @@ exports.sendRegisterAuthOTP = async (req, res) => {
     const existingUser = await prisma.users.findFirst({
       where: { OR: [{ email }] },
     });
-    if (existingUser) {
-      return res.status(400).json({ message: "Email already exists" });
-    }
 
     let new_otp = generateOTP(4);
     const password_resets = await prisma.password_resets.create({
       data: {
         email,
         otp: new_otp,
-        expires_at: new Date(Date.now() + 180000),
+        type: "REGISTER",
+        expires_at: moment().tz("Asia/Ho_Chi_Minh").add(3, "minutes").toDate(),
       },
     });
     // GỬI MAIL
@@ -151,9 +171,10 @@ exports.sendRegisterAuthOTP = async (req, res) => {
         </div>
       `,
     });
-    res
-      .status(201)
-      .json({ message: "OTP created successfully", data: password_resets });
+    res.status(201).json({
+      message: "Mã OTP đã được tạo thành công",
+      data: password_resets,
+    });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -167,7 +188,7 @@ exports.sendForgotAuthOTP = async (req, res) => {
       where: { OR: [{ email }] },
     });
     if (!existingUser) {
-      return res.status(400).json({ message: "Email not found" });
+      return res.status(400).json({ message: "Email không tồn tại" });
     }
 
     let new_otp = generateOTP(4);
@@ -175,7 +196,8 @@ exports.sendForgotAuthOTP = async (req, res) => {
       data: {
         email: email,
         otp: new_otp,
-        expires_at: new Date(Date.now() + 180000),
+        type: "FORGOT_PASSWORD",
+        expires_at: moment().tz("Asia/Ho_Chi_Minh").add(3, "minutes").toDate(),
       },
     });
     // GỬI MAIL
@@ -218,9 +240,10 @@ exports.sendForgotAuthOTP = async (req, res) => {
         </div>
       `,
     });
-    res
-      .status(201)
-      .json({ message: "OTP created successfully", data: password_resets });
+    res.status(201).json({
+      message: "Mã OTP đã được tạo thành công",
+      data: password_resets,
+    });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -228,21 +251,27 @@ exports.sendForgotAuthOTP = async (req, res) => {
 
 exports.verifyOtp = async (req, res) => {
   try {
-    const { email, otp } = req.body;
+    const { email, otp, type } = req.body;
 
-    const password_resets = await prisma.password_resets.findUnique({
+    const password_resets = await prisma.password_resets.findFirst({
+      where: {
+        email: email,
+        otp: otp,
+        type: type,
+      },
+      orderBy: { created_at: "desc" },
+    });
+    if (!password_resets) {
+      return res.status(400).json({ message: "Mã OTP không chính xác!" });
+    }
+    if (password_resets.expires_at < new Date()) {
+      return res.status(400).json({ message: "Mã OTP đã hết hạn!" });
+    }
+
+    await prisma.password_resets.deleteMany({
       where: { email },
     });
-    if (password_resets.otp !== otp) {
-      return res.status(400).json({ message: "Invalid OTP" });
-    }
-    if (password_resets.expires_at < Date.now()) {
-      return res.status(400).json({ message: "Expired OTP" });
-    }
-    await prisma.password_resets.delete({
-      where: { email },
-    });
-    res.status(200).json({ message: "OTP verified successfully" });
+    res.status(200).json({ message: "Xác thực OTP thành công" });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

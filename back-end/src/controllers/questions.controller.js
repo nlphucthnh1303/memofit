@@ -7,7 +7,7 @@ exports.getQuestions = async (req, res) => {
       where: { is_delete: "0" },
     });
     res.status(200).json({
-      message: "Questions retrieved successfully",
+      message: "Lấy danh sách câu hỏi thành công",
       data: questions,
     });
   } catch (error) {
@@ -19,7 +19,7 @@ exports.getQuestion = async (req, res) => {
   try {
     const id = parseInt(req.params.id, 10);
     if (Number.isNaN(id)) {
-      return res.status(400).json({ message: "Invalid question id" });
+      return res.status(400).json({ message: "ID câu hỏi không hợp lệ" });
     }
 
     const question = await prisma.questions.findFirst({
@@ -27,11 +27,11 @@ exports.getQuestion = async (req, res) => {
     });
 
     if (!question) {
-      return res.status(404).json({ message: "Question not found" });
+      return res.status(404).json({ message: "Không tìm thấy câu hỏi" });
     }
 
     res.status(200).json({
-      message: "Question retrieved successfully",
+      message: "Lấy thông tin câu hỏi thành công",
       data: question,
     });
   } catch (error) {
@@ -64,7 +64,7 @@ exports.createQuestion = async (req, res) => {
     });
 
     res.status(201).json({
-      message: "Question created successfully",
+      message: "Tạo câu hỏi thành công",
       data: question,
     });
   } catch (error) {
@@ -76,7 +76,7 @@ exports.updateQuestion = async (req, res) => {
   try {
     const id = parseInt(req.params.id, 10);
     if (Number.isNaN(id)) {
-      return res.status(400).json({ message: "Invalid question id" });
+      return res.status(400).json({ message: "ID câu hỏi không hợp lệ" });
     }
 
     const existing = await prisma.questions.findFirst({
@@ -84,7 +84,7 @@ exports.updateQuestion = async (req, res) => {
     });
 
     if (!existing) {
-      return res.status(404).json({ message: "Question not found" });
+      return res.status(404).json({ message: "Không tìm thấy câu hỏi" });
     }
 
     const {
@@ -111,7 +111,7 @@ exports.updateQuestion = async (req, res) => {
     });
 
     res.status(200).json({
-      message: "Question updated successfully",
+      message: "Cập nhật câu hỏi thành công",
       data: updatedQuestion,
     });
   } catch (error) {
@@ -123,7 +123,7 @@ exports.deleteQuestion = async (req, res) => {
   try {
     const id = parseInt(req.params.id, 10);
     if (Number.isNaN(id)) {
-      return res.status(400).json({ message: "Invalid question id" });
+      return res.status(400).json({ message: "ID câu hỏi không hợp lệ" });
     }
 
     const existing = await prisma.questions.findFirst({
@@ -131,7 +131,7 @@ exports.deleteQuestion = async (req, res) => {
     });
 
     if (!existing) {
-      return res.status(404).json({ message: "Question not found" });
+      return res.status(404).json({ message: "Không tìm thấy câu hỏi" });
     }
 
     const deletedQuestion = await prisma.questions.update({
@@ -140,7 +140,7 @@ exports.deleteQuestion = async (req, res) => {
     });
 
     res.status(200).json({
-      message: "Question deleted successfully",
+      message: "Xóa câu hỏi thành công",
       data: deletedQuestion,
     });
   } catch (error) {

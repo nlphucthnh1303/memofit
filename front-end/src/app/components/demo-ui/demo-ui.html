@@ -1,0 +1,124 @@
+<div class="min-h-screen bg-slate-50 text-slate-900 font-sans p-6 md:p-12">
+  <div class="max-w-4xl mx-auto space-y-12">
+    <!-- Header -->
+    <div class="mb-12">
+      <h1 class="text-3xl md:text-4xl font-bold text-slate-900 mb-2">
+        Hệ thống Thông báo & UI
+      </h1>
+      <p class="text-slate-500">
+        Minh họa cách sử dụng Alert, Toast và Dialog (Modal) được điều khiển
+        thông qua Dependency Injection.
+      </p>
+    </div>
+
+    <!-- 1. Alert (Inline) -->
+    <section class="space-y-6">
+      <div class="border-b border-slate-200 pb-3">
+        <h2 class="text-xl font-bold text-slate-800">1. Alert Component</h2>
+        <p class="text-sm text-slate-500 mt-1">
+          Sử dụng tag &lt;app-alert&gt; trong View Template để hiển thị trực
+          tiếp.
+        </p>
+      </div>
+
+      <div class="space-y-4">
+        <app-alert type="success" title="Thành công: Dữ liệu đã được lưu">
+          Cơ sở dữ liệu đám mây đã được cập nhật thành công và an toàn.
+        </app-alert>
+
+        <app-alert type="error" title="Lỗi: Giao dịch bị từ chối">
+          Không thể kết nối đến máy chủ thanh toán. Vui lòng kiểm tra lại phương
+          thức thanh toán.
+        </app-alert>
+
+        <app-alert
+          type="warning"
+          title="Cảnh báo: Sắp hết dung lượng"
+          [dismissible]="false"
+        >
+          Bạn chỉ còn lại 5% dung lượng lưu trữ trên gói hiện tại. Hãy nâng cấp
+          để tiếp tục sử dụng.
+        </app-alert>
+
+        <app-alert type="info" title="Cập nhật hệ thống v2.4.0">
+          Chúng tôi vừa cập nhật nhiều tính năng mới. Hãy làm mới trang để trải
+          nghiệm.
+        </app-alert>
+      </div>
+    </section>
+
+    <!-- 2. Toasts -->
+    <section class="space-y-6">
+      <div class="border-b border-slate-200 pb-3">
+        <h2 class="text-xl font-bold text-slate-800">2. Toast Notification</h2>
+        <p class="text-sm text-slate-500 mt-1">
+          Thông báo dạng popup ở góc phải (Gọi thông qua
+          <code>ToastService.show()</code>).
+        </p>
+      </div>
+
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <button
+          class="bg-emerald-600 text-white px-5 py-3 rounded-xl font-bold hover:bg-emerald-700 transition-colors shadow-sm flex items-center justify-center gap-2"
+          (click)="showToast('success')"
+        >
+          <i class="fi fi-rr-check-circle"></i> Success
+        </button>
+        <button
+          class="bg-red-600 text-white px-5 py-3 rounded-xl font-bold hover:bg-red-700 transition-colors shadow-sm flex items-center justify-center gap-2"
+          (click)="showToast('error')"
+        >
+          <i class="fi fi-rr-cross-circle"></i> Error
+        </button>
+        <button
+          class="bg-blue-600 text-white px-5 py-3 rounded-xl font-bold hover:bg-blue-700 transition-colors shadow-sm flex items-center justify-center gap-2"
+          (click)="showToast('info')"
+        >
+          <i class="fi fi-rr-info"></i> Info
+        </button>
+        <button
+          class="bg-orange-500 text-white px-5 py-3 rounded-xl font-bold hover:bg-orange-600 transition-colors shadow-sm flex items-center justify-center gap-2"
+          (click)="showToast('warning')"
+        >
+          <i class="fi fi-rr-triangle-warning"></i> Warning
+        </button>
+      </div>
+    </section>
+
+    <!-- 3. Dialog / Modal -->
+    <section class="space-y-6">
+      <div class="border-b border-slate-200 pb-3">
+        <h2 class="text-xl font-bold text-slate-800">3. Dialog / Modal</h2>
+        <p class="text-sm text-slate-500 mt-1">
+          Hộp thoại chèn động (Dynamic Component) thông qua
+          <code>DialogService.open()</code>, trả về <code>Observable</code>.
+        </p>
+      </div>
+
+      <div
+        class="p-8 bg-white border border-slate-200 rounded-2xl flex flex-col items-center justify-center gap-4 text-center"
+      >
+        <div
+          class="w-16 h-16 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center text-2xl"
+        >
+          <i class="fi fi-rr-mode-landscape"></i>
+        </div>
+        <div>
+          <h3 class="font-bold text-lg text-slate-800">
+            Kiểm tra cơ chế Dialog
+          </h3>
+          <p class="text-slate-500 text-sm mt-1 max-w-sm mx-auto">
+            Nhấn nút bên dưới để mở Modal xác nhận xóa dữ liệu. Kết quả
+            (Confirm/Cancel) sẽ hiển thị thông qua Toast.
+          </p>
+        </div>
+        <button
+          class="mt-4 bg-slate-900 text-white px-8 py-3 rounded-xl font-bold hover:bg-slate-800 transition-colors shadow-sm"
+          (click)="openDialog()"
+        >
+          Mở Xác nhận Xóa
+        </button>
+      </div>
+    </section>
+  </div>
+</div>

@@ -21,13 +21,14 @@
     "strictInputAccessModifiers": true,
     "strictTemplates": true
   },
-  "files": [],
-  "references": [
-    {
-      "path": "./tsconfig.app.json"
-    },
-    {
-      "path": "./tsconfig.spec.json"
-    }
+  "exclude": [
+    "src/**/*.spec.ts",
+    "out-tsc",
+    "node_modules"
+  ],
+  "include": [
+    "**/*.ts",
+    "**/*.d.ts",
+    "eslint.config.js"
   ]
 }

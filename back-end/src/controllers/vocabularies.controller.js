@@ -8,12 +8,12 @@ exports.getVocabularies = async (req, res) => {
       where: { is_delete: "0" },
     });
     res.status(200).json({
-      message: "Vocabularies retrieved successfully",
+      message: "Lấy danh sách từ vựng thành công",
       data: vocabularies,
     });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Internal Server Error" });
+    res.status(500).json({ error: "Lỗi máy chủ nội bộ" });
   }
 };
 
@@ -24,15 +24,15 @@ exports.getVocabulary = async (req, res) => {
       where: { id: parseInt(id), is_delete: "0" },
     });
     if (!vocabulary) {
-      return res.status(404).json({ error: "Vocabulary not found" });
+      return res.status(404).json({ error: "Không tìm thấy từ vựng" });
     }
     res.status(200).json({
-      message: "Vocabulary retrieved successfully",
+      message: "Lấy thông tin từ vựng thành công",
       data: vocabulary,
     });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Internal Server Error" });
+    res.status(500).json({ error: "Lỗi máy chủ nội bộ" });
   }
 };
 
@@ -81,12 +81,12 @@ exports.createVocabulary = async (req, res) => {
     });
     return res.status(201).json({
       data: vocabulary,
-      message: "Vocabulary created successfully",
+      message: "Tạo từ vựng thành công",
     });
   } catch (error) {
     console.log(error);
     return res.status(500).json({
-      error: "Internal Server Error",
+      error: "Lỗi máy chủ nội bộ",
       message: error.message,
     });
   }
@@ -121,12 +121,12 @@ exports.updateVocabulary = async (req, res) => {
       },
     });
     res.status(200).json({
-      message: "Vocabulary updated successfully",
+      message: "Cập nhật từ vựng thành công",
       data: vocabulary,
     });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Internal Server Error" });
+    res.status(500).json({ error: "Lỗi máy chủ nội bộ" });
   }
 };
 
@@ -138,11 +138,11 @@ exports.deleteVocabulary = async (req, res) => {
       data: { is_delete: "1" },
     });
     res.status(200).json({
-      message: "Vocabulary deleted successfully",
+      message: "Xóa từ vựng thành công",
       data: vocabulary,
     });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Internal Server Error" });
+    res.status(500).json({ error: "Lỗi máy chủ nội bộ" });
   }
 };

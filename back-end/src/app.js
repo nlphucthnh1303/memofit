@@ -1,7 +1,6 @@
 const express = require("express");
 const cors = require("cors");
 const swaggerUi = require("swagger-ui-express");
-
 // Import cấu hình & biến môi trường
 require("dotenv").config(); // Đảm bảo đã nạp biến môi trường
 const swaggerSpec = require("./config/swagger");
@@ -20,6 +19,7 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 // --- 3. Routes ---
 app.get("/", (req, res) => res.send("Hello from Express backend!"));
 app.use("/api/auth", require("./routes/auth.route"));
+
 app.use("/api/users", require("./routes/users.route"));
 app.use("/api/collections", require("./routes/collections.route"));
 app.use("/api/vocabularies", require("./routes/vocabularies.route"));

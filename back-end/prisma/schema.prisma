@@ -108,7 +108,8 @@ model users {
   longest_streak           Int?                       @default(0)
   last_active_date         DateTime?                  @db.Date
   created_at               DateTime?                  @default(now()) @db.Timestamp(6)
-  is_delete                String                     @default(dbgenerated("B'0'")) @db.Bit(1)
+  is_delete                String                     @default("0")
+  isOtpVerify              Boolean                    @default(false)
   collections              collections[]
   quiz_sessions            quiz_sessions[]
   user_vocabulary_progress user_vocabulary_progress[]
@@ -120,6 +121,7 @@ model password_resets {
   otp        String   @db.VarChar(6)
   expires_at DateTime
   created_at DateTime @default(now())
+  type      String   @default("REGISTER") // "REGISTER" hoặc "FORGOT_PASSWORD"
   email      String   // Đảm bảo bạn đã thêm trường này
   user_id    Int?     // Thêm dấu ? vào đây để nó trở thành không bắt buộc
   user       users?   @relation(fields: [user_id], references: [id]) // Cũng thêm ? vào đây

@@ -1,26 +1,90 @@
 <div class="flex items-center justify-center min-h-screen bg-slate-100/50 p-4">
-  <div class="w-full max-w-sm bg-white p-8 rounded-3xl shadow-sm border border-slate-200">
-    <h1 class="font-sans text-2xl font-bold text-blue-700 text-center mb-8">Memofit</h1>
-    
-    <h2 class="font-sans text-xl font-semibold text-slate-900 mb-2">Xác thực OTP</h2>
-    <p class="font-sans text-sm text-slate-600 mb-6 leading-relaxed">Mã xác minh đã được gửi đến email: user.learner@example.com</p>
+  <div
+    class="w-full max-w-sm bg-white p-8 rounded-3xl shadow-sm border border-slate-200"
+  >
+    <h1 class="font-sans text-2xl font-bold text-blue-700 text-center mb-8">
+      Memofit
+    </h1>
 
-    <form [formGroup]="otpForm" (ngSubmit)="onSubmit()" class="flex flex-col gap-6 items-center">
-      <div class="flex gap-2">
-        <input type="text" maxlength="1" class="w-12 h-14 text-center text-xl font-mono border-2 border-slate-200 rounded-xl focus:border-blue-500 focus:outline-none">
-        <input type="text" maxlength="1" class="w-12 h-14 text-center text-xl font-mono border-2 border-slate-200 rounded-xl focus:border-blue-500 focus:outline-none">
-        <input type="text" maxlength="1" class="w-12 h-14 text-center text-xl font-mono border-2 border-slate-200 rounded-xl focus:border-blue-500 focus:outline-none">
-        <input type="text" maxlength="1" class="w-12 h-14 text-center text-xl font-mono border-2 border-slate-200 rounded-xl focus:border-blue-500 focus:outline-none">
-        <input type="text" maxlength="1" class="w-12 h-14 text-center text-xl font-mono border-2 border-slate-200 rounded-xl focus:border-blue-500 focus:outline-none">
-        <input type="text" maxlength="1" class="w-12 h-14 text-center text-xl font-mono border-2 border-slate-200 rounded-xl focus:border-blue-500 focus:outline-none">
+    <h2 class="font-sans text-xl font-semibold text-slate-900 mb-2">
+      Xác thực OTP
+    </h2>
+    <p class="font-sans text-sm text-slate-600 mb-6 leading-relaxed">
+      Mã xác minh đã được gửi đến email: {{emailSend}}
+    </p>
+
+    <form
+      [formGroup]="otpForm"
+      (ngSubmit)="onSubmit()"
+      class="flex flex-col gap-6 items-center"
+    >
+      <div class="flex gap-4">
+        <input
+          type="text"
+          maxlength="1"
+          id="otp1"
+          formControlName="otp1"
+          class="w-14 h-16 text-center text-xl font-mono border-2 border-slate-200 rounded-xl focus:border-blue-500 focus:outline-none"
+        />
+        <input
+          type="text"
+          maxlength="1"
+          id="otp2"
+          formControlName="otp2"
+          class="w-14 h-16 text-center text-xl font-mono border-2 border-slate-200 rounded-xl focus:border-blue-500 focus:outline-none"
+        />
+        <input
+          type="text"
+          maxlength="1"
+          id="otp3"
+          formControlName="otp3"
+          class="w-14 h-16 text-center text-xl font-mono border-2 border-slate-200 rounded-xl focus:border-blue-500 focus:outline-none"
+        />
+        <input
+          type="text"
+          maxlength="1"
+          id="otp4"
+          formControlName="otp4"
+          class="w-14 h-16 text-center text-xl font-mono border-2 border-slate-200 rounded-xl focus:border-blue-500 focus:outline-none"
+        />
       </div>
 
-      <button type="submit"
-        class="w-full bg-blue-700 text-white py-3.5 rounded-xl font-sans font-semibold hover:bg-blue-800 flex items-center justify-center gap-2 transition duration-200">
+      <button
+        type="submit"
+        class="w-full bg-blue-700 text-white py-3.5 rounded-xl font-sans font-semibold hover:bg-blue-800 flex items-center justify-center gap-2 transition duration-200"
+      >
         Xác thực
       </button>
-
-      <p class="font-sans text-sm text-slate-600">Bạn chưa nhận được mã? <a href="#" class="font-semibold text-blue-600">Gửi lại mã (58s)</a></p>
     </form>
+    <br />
+    <p class="font-sans text-sm text-slate-600">
+      Bạn chưa nhận được mã?
+      <button
+        type="button"
+        class="resend-btn"
+        (click)="onResendOtp()"
+        [disabled]="!canReset()"
+      >
+        Gửi lại mã sau {{ formatTime(countdown()) }}
+      </button>
+    </p>
   </div>
 </div>
+<style>
+  .resend-btn {
+    background: none;
+    border: none;
+    color: #007bff; /* Màu xanh giống thẻ a */
+    text-decoration: underline;
+    cursor: pointer;
+    padding: 0;
+    font: inherit;
+  }
+
+  /* Khi nút bị disabled, tự động đổi màu xám và cấm click */
+  .resend-btn:disabled {
+    color: #6c757d;
+    cursor: not-allowed;
+    text-decoration: none;
+  }
+</style>

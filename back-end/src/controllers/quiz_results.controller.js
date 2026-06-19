@@ -7,7 +7,7 @@ exports.getQuizResults = async (req, res) => {
       where: { is_delete: "0" },
     });
     res.status(200).json({
-      message: "Quiz results retrieved successfully",
+      message: "Lấy danh sách kết quả bài tập thành công",
       data: results,
     });
   } catch (error) {
@@ -19,7 +19,7 @@ exports.getQuizResult = async (req, res) => {
   try {
     const id = parseInt(req.params.id, 10);
     if (Number.isNaN(id)) {
-      return res.status(400).json({ message: "Invalid quiz result id" });
+      return res.status(400).json({ message: "ID kết quả không hợp lệ" });
     }
 
     const result = await prisma.quiz_results.findFirst({
@@ -27,11 +27,11 @@ exports.getQuizResult = async (req, res) => {
     });
 
     if (!result) {
-      return res.status(404).json({ message: "Quiz result not found" });
+      return res.status(404).json({ message: "Không tìm thấy kết quả bài tập" });
     }
 
     res.status(200).json({
-      message: "Quiz result retrieved successfully",
+      message: "Lấy thông tin kết quả bài tập thành công",
       data: result,
     });
   } catch (error) {
@@ -63,7 +63,7 @@ exports.createQuizResult = async (req, res) => {
       },
     });
     res.status(201).json({
-      message: "Quiz result created successfully",
+      message: "Lưu kết quả bài tập thành công",
       data: result,
     });
   } catch (error) {
@@ -75,7 +75,7 @@ exports.updateQuizResult = async (req, res) => {
   try {
     const id = parseInt(req.params.id, 10);
     if (Number.isNaN(id)) {
-      return res.status(400).json({ message: "Invalid quiz result id" });
+      return res.status(400).json({ message: "ID kết quả không hợp lệ" });
     }
 
     const existing = await prisma.quiz_results.findFirst({
@@ -83,7 +83,7 @@ exports.updateQuizResult = async (req, res) => {
     });
 
     if (!existing) {
-      return res.status(404).json({ message: "Quiz result not found" });
+      return res.status(404).json({ message: "Không tìm thấy kết quả bài tập" });
     }
 
     const {
@@ -109,7 +109,7 @@ exports.updateQuizResult = async (req, res) => {
       },
     });
     res.status(200).json({
-      message: "Quiz result updated successfully",
+      message: "Cập nhật kết quả bài tập thành công",
       data: updatedResult,
     });
   } catch (error) {
@@ -121,7 +121,7 @@ exports.deleteQuizResult = async (req, res) => {
   try {
     const id = parseInt(req.params.id, 10);
     if (Number.isNaN(id)) {
-      return res.status(400).json({ message: "Invalid quiz result id" });
+      return res.status(400).json({ message: "ID kết quả không hợp lệ" });
     }
 
     const existing = await prisma.quiz_results.findFirst({
@@ -129,7 +129,7 @@ exports.deleteQuizResult = async (req, res) => {
     });
 
     if (!existing) {
-      return res.status(404).json({ message: "Quiz result not found" });
+      return res.status(404).json({ message: "Không tìm thấy kết quả bài tập" });
     }
 
     const deletedResult = await prisma.quiz_results.update({
@@ -137,7 +137,7 @@ exports.deleteQuizResult = async (req, res) => {
       data: { is_delete: "1" },
     });
     res.status(200).json({
-      message: "Quiz result deleted successfully",
+      message: "Xóa kết quả bài tập thành công",
       data: deletedResult,
     });
   } catch (error) {

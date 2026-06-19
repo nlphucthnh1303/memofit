@@ -7,7 +7,7 @@ exports.getExamQuestions = async (req, res) => {
       where: { is_delete: "0" },
     });
     res.status(200).json({
-      message: "Exam questions retrieved successfully",
+      message: "Lấy danh sách câu hỏi trong đề thi thành công",
       data: items,
     });
   } catch (error) {
@@ -19,7 +19,7 @@ exports.getExamQuestion = async (req, res) => {
   try {
     const id = parseInt(req.params.id, 10);
     if (Number.isNaN(id)) {
-      return res.status(400).json({ message: "Invalid id" });
+      return res.status(400).json({ message: "ID không hợp lệ" });
     }
 
     const item = await prisma.exam_questions.findFirst({
@@ -27,11 +27,11 @@ exports.getExamQuestion = async (req, res) => {
     });
 
     if (!item) {
-      return res.status(404).json({ message: "Exam question not found" });
+      return res.status(404).json({ message: "Không tìm thấy câu hỏi trong đề thi" });
     }
 
     res.status(200).json({
-      message: "Exam question retrieved successfully",
+      message: "Lấy thông tin câu hỏi trong đề thi thành công",
       data: item,
     });
   } catch (error) {
@@ -49,7 +49,7 @@ exports.createExamQuestion = async (req, res) => {
       },
     });
     res.status(201).json({
-      message: "Exam question created successfully",
+      message: "Tạo câu hỏi trong đề thi thành công",
       data: item,
     });
   } catch (error) {
@@ -61,7 +61,7 @@ exports.updateExamQuestion = async (req, res) => {
   try {
     const id = parseInt(req.params.id, 10);
     if (Number.isNaN(id)) {
-      return res.status(400).json({ message: "Invalid id" });
+      return res.status(400).json({ message: "ID không hợp lệ" });
     }
 
     const existing = await prisma.exam_questions.findFirst({
@@ -69,7 +69,7 @@ exports.updateExamQuestion = async (req, res) => {
     });
 
     if (!existing) {
-      return res.status(404).json({ message: "Exam question not found" });
+      return res.status(404).json({ message: "Không tìm thấy câu hỏi trong đề thi" });
     }
 
     const { exam_id, question_id } = req.body;
@@ -82,7 +82,7 @@ exports.updateExamQuestion = async (req, res) => {
     });
 
     res.status(200).json({
-      message: "Exam question updated successfully",
+      message: "Cập nhật câu hỏi trong đề thi thành công",
       data: updatedItem,
     });
   } catch (error) {
@@ -94,7 +94,7 @@ exports.deleteExamQuestion = async (req, res) => {
   try {
     const id = parseInt(req.params.id, 10);
     if (Number.isNaN(id)) {
-      return res.status(400).json({ message: "Invalid id" });
+      return res.status(400).json({ message: "ID không hợp lệ" });
     }
 
     const existing = await prisma.exam_questions.findFirst({
@@ -102,7 +102,7 @@ exports.deleteExamQuestion = async (req, res) => {
     });
 
     if (!existing) {
-      return res.status(404).json({ message: "Exam question not found" });
+      return res.status(404).json({ message: "Không tìm thấy câu hỏi trong đề thi" });
     }
 
     const deletedItem = await prisma.exam_questions.update({
@@ -111,7 +111,7 @@ exports.deleteExamQuestion = async (req, res) => {
     });
 
     res.status(200).json({
-      message: "Exam question deleted successfully",
+      message: "Xóa câu hỏi trong đề thi thành công",
       data: deletedItem,
     });
   } catch (error) {

@@ -7,7 +7,7 @@ exports.getCollections = async (req, res) => {
       where: { is_delete: "0" },
     });
     res.status(200).json({
-      message: "Collections retrieved successfully",
+      message: "Lấy danh sách bộ sưu tập thành công",
       data: collections,
     });
   } catch (error) {
@@ -22,10 +22,10 @@ exports.getCollection = async (req, res) => {
       where: { id: parseInt(id), is_delete: "0" },
     });
     if (!collection) {
-      return res.status(404).json({ error: "Collection not found" });
+      return res.status(404).json({ error: "Không tìm thấy bộ sưu tập" });
     }
     res.status(200).json({
-      message: "Collection retrieved successfully",
+      message: "Lấy thông tin bộ sưu tập thành công",
       data: collection,
     });
   } catch (error) {
@@ -45,7 +45,7 @@ exports.createCollection = async (req, res) => {
       },
     });
     res.status(201).json({
-      message: "Collection created successfully",
+      message: "Tạo bộ sưu tập thành công",
       data: collection,
     });
   } catch (error) {
@@ -62,7 +62,7 @@ exports.updateCollection = async (req, res) => {
       data,
     });
     res.status(200).json({
-      message: "Collection updated successfully",
+      message: "Cập nhật bộ sưu tập thành công",
       data: collection,
     });
   } catch (error) {
@@ -78,7 +78,7 @@ exports.deleteCollection = async (req, res) => {
       data: { is_delete: "1" },
     });
     res.status(200).json({
-      message: "Collection deleted successfully",
+      message: "Xóa bộ sưu tập thành công",
       data: collection,
     });
   } catch (error) {

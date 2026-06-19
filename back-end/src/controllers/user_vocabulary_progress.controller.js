@@ -11,10 +11,10 @@ exports.getUserVocabularyProgress = async (req, res) => {
     if (!userVocabularyProgress) {
       return res
         .status(404)
-        .json({ error: "User vocabulary progress not found" });
+        .json({ error: "Không tìm thấy tiến trình học từ vựng của người dùng" });
     }
     res.status(200).json({
-      message: "User vocabulary progress retrieved successfully",
+      message: "Lấy thông tin tiến trình học từ vựng thành công",
       data: userVocabularyProgress,
     });
   } catch (error) {
@@ -50,7 +50,7 @@ exports.createUserVocabularyProgress = async (req, res) => {
       },
     );
     res.status(201).json({
-      message: "User vocabulary progress created successfully",
+      message: "Tạo tiến trình học từ vựng thành công",
       data: userVocabularyProgress,
     });
   } catch (error) {
@@ -87,7 +87,7 @@ exports.updateUserVocabularyProgress = async (req, res) => {
       },
     );
     res.status(200).json({
-      message: "User vocabulary progress updated successfully",
+      message: "Cập nhật tiến trình học từ vựng thành công",
       data: userVocabularyProgress,
     });
   } catch (error) {
@@ -105,7 +105,7 @@ exports.deleteUserVocabularyProgress = async (req, res) => {
       },
     );
     res.status(200).json({
-      message: "User vocabulary progress deleted successfully",
+      message: "Xóa tiến trình học từ vựng thành công",
       data: userVocabularyProgress,
     });
   } catch (error) {
