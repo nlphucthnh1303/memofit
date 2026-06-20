@@ -1,9 +1,10 @@
-import { ChangeDetectionStrategy, Component, CUSTOM_ELEMENTS_SCHEMA, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, CUSTOM_ELEMENTS_SCHEMA, inject, PLATFORM_ID } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../../services/auth.service'
 import { ToastService } from '../../shared/ui/toast/toast.service';
 import { Router } from '@angular/router';
 import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
+import { isPlatformBrowser } from '@angular/common';
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-login',
@@ -17,6 +18,8 @@ export class Login {
   private authService = inject(AuthService);
   private router = inject(Router);
   private spinner = inject(NgxSpinnerService)
+  private platformId = inject(PLATFORM_ID);
+  private cdr = inject(ChangeDetectorRef);
   constructor() { }
 
 
@@ -29,18 +32,34 @@ export class Login {
   onSubmit() {
     if (this.loginForm.valid) {
       this.spinner.show();
-      this.authService.login(this.loginForm.value).subscribe({
+      const { email, password, rememberMe } = this.loginForm.value;
+
+      this.authService.login({ email, password }).subscribe({
         next: (response) => {
-          localStorage.setItem('user-login', JSON.stringify(response));
-          this.toastService.show('Đăng nhập thành công!', 'success');
           this.spinner.hide();
-          this.router.navigate(['/dashboard']);
+          this.toastService.show('Đăng nhập thành công!', 'success');
+
+          if (isPlatformBrowser(this.platformId)) {
+            const storage = rememberMe ? localStorage : sessionStorage;
+
+            localStorage.setItem('storage_type', rememberMe ? 'local' : 'session');
+            storage.setItem('user_login', JSON.stringify(response));
+
+            const isVerified = response?.user?.isOtpVerify === true;
+            storage.setItem('is_otp_verified', isVerified ? 'true' : 'false');
+
+            if (isVerified) {
+              this.router.navigate(['/dashboard']);
+            } else {
+              this.router.navigate(['/otp']);
+            }
+          }
         },
         error: (err) => {
           console.error(err);
-          const errorMessage = err.error?.message || 'Đăng nhập thất bại!';
-          this.toastService.show(errorMessage, 'error');
+          this.toastService.show(err.error?.message || 'Đăng nhập thất bại!', 'error');
           this.spinner.hide();
+          this.cdr.markForCheck();
         }
       });
     }

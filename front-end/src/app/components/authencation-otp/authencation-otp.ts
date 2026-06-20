@@ -21,6 +21,7 @@ export class AuthencationOtp implements OnInit {
   private cdr = inject(ChangeDetectorRef);
   private toastService = inject(ToastService);
   public emailSend!: string;
+  public is_forgot!: boolean;
   private authService = inject(AuthService);
   private usersService = inject(UsersService);
   private router = inject(Router);
@@ -42,16 +43,24 @@ export class AuthencationOtp implements OnInit {
 
   ngOnInit() {
     if (isPlatformBrowser(this.platformId)) {
-      this.emailSend = sessionStorage.getItem('email_verify_otp') || '';
+      const emailVerifyOtp = sessionStorage.getItem('email_verify_otp');
+      let parsedData = null;
+      if (emailVerifyOtp) {
+        try {
+          parsedData = JSON.parse(emailVerifyOtp);
+        } catch (e) {
+          console.error(e);
+        }
+      }
+      this.emailSend = parsedData?.email || '';
+      this.is_forgot = parsedData?.is_forgot || false;
 
-      if (!this.emailSend || this.emailSend === '') {
+      if (!this.emailSend) {
         this.toastService.show('Email không tồn tại!', 'error');
-        // Tránh lỗi bất đồng bộ của OnPush, báo Angular cập nhật lại giao diện
         this.cdr.markForCheck();
         return;
       }
 
-      // Chạy bộ đếm lùi
       this.startCountdown();
       this.cdr.markForCheck();
     }
@@ -72,7 +81,7 @@ export class AuthencationOtp implements OnInit {
         if (this.countdown() === 0) {
           this.canReset.set(true);
         }
-        this.cdr.markForCheck(); // Đảm bảo OnPush bắt được sự thay đổi của giây
+        this.cdr.markForCheck();
       });
   }
 
@@ -85,7 +94,7 @@ export class AuthencationOtp implements OnInit {
         this.toastService.show('Email không tồn tại!', 'error');
         return;
       }
-      this.authService.verifyOtp({ email: this.emailSend, otp: otp, type: "REGISTER" })
+      this.authService.verifyOtp({ email: this.emailSend, otp: otp, type: this.is_forgot ? "FORGOT_PASSWORD" : "REGISTER" })
         .pipe(
           switchMap((res) => {
             this.toastService.show(res.message, 'success');
@@ -97,9 +106,19 @@ export class AuthencationOtp implements OnInit {
           next: () => {
             // ĐỪNG QUÊN: Xóa email rác sau khi xác thực thành công
             if (isPlatformBrowser(this.platformId)) {
-              sessionStorage.removeItem('email_verify_otp');
+              if (this.is_forgot) {
+                const updatedState = {
+                  email: this.emailSend,
+                  is_forgot: true,
+                  is_otp_verified: true
+                };
+                sessionStorage.setItem('email_verify_otp', JSON.stringify(updatedState));
+                this.router.navigate(['/change-password']);
+              } else {
+                sessionStorage.removeItem('email_verify_otp');
+                this.router.navigate(['/login']);
+              }
             }
-            this.router.navigate(['/login']);
           },
           error: (err) => {
             console.log(err);

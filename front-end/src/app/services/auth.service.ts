@@ -30,7 +30,7 @@ export class AuthService {
     return this.http.post<any>(`${this.baseApi}/verify-otp`, data);
   }
 
-  resetPassword(data: { email: string; otp: string; password: string }): Observable<any> {
+  resetPassword(data: { email: string; password: string }): Observable<any> {
     return this.http.post<any>(`${this.baseApi}/reset-password`, data);
   }
 

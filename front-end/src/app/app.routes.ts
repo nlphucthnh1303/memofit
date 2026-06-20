@@ -20,12 +20,23 @@ export const routes: Routes = [
   { path: 'forgot-password', component: ForgotPassword },
   { path: 'otp', component: AuthencationOtp, canActivate: [otpGuard] },
   { path: 'change-password', component: ChangePassword },
-  { path: 'dashboard', component: Dashboard, canActivate: [authGuard] },
-  { path: 'settings', component: Settings },
-  { path: 'vocabulary', component: Vocabulary },
-  { path: 'generate-questions', component: GenerateQuestions },
-  { path: 'practice', component: Practice },
   { path: 'demo-ui', component: DemoUi },
+  {
+    path: 'dashboard',
+    component: Dashboard,
+    canActivate: [authGuard],
+    children: [
+      { path: '', redirectTo: 'overview', pathMatch: 'full' },
+      { path: 'overview', component: Dashboard },
+      { path: 'vocabulary', component: Vocabulary },
+      { path: 'generate-questions', component: GenerateQuestions },
+      { path: 'settings', component: Settings },
+      { path: 'practice', component: Practice }
+    ]
+  },
   { path: '', redirectTo: '/login', pathMatch: 'full' },
   { path: '**', redirectTo: '/login' }
+
+
+
 ];

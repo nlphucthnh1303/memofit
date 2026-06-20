@@ -53,7 +53,10 @@ export class Register {
         next: (otpResponse) => {
           this.toastService.show('Đăng ký thành công! Mã OTP kích hoạt đã được gửi đến email của bạn.', 'success');
           this.spinner.hide();
-          sessionStorage.setItem('email_verify_otp', otpResponse.data.email);
+          sessionStorage.setItem('email_verify_otp', JSON.stringify({
+            email: otpResponse.data.email,
+            is_forgot: false
+          }));
           this.router.navigate(['/otp']);
         },
         error: (err) => {

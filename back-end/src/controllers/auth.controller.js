@@ -90,6 +90,7 @@ exports.login = async (req, res) => {
         id: user.id,
         username: user.username,
         email: user.email,
+        isOtpVerify: user.isOtpVerify,
       },
     });
   } catch (error) {
@@ -279,30 +280,14 @@ exports.verifyOtp = async (req, res) => {
 
 exports.resetPassword = async (req, res) => {
   try {
-    const { email, password, otp } = req.body;
-
-    const otpRecord = await prisma.password_resets.findFirst({
-      where: {
-        email: email,
-        otp: otp,
-        expires_at: { gt: new Date() },
-      },
-    });
-
-    if (!otpRecord) {
-      return res
-        .status(400)
-        .json({ message: "Mã OTP không hợp lệ hoặc đã hết hạn" });
-    }
+    const { email, password } = req.body;
 
     const user = await prisma.users.findUnique({ where: { email } });
-    if (!user)
+    if (!user) {
       return res.status(404).json({ message: "Người dùng không tồn tại" });
-
-    // 3. Hash mật khẩu mới
+    }
     const password_hash = await bcrypt.hash(password, 10);
 
-    // 4. Cập nhật mật khẩu và XÓA OTP đã dùng
     await prisma.$transaction([
       prisma.users.update({
         where: { email },
