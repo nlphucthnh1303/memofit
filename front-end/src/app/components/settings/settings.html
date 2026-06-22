@@ -1,156 +1,224 @@
-<div class="flex min-h-[100dvh] bg-slate-50 font-sans md:pb-0 pb-[72px]">
-  <app-sidebar></app-sidebar>
-  
-  <main class="flex-1 p-4 md:p-8 lg:p-10 w-full overflow-y-auto">
-    <header class="flex justify-between items-center mb-6 md:mb-10 max-w-5xl mx-auto">
-      <h2 class="text-xl md:text-2xl font-bold text-blue-700">Cài đặt</h2>
-      <div class="flex items-center gap-3 md:gap-6">
-        <div class="relative w-48 md:w-80">
-          <i class="fi fi-rr-search absolute left-3 md:left-4 top-1/2 transform -translate-y-1/2 text-slate-400 text-sm md:text-base"></i>
-          <input type="search" placeholder="Tìm kiếm cài đặt..." class="w-full bg-white border border-slate-200 pl-9 md:pl-11 pr-3 md:pr-4 py-2 md:py-2.5 rounded-full text-xs md:text-sm font-sans focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all placeholder:text-slate-400 shadow-sm">
-        </div>
-        <button class="relative text-slate-600 hover:text-slate-900 transition-colors p-1 md:p-2 min-h-[44px] min-w-[44px]">
-          <i class="fi fi-rr-bell text-lg md:text-xl"></i>
-          <span class="absolute top-[10px] md:top-1.5 right-[10px] md:right-2 w-2 h-2 rounded-full bg-red-500 border-2 border-slate-50"></span>
-        </button>
-      </div>
-    </header>
-
-    <div class="max-w-5xl mx-auto space-y-8">
-      
-      <!-- Top Section -->
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <!-- Left Column -->
-        <div class="lg:col-span-2 space-y-8">
-          
-          <!-- SM-2 -->
-          <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-100">
-            <div class="flex items-center gap-4 mb-4">
-              <i class="fi fi-rr-brain text-blue-600 text-2xl"></i>
-              <h3 class="text-xl font-bold text-slate-900">Thuật toán SM-2</h3>
-            </div>
-            <p class="text-slate-600 text-[15px] mb-8 leading-relaxed max-w-xl">
-              Tối ưu hóa thời gian ghi nhớ của bạn bằng cách lên lịch các buổi ôn tập trong những giờ bạn tỉnh táo nhất.
-            </p>
-            
-            <div class="font-mono text-xs font-bold text-slate-800 uppercase tracking-widest mb-3">Nhắc nhở giờ vàng</div>
-            <div class="flex items-center gap-4">
-              <input type="text" value="08 : 00 AM" class="bg-white border border-slate-300 px-4 py-3 rounded-xl w-40 text-sm font-mono focus:ring-2 focus:ring-blue-500/20 focus:outline-none text-slate-800 font-medium">
-              <div class="bg-blue-50/80 text-blue-700 px-5 py-3 rounded-xl text-sm font-mono font-bold">Gợi ý: 07:00 - 09:00</div>
-            </div>
+<main class="flex-1 p-4 md:p-8 lg:p-10 w-full overflow-y-auto">
+  <div class="max-w-5xl mx-auto space-y-8">
+    <!-- Top Section -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <!-- Left Column -->
+      <div class="lg:col-span-2 space-y-8">
+        <!-- SM-2 -->
+        <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-100">
+          <div class="flex items-center gap-4 mb-4">
+            <i class="fi fi-rr-brain text-blue-600 text-2xl"></i>
+            <h3 class="text-xl font-bold text-slate-900">Thuật toán SM-2</h3>
           </div>
+          <p class="text-slate-600 text-[15px] mb-8 leading-relaxed max-w-xl">
+            Tối ưu hóa thời gian ghi nhớ của bạn bằng cách lên lịch các buổi ôn
+            tập trong những giờ bạn tỉnh táo nhất.
+          </p>
 
-          <!-- Thông báo -->
-          <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-100">
-            <div class="flex items-center gap-4 mb-6">
-              <i class="fi fi-rr-bell-ring text-emerald-600 text-2xl"></i>
-              <h3 class="text-xl font-bold text-slate-900">Thông báo</h3>
-            </div>
-            
-            <div class="flex justify-between items-center bg-slate-50/80 rounded-2xl p-6 border border-slate-100">
-              <div class="pr-8">
-                <div class="font-bold text-slate-900 mb-1">Thông báo hệ thống</div>
-                <div class="text-[15px] text-slate-600 leading-relaxed max-w-sm">Nhận thông báo trên máy tính cho các chuỗi mục tiêu hàng ngày và nhắc nhở ôn tập.</div>
-              </div>
-              <button class="w-12 h-6 rounded-full bg-blue-600 relative shrink-0 transition-colors">
-                <div class="w-4 h-4 rounded-full bg-white absolute right-1 top-1 shadow-sm"></div>
-              </button>
+          <div
+            class="font-mono text-xs font-bold text-slate-800 uppercase tracking-widest mb-3"
+          >
+            Nhắc nhở giờ vàng
+          </div>
+          <div class="flex items-center gap-4">
+            <input
+              type="text"
+              value="08 : 00 AM"
+              class="bg-white border border-slate-300 px-4 py-3 rounded-xl w-40 text-sm font-mono focus:ring-2 focus:ring-blue-500/20 focus:outline-none text-slate-800 font-medium"
+            />
+            <div
+              class="bg-blue-50/80 text-blue-700 px-5 py-3 rounded-xl text-sm font-mono font-bold"
+            >
+              Gợi ý: 07:00 - 09:00
             </div>
           </div>
         </div>
 
-        <!-- Right Column -->
-        <div class="lg:col-span-1 h-full">
-          <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-100 h-full flex flex-col">
-            <div class="flex items-center gap-4 mb-8">
-              <i class="fi fi-rr-cloud-download text-sky-500 text-2xl"></i>
-              <h3 class="text-xl font-bold text-slate-900">Sao lưu</h3>
-            </div>
-            
-            <div class="space-y-4 flex-1">
-              <div class="p-5 border border-slate-200 rounded-2xl hover:border-blue-300 hover:shadow-sm flex items-center justify-between cursor-pointer group transition-all">
-                <div class="flex items-center gap-4">
-                  <div class="text-slate-400 group-hover:text-blue-600 transition-colors"><i class="fi fi-rr-database text-xl"></i></div>
-                  <div>
-                    <div class="font-bold text-slate-900 text-[15px] mb-0.5">Xuất SQLite</div>
-                    <div class="text-[13px] text-slate-500">Sao lưu toàn bộ cơ sở dữ liệu cục bộ</div>
-                  </div>
-                </div>
-                <i class="fi fi-rr-angle-small-right text-slate-300 group-hover:text-blue-600 text-xl"></i>
-              </div>
-              
-              <div class="p-5 border border-slate-200 rounded-2xl hover:border-blue-300 hover:shadow-sm flex items-center justify-between cursor-pointer group transition-all">
-                <div class="flex items-center gap-4">
-                  <div class="text-slate-400 group-hover:text-blue-600 transition-colors"><i class="fi fi-rr-upload text-xl"></i></div>
-                  <div>
-                    <div class="font-bold text-slate-900 text-[15px] mb-0.5">Nhập cơ sở dữ liệu</div>
-                    <div class="text-[13px] text-slate-500">Khôi phục từ tệp .sqlite hoặc .json</div>
-                  </div>
-                </div>
-                <i class="fi fi-rr-angle-small-right text-slate-300 group-hover:text-blue-600 text-xl"></i>
-              </div>
-            </div>
-            
-            <div class="text-[10px] text-slate-400 font-mono text-center pt-8 uppercase tracking-widest font-bold">LẦN SAO LƯU CUỐI: 2 GIỜ TRƯỚC</div>
+        <!-- Thông báo -->
+        <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-100">
+          <div class="flex items-center gap-4 mb-6">
+            <i class="fi fi-rr-bell-ring text-emerald-600 text-2xl"></i>
+            <h3 class="text-xl font-bold text-slate-900">Thông báo</h3>
           </div>
-        </div>
-      </div>
 
-      <!-- TTS -->
-      <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-100">
-        <div class="flex items-center gap-4 mb-8">
-          <i class="fi fi-rr-headset text-blue-700 text-2xl"></i>
-          <h3 class="text-xl font-bold text-slate-900">Cài đặt Giọng đọc (TTS)</h3>
-        </div>
-        
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-20">
-          <div>
-            <div class="font-mono text-[11px] font-bold text-slate-800 uppercase tracking-widest mb-3">Công cụ giọng nói</div>
-            <div class="relative mb-6">
-              <select class="w-full bg-white border border-slate-300 px-5 py-3.5 rounded-xl text-[15px] text-slate-800 font-medium focus:ring-2 focus:ring-blue-500/20 focus:outline-none appearance-none">
-                <option>Azure Neural HD - Christopher</option>
-              </select>
-              <i class="fi fi-rr-angle-small-down absolute right-5 top-1/2 -translate-y-1/2 text-slate-400 text-lg pointer-events-none"></i>
+          <div
+            class="flex justify-between items-center bg-slate-50/80 rounded-2xl p-6 border border-slate-100"
+          >
+            <div class="pr-8">
+              <div class="font-bold text-slate-900 mb-1">
+                Thông báo hệ thống
+              </div>
+              <div class="text-[15px] text-slate-600 leading-relaxed max-w-sm">
+                Nhận thông báo trên máy tính cho các chuỗi mục tiêu hàng ngày và
+                nhắc nhở ôn tập.
+              </div>
             </div>
-            
-            <button class="bg-blue-50/80 hover:bg-blue-100 text-blue-700 px-6 py-3.5 rounded-xl font-semibold text-[15px] transition-colors flex items-center gap-3">
-              <i class="fi fi-rr-play-circle text-lg"></i> Nghe thử giọng đã chọn
+            <button
+              class="w-12 h-6 rounded-full bg-blue-600 relative shrink-0 transition-colors"
+            >
+              <div
+                class="w-4 h-4 rounded-full bg-white absolute right-1 top-1 shadow-sm"
+              ></div>
             </button>
           </div>
-          
-          <div>
-            <div class="flex justify-between items-center mb-6">
-              <div class="font-mono text-[11px] font-bold text-slate-800 uppercase tracking-widest">Tốc độ phát</div>
-              <div class="bg-blue-100/80 text-blue-700 px-3 py-1.5 rounded text-sm font-mono font-bold">1.15x</div>
-            </div>
-            
-            <div class="relative py-2 mt-4">
-              <div class="h-1.5 w-full bg-blue-100/80 rounded-full overflow-hidden">
-                <div class="h-full bg-blue-300 w-[60%]"></div>
+        </div>
+      </div>
+
+      <!-- Right Column -->
+      <div class="lg:col-span-1 h-full">
+        <div
+          class="bg-white p-8 rounded-3xl shadow-sm border border-slate-100 h-full flex flex-col"
+        >
+          <div class="flex items-center gap-4 mb-8">
+            <i class="fi fi-rr-cloud-download text-sky-500 text-2xl"></i>
+            <h3 class="text-xl font-bold text-slate-900">Sao lưu</h3>
+          </div>
+
+          <div class="space-y-4 flex-1">
+            <div
+              class="p-5 border border-slate-200 rounded-2xl hover:border-blue-300 hover:shadow-sm flex items-center justify-between cursor-pointer group transition-all"
+            >
+              <div class="flex items-center gap-4">
+                <div
+                  class="text-slate-400 group-hover:text-blue-600 transition-colors"
+                >
+                  <i class="fi fi-rr-database text-xl"></i>
+                </div>
+                <div>
+                  <div class="font-bold text-slate-900 text-[15px] mb-0.5">
+                    Xuất SQLite
+                  </div>
+                  <div class="text-[13px] text-slate-500">
+                    Sao lưu toàn bộ cơ sở dữ liệu cục bộ
+                  </div>
+                </div>
               </div>
-              <div class="absolute top-1/2 left-[60%] -translate-x-1/2 -translate-y-1/2 w-4 h-4 bg-white border-2 border-blue-400 rounded-full shadow-sm cursor-pointer hover:scale-110 transition-transform"></div>
+              <i
+                class="fi fi-rr-angle-small-right text-slate-300 group-hover:text-blue-600 text-xl"
+              ></i>
             </div>
-            
-            <div class="flex justify-between text-[10px] text-slate-400 font-mono uppercase font-bold mt-4 tracking-widest">
-              <span>Chậm</span>
-              <span>Bình thường</span>
-              <span>Nhanh</span>
+
+            <div
+              class="p-5 border border-slate-200 rounded-2xl hover:border-blue-300 hover:shadow-sm flex items-center justify-between cursor-pointer group transition-all"
+            >
+              <div class="flex items-center gap-4">
+                <div
+                  class="text-slate-400 group-hover:text-blue-600 transition-colors"
+                >
+                  <i class="fi fi-rr-upload text-xl"></i>
+                </div>
+                <div>
+                  <div class="font-bold text-slate-900 text-[15px] mb-0.5">
+                    Nhập cơ sở dữ liệu
+                  </div>
+                  <div class="text-[13px] text-slate-500">
+                    Khôi phục từ tệp .sqlite hoặc .json
+                  </div>
+                </div>
+              </div>
+              <i
+                class="fi fi-rr-angle-small-right text-slate-300 group-hover:text-blue-600 text-xl"
+              ></i>
             </div>
+          </div>
+
+          <div
+            class="text-[10px] text-slate-400 font-mono text-center pt-8 uppercase tracking-widest font-bold"
+          >
+            LẦN SAO LƯU CUỐI: 2 GIỜ TRƯỚC
           </div>
         </div>
       </div>
+    </div>
 
-      <!-- Danger Zone -->
-      <div class="bg-red-50/30 p-6 md:p-8 rounded-3xl border border-red-200 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-        <div>
-          <h3 class="text-xl font-bold text-red-600 mb-2">Xóa dữ liệu tài khoản</h3>
-          <p class="text-[15px] text-slate-600 leading-relaxed">Xóa vĩnh viễn tất cả lịch sử học tập, danh sách từ vựng và các khoảng cách SM-2 tùy chỉnh.</p>
-        </div>
-        <button class="shrink-0 bg-red-700 text-white px-8 py-3.5 rounded-xl font-sans font-semibold hover:bg-red-800 transition duration-200 shadow-sm">
-          Thiết lập lại ứng dụng
-        </button>
+    <!-- TTS -->
+    <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-100">
+      <div class="flex items-center gap-4 mb-8">
+        <i class="fi fi-rr-headset text-blue-700 text-2xl"></i>
+        <h3 class="text-xl font-bold text-slate-900">
+          Cài đặt Giọng đọc (TTS)
+        </h3>
       </div>
 
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-20">
+        <div>
+          <div
+            class="font-mono text-[11px] font-bold text-slate-800 uppercase tracking-widest mb-3"
+          >
+            Công cụ giọng nói
+          </div>
+          <div class="relative mb-6">
+            <select
+              class="w-full bg-white border border-slate-300 px-5 py-3.5 rounded-xl text-[15px] text-slate-800 font-medium focus:ring-2 focus:ring-blue-500/20 focus:outline-none appearance-none"
+            >
+              <option>Azure Neural HD - Christopher</option>
+            </select>
+            <i
+              class="fi fi-rr-angle-small-down absolute right-5 top-1/2 -translate-y-1/2 text-slate-400 text-lg pointer-events-none"
+            ></i>
+          </div>
+
+          <button
+            class="bg-blue-50/80 hover:bg-blue-100 text-blue-700 px-6 py-3.5 rounded-xl font-semibold text-[15px] transition-colors flex items-center gap-3"
+          >
+            <i class="fi fi-rr-play-circle text-lg"></i> Nghe thử giọng đã chọn
+          </button>
+        </div>
+
+        <div>
+          <div class="flex justify-between items-center mb-6">
+            <div
+              class="font-mono text-[11px] font-bold text-slate-800 uppercase tracking-widest"
+            >
+              Tốc độ phát
+            </div>
+            <div
+              class="bg-blue-100/80 text-blue-700 px-3 py-1.5 rounded text-sm font-mono font-bold"
+            >
+              1.15x
+            </div>
+          </div>
+
+          <div class="relative py-2 mt-4">
+            <div
+              class="h-1.5 w-full bg-blue-100/80 rounded-full overflow-hidden"
+            >
+              <div class="h-full bg-blue-300 w-[60%]"></div>
+            </div>
+            <div
+              class="absolute top-1/2 left-[60%] -translate-x-1/2 -translate-y-1/2 w-4 h-4 bg-white border-2 border-blue-400 rounded-full shadow-sm cursor-pointer hover:scale-110 transition-transform"
+            ></div>
+          </div>
+
+          <div
+            class="flex justify-between text-[10px] text-slate-400 font-mono uppercase font-bold mt-4 tracking-widest"
+          >
+            <span>Chậm</span>
+            <span>Bình thường</span>
+            <span>Nhanh</span>
+          </div>
+        </div>
+      </div>
     </div>
-  </main>
-</div>
+
+    <!-- Danger Zone -->
+    <div
+      class="bg-red-50/30 p-6 md:p-8 rounded-3xl border border-red-200 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-6"
+    >
+      <div>
+        <h3 class="text-xl font-bold text-red-600 mb-2">
+          Xóa dữ liệu tài khoản
+        </h3>
+        <p class="text-[15px] text-slate-600 leading-relaxed">
+          Xóa vĩnh viễn tất cả lịch sử học tập, danh sách từ vựng và các khoảng
+          cách SM-2 tùy chỉnh.
+        </p>
+      </div>
+      <button
+        class="shrink-0 bg-red-700 text-white px-8 py-3.5 rounded-xl font-sans font-semibold hover:bg-red-800 transition duration-200 shadow-sm"
+      >
+        Thiết lập lại ứng dụng
+      </button>
+    </div>
+  </div>
+</main>

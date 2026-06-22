@@ -12,9 +12,9 @@ import { Practice } from './components/practice/practice';
 import { DemoUi } from './components/demo-ui/demo-ui';
 import { otpGuard } from './guards/otp.guard';
 import { authGuard } from './guards/auth.guard';
+import { Overview } from './components/overview/overview';
 
 export const routes: Routes = [
-  { path: '', component: Login },
   { path: 'login', component: Login },
   { path: 'register', component: Register },
   { path: 'forgot-password', component: ForgotPassword },
@@ -24,19 +24,16 @@ export const routes: Routes = [
   {
     path: 'dashboard',
     component: Dashboard,
-    canActivate: [authGuard],
+    // canActivate: [authGuard],
     children: [
       { path: '', redirectTo: 'overview', pathMatch: 'full' },
-      { path: 'overview', component: Dashboard },
+      { path: 'overview', component: Overview },
       { path: 'vocabulary', component: Vocabulary },
       { path: 'generate-questions', component: GenerateQuestions },
       { path: 'settings', component: Settings },
       { path: 'practice', component: Practice }
     ]
   },
-  { path: '', redirectTo: '/login', pathMatch: 'full' },
-  { path: '**', redirectTo: '/login' }
-
-
-
+  { path: '', redirectTo: 'login', pathMatch: 'full' },
+  { path: '**', redirectTo: 'login' }
 ];

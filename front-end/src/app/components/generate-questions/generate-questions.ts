@@ -3,19 +3,19 @@ import { Sidebar } from '../sidebar/sidebar';
 
 @Component({
   selector: 'app-generate-questions',
-  imports: [Sidebar],
+  imports: [],
   templateUrl: './generate-questions.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class GenerateQuestions {
   sourceType = signal<'collection' | 'words'>('collection');
-  
+
   questionCount = signal<number>(15);
   timeLimit = signal<number>(10);
-  
+
   selectedCollectionId = signal<number | null>(1);
   selectedQuestionType = signal<string>('multiple_choice');
-  
+
   showReviewModal = signal<boolean>(false);
 
   collections = [

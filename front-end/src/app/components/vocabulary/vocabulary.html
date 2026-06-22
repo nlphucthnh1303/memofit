@@ -1,500 +1,453 @@
-<div class="flex min-h-dvh bg-slate-50 font-sans md:pb-0 pb-18">
-  <app-sidebar></app-sidebar>
+<main class="flex-1 w-full overflow-y-auto">
+  <!-- Top Header -->
 
-  <main class="flex-1 w-full overflow-y-auto">
-    <!-- Top Header -->
-    <header
-      class="flex justify-between items-center px-4 md:px-10 py-4 md:py-8 border-b border-slate-200 bg-white sticky top-0 z-10 min-h-16 md:min-h-auto"
-    >
-      <h2 class="text-lg md:text-2xl font-bold text-blue-700">Kho từ vựng</h2>
-      <div class="flex items-center gap-3 md:gap-6">
-        <div class="relative w-48 md:w-80">
-          <i
-            class="fi fi-rr-search absolute left-3 md:left-4 top-1/2 transform -translate-y-1/2 text-slate-400 text-sm md:text-base"
-          ></i>
-          <input
-            type="search"
-            placeholder="Tìm kiếm..."
-            class="w-full bg-slate-50 border border-slate-200 pl-9 md:pl-11 pr-3 md:pr-4 py-2 md:py-2.5 rounded-full text-xs md:text-sm font-sans focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all placeholder:text-slate-400"
-          />
-        </div>
+  <div class="p-4 md:p-10 max-w-300 mx-auto">
+    @if (currentView() === 'collections') {
+    <!-- View 1: Danh sách Bộ sưu tập -->
+    <div class="mb-6 md:mb-10">
+      <div class="flex justify-start md:justify-end mt-4">
         <button
-          class="relative text-slate-600 hover:text-slate-900 transition-colors p-1 md:p-2 min-h-11 min-w-11"
+          class="bg-blue-700 text-white px-4 md:px-5 py-2.5 md:py-2.5 rounded-xl text-sm font-semibold hover:bg-blue-800 transition-colors shadow-sm flex items-center gap-2 min-h-11 w-full md:w-auto justify-center"
+          (click)="openCollectionModal()"
         >
-          <i class="fi fi-rr-bell text-lg md:text-xl"></i>
-          <span
-            class="absolute top-2.5 md:top-1.5 right-2.5 md:right-2 w-2 h-2 rounded-full bg-red-500 border-2 border-white"
-          ></span>
+          <i class="fi fi-rr-plus"></i> Thêm Bộ sưu tập
         </button>
       </div>
-    </header>
+    </div>
 
-    <div class="p-4 md:p-10 max-w-300 mx-auto">
-      @if (currentView() === 'collections') {
-      <!-- View 1: Danh sách Bộ sưu tập -->
-      <div class="mb-6 md:mb-10">
-        <h3
-          class="text-3xl md:text-4xl font-black text-slate-800 mb-2 md:mb-3 tracking-tight"
-        >
-          Bộ sưu tập
-        </h3>
-        <p class="text-slate-600 text-sm md:text-lg">
-          Quản lý và tổ chức các nhóm từ vựng của bạn. Xây dựng các danh sách
-          chuyên đề để tối ưu hóa quá trình ôn tập SM-2.
-        </p>
-
-        <div class="flex justify-start md:justify-end mt-4">
-          <button
-            class="bg-blue-700 text-white px-4 md:px-5 py-2.5 md:py-2.5 rounded-xl text-sm font-semibold hover:bg-blue-800 transition-colors shadow-sm flex items-center gap-2 min-h-11 w-full md:w-auto justify-center"
-            (click)="openCollectionModal()"
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 md:gap-8">
+      @for (col of collections; track col.id) {
+      <div
+        class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-md hover:border-blue-300 transition-all cursor-pointer group flex flex-col h-full"
+        (click)="openCollection()"
+      >
+        <!-- Cover Image -->
+        <div class="h-32 md:h-44 w-full relative overflow-hidden">
+          <div class="absolute inset-0 bg-slate-200">
+            <img
+              [src]="col.imageUrl"
+              class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+              alt="Cover"
+              referrerpolicy="no-referrer"
+            />
+          </div>
+          <div
+            class="absolute top-3 left-3 bg-white/90 backdrop-blur-sm text-slate-800 text-xs font-bold px-3 py-1.5 rounded flex items-center gap-2 shadow-sm font-mono"
           >
-            <i class="fi fi-rr-plus"></i> Thêm Bộ sưu tập
+            <i class="fi fi-rr-document"></i>
+            {{ col.wordCount }} từ
+          </div>
+        </div>
+
+        <!-- Content -->
+        <div class="p-4 md:p-6 flex-1 flex flex-col">
+          <h4 class="text-lg md:text-xl font-bold text-slate-900 mb-2 md:mb-3">
+            {{ col.title }}
+          </h4>
+          <p
+            class="text-slate-600 text-[13px] md:text-[15px] leading-relaxed line-clamp-3"
+          >
+            {{ col.description }}
+          </p>
+        </div>
+
+        <!-- Footer -->
+        <div
+          class="px-4 md:px-6 py-4 border-t border-slate-100 flex justify-between items-center mt-auto"
+        >
+          <button
+            class="text-blue-700 font-mono text-[10px] md:text-xs font-bold flex items-center gap-2 uppercase tracking-wide group-hover:text-blue-800 transition-colors min-h-11 px-2 -ml-2"
+          >
+            Ôn tập ngay <i class="fi fi-rr-arrow-right"></i>
+          </button>
+          <div class="flex gap-2 md:gap-4">
+            <button
+              class="text-slate-400 hover:text-slate-700 transition-colors min-h-11 min-w-11 flex items-center justify-center p-2 rounded-lg hover:bg-slate-50"
+              (click)="$event.stopPropagation()"
+            >
+              <i class="fi fi-rr-pencil"></i>
+            </button>
+            <button
+              class="text-slate-400 hover:text-red-500 transition-colors min-h-11 min-w-11 flex items-center justify-center p-2 rounded-lg hover:bg-red-50"
+              (click)="$event.stopPropagation()"
+            >
+              <i class="fi fi-rr-trash"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+      }
+    </div>
+    } @else {
+    <!-- View 2: Danh sách Từ vựng -->
+
+    <!-- Toolbar -->
+    <div
+      class="flex flex-col md:flex-row items-stretch md:items-center justify-between mb-6 md:mb-8 pb-6 md:pb-8 border-b border-slate-200 gap-4"
+    >
+      <div
+        class="flex flex-col md:flex-row items-stretch md:items-center gap-4"
+      >
+        <!-- Segmented Control -->
+        <div class="flex bg-slate-100/80 p-1 rounded-xl w-full md:w-auto">
+          <button
+            class="flex-1 md:flex-none px-3 md:px-5 py-2 min-h-11 rounded-lg text-xs md:text-sm font-semibold transition-colors shadow-sm bg-white text-slate-800"
+            (click)="activeStatusFilter.set('ALL')"
+          >
+            Tất cả
+          </button>
+          <button
+            class="flex-1 md:flex-none px-3 md:px-5 py-2 min-h-11 rounded-lg text-xs md:text-sm font-medium text-slate-600 hover:text-slate-800 transition-colors"
+            (click)="activeStatusFilter.set('MASTERED')"
+          >
+            Đã thuộc
+          </button>
+          <button
+            class="flex-1 md:flex-none px-3 md:px-5 py-2 min-h-11 rounded-lg text-xs md:text-sm font-medium text-slate-600 hover:text-slate-800 transition-colors whitespace-nowrap"
+            (click)="activeStatusFilter.set('REVIEW_SOON')"
+          >
+            Sắp quên
+          </button>
+        </div>
+
+        <!-- Dropdown -->
+        <div class="relative w-full md:w-auto">
+          <button
+            class="w-full bg-white border border-slate-200 text-slate-800 px-5 py-2 md:py-2.5 min-h-11 rounded-xl text-sm font-semibold flex items-center justify-between md:justify-center gap-3 hover:bg-slate-50 transition-colors shadow-sm"
+          >
+            <span>Tất cả bộ sưu tập</span>
+            <i class="fi fi-rr-angle-small-down pt-1 text-slate-500"></i>
           </button>
         </div>
       </div>
 
-      <div
-        class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 md:gap-8"
-      >
-        @for (col of collections; track col.id) {
-        <div
-          class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-md hover:border-blue-300 transition-all cursor-pointer group flex flex-col h-full"
-          (click)="openCollection()"
+      <div class="flex items-center gap-3 w-full md:w-auto">
+        <button
+          class="flex-1 md:flex-none bg-white border border-slate-200 text-slate-700 px-3 md:px-5 py-2.5 min-h-11 rounded-xl text-sm font-semibold hover:bg-slate-50 transition-colors shadow-sm flex items-center justify-center gap-2"
+          (click)="openImportModal()"
         >
-          <!-- Cover Image -->
-          <div class="h-32 md:h-44 w-full relative overflow-hidden">
-            <div class="absolute inset-0 bg-slate-200">
-              <img
-                [src]="col.imageUrl"
-                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                alt="Cover"
-                referrerpolicy="no-referrer"
-              />
-            </div>
-            <div
-              class="absolute top-3 left-3 bg-white/90 backdrop-blur-sm text-slate-800 text-xs font-bold px-3 py-1.5 rounded flex items-center gap-2 shadow-sm font-mono"
-            >
-              <i class="fi fi-rr-document"></i>
-              {{ col.wordCount }} từ
-            </div>
-          </div>
+          <i class="fi fi-rr-upload text-slate-500"></i>
+          <span class="hidden sm:inline">Nhập dữ liệu</span>
+          <span class="sm:hidden">Nhập</span>
+        </button>
+        <button
+          class="flex-1 md:flex-none bg-blue-700 text-white px-3 md:px-5 py-2.5 min-h-11 rounded-xl text-sm font-semibold hover:bg-blue-800 transition-colors shadow-sm flex items-center justify-center gap-2"
+          (click)="openVocabularyModal()"
+        >
+          <i class="fi fi-rr-plus"></i>
+          <span class="hidden sm:inline">Thêm từ mới</span>
+          <span class="sm:hidden">Thêm</span>
+        </button>
+      </div>
+    </div>
 
-          <!-- Content -->
-          <div class="p-4 md:p-6 flex-1 flex flex-col">
-            <h4
-              class="text-lg md:text-xl font-bold text-slate-900 mb-2 md:mb-3"
-            >
-              {{ col.title }}
-            </h4>
-            <p
-              class="text-slate-600 text-[13px] md:text-[15px] leading-relaxed line-clamp-3"
-            >
-              {{ col.description }}
-            </p>
-          </div>
+    <!-- Quick Nav Header -->
+    <div class="flex items-center gap-3 mb-4 md:mb-6">
+      <button
+        class="text-slate-400 hover:text-blue-700 transition-colors text-sm font-medium flex items-center gap-1 min-h-11"
+        (click)="goBackToCollections()"
+      >
+        <i class="fi fi-rr-arrow-left"></i> Quay lại
+      </button>
+    </div>
 
-          <!-- Footer -->
-          <div
-            class="px-4 md:px-6 py-4 border-t border-slate-100 flex justify-between items-center mt-auto"
+    <!-- Data Table Desktop -->
+    <div
+      class="hidden md:block bg-white rounded-2xl border border-slate-200 shadow-sm overflow-x-auto text-sm"
+    >
+      <table class="w-full text-left min-w-200">
+        <thead>
+          <tr class="border-b border-slate-200 bg-slate-50/50">
+            <th
+              class="px-6 py-4 font-mono text-xs font-bold text-slate-500 uppercase tracking-widest w-[25%]"
+            >
+              Từ vựng
+            </th>
+            <th
+              class="px-6 py-4 font-mono text-xs font-bold text-slate-500 uppercase tracking-widest w-[30%]"
+            >
+              Nghĩa
+            </th>
+            <th
+              class="px-6 py-4 font-mono text-xs font-bold text-slate-500 uppercase tracking-widest w-[30%]"
+            >
+              Ví dụ
+            </th>
+            <th
+              class="px-6 py-4 font-mono text-xs font-bold text-slate-500 uppercase tracking-widest w-[15%]"
+            >
+              Trạng thái SM-2
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (word of words; track word.id) {
+          <tr
+            class="border-b border-slate-100 hover:bg-slate-50/50 transition-colors"
           >
-            <button
-              class="text-blue-700 font-mono text-[10px] md:text-xs font-bold flex items-center gap-2 uppercase tracking-wide group-hover:text-blue-800 transition-colors min-h-11 px-2 -ml-2"
-            >
-              Ôn tập ngay <i class="fi fi-rr-arrow-right"></i>
-            </button>
-            <div class="flex gap-2 md:gap-4">
+            <td class="px-6 py-5 align-top">
+              <div class="font-bold text-[15px] text-slate-900 mb-1.5">
+                {{ word.target }}
+              </div>
+              <div class="text-slate-500 font-mono text-[13px] tracking-tight">
+                {{ word.ipa }} <span class="mx-1.5">•</span> {{ word.type }}
+              </div>
+            </td>
+            <td class="px-6 py-5 align-top">
+              <p class="text-slate-700 leading-relaxed">{{ word.meaning }}</p>
+            </td>
+            <td class="px-6 py-5 align-top">
+              <div
+                class="bg-slate-100/70 text-slate-600 rounded-lg p-3 text-sm italic leading-relaxed border border-slate-200/50"
+              >
+                {{ word.example }}
+              </div>
+            </td>
+            <td class="px-6 py-5 align-top">
+              <!-- Status Badge -->
+              <div class="mb-3">
+                @if (word.status === 'Mastered') {
+                <span
+                  class="inline-flex items-center gap-1.5 bg-emerald-100 text-emerald-800 px-2.5 py-1 rounded font-medium text-xs font-mono"
+                >
+                  <div class="w-1.5 h-1.5 rounded-full bg-emerald-500"></div>
+                  Mastered
+                </span>
+                } @else if (word.status === 'Learning') {
+                <span
+                  class="inline-flex items-center gap-1.5 bg-amber-100 text-amber-800 px-2.5 py-1 rounded font-medium text-xs font-mono"
+                >
+                  <div class="w-1.5 h-1.5 rounded-full bg-amber-500"></div>
+                  Learning
+                </span>
+                } @else {
+                <span
+                  class="inline-flex items-center gap-1.5 bg-red-100 text-red-800 px-2.5 py-1 rounded font-medium text-xs font-mono"
+                >
+                  <div class="w-1.5 h-1.5 rounded-full bg-red-500"></div>
+                  Review Soon
+                </span>
+                }
+              </div>
+
+              <!-- Next Review -->
+              <div
+                class="font-mono text-[11px] font-bold uppercase mb-2 tracking-wide text-slate-500 group"
+              >
+                Next:
+                <span [class.text-red-600]="word.nextReview === 'Today'"
+                  >{{ word.nextReview }}</span
+                >
+              </div>
+
+              <!-- Progress Bar -->
+              <div class="flex gap-1">
+                <div
+                  class="h-1.5 flex-1 rounded-full"
+                  [class.bg-emerald-600]="word.progress >= 1 && word.status === 'Mastered'"
+                  [class.bg-emerald-200]="word.progress < 1 && word.status === 'Mastered'"
+                  [class.bg-amber-700]="word.progress >= 1 && word.status === 'Learning'"
+                  [class.bg-slate-200]="word.progress < 1 && word.status === 'Learning'"
+                  [class.bg-red-600]="word.progress >= 1 && word.status === 'Review Soon'"
+                  [class.bg-slate-200]="word.progress < 1 && word.status === 'Review Soon'"
+                ></div>
+                <div
+                  class="h-1.5 flex-1 rounded-full"
+                  [class.bg-emerald-600]="word.progress >= 2 && word.status === 'Mastered'"
+                  [class.bg-emerald-200]="word.progress < 2 && word.status === 'Mastered'"
+                  [class.bg-amber-700]="word.progress >= 2 && word.status === 'Learning'"
+                  [class.bg-slate-200]="word.progress < 2 && word.status === 'Learning'"
+                  [class.bg-red-600]="word.progress >= 2 && word.status === 'Review Soon'"
+                  [class.bg-slate-200]="word.progress < 2 && word.status === 'Review Soon'"
+                ></div>
+                <div
+                  class="h-1.5 flex-1 rounded-full"
+                  [class.bg-emerald-600]="word.progress >= 3 && word.status === 'Mastered'"
+                  [class.bg-emerald-200]="word.progress < 3 && word.status === 'Mastered'"
+                  [class.bg-amber-700]="word.progress >= 3 && word.status === 'Learning'"
+                  [class.bg-slate-200]="word.progress < 3 && word.status === 'Learning'"
+                  [class.bg-red-600]="word.progress >= 3 && word.status === 'Review Soon'"
+                  [class.bg-slate-200]="word.progress < 3 && word.status === 'Review Soon'"
+                ></div>
+                <div
+                  class="h-1.5 flex-1 rounded-full"
+                  [class.bg-emerald-600]="word.progress >= 4 && word.status === 'Mastered'"
+                  [class.bg-emerald-200]="word.progress < 4 && word.status === 'Mastered'"
+                  [class.bg-amber-700]="word.progress >= 4 && word.status === 'Learning'"
+                  [class.bg-slate-200]="word.progress < 4 && word.status === 'Learning'"
+                  [class.bg-red-600]="word.progress >= 4 && word.status === 'Review Soon'"
+                  [class.bg-slate-200]="word.progress < 4 && word.status === 'Review Soon'"
+                ></div>
+              </div>
+            </td>
+          </tr>
+          }
+        </tbody>
+      </table>
+
+      <!-- Pagination Desktop -->
+      <div
+        class="px-6 py-6 border-t border-slate-200 flex justify-center items-center gap-2"
+      >
+        <button
+          class="w-8 h-8 flex justify-center items-center rounded text-slate-400 hover:bg-slate-100 transition-colors min-h-11 min-w-11"
+        >
+          <i class="fi fi-rr-angle-small-left mt-1"></i>
+        </button>
+        <button
+          class="w-8 h-8 flex justify-center items-center rounded font-semibold text-white bg-blue-700 min-h-11 min-w-11"
+        >
+          1
+        </button>
+        <button
+          class="w-8 h-8 flex justify-center items-center rounded text-slate-600 hover:bg-slate-100 font-semibold transition-colors min-h-11 min-w-11"
+        >
+          2
+        </button>
+        <button
+          class="w-8 h-8 flex justify-center items-center rounded text-slate-600 hover:bg-slate-100 font-semibold transition-colors min-h-11 min-w-11"
+        >
+          3
+        </button>
+        <span class="text-slate-400 px-1">...</span>
+        <button
+          class="w-8 h-8 flex justify-center items-center rounded text-slate-400 hover:bg-slate-100 transition-colors min-h-11 min-w-11"
+        >
+          <i class="fi fi-rr-angle-small-right mt-1"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Data Cards -->
+    <div class="md:hidden flex flex-col gap-4">
+      @for (word of words; track word.id) {
+      <div
+        class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm relative overflow-hidden"
+      >
+        <!-- Status Indicator Line -->
+        <div
+          class="absolute left-0 top-0 bottom-0 w-1"
+          [class.bg-emerald-500]="word.status === 'Mastered'"
+          [class.bg-amber-500]="word.status === 'Learning'"
+          [class.bg-red-500]="word.status === 'Review Soon'"
+        ></div>
+
+        <div class="pl-2">
+          <div class="flex justify-between items-start mb-2">
+            <div>
+              <div class="font-bold text-lg text-slate-900">
+                {{ word.target }}
+              </div>
+              <div class="text-slate-500 font-mono text-xs tracking-tight mt-1">
+                {{ word.ipa }} <span class="mx-1.5">•</span> {{ word.type }}
+              </div>
+            </div>
+            <div class="flex items-center gap-1">
               <button
-                class="text-slate-400 hover:text-slate-700 transition-colors min-h-11 min-w-11 flex items-center justify-center p-2 rounded-lg hover:bg-slate-50"
-                (click)="$event.stopPropagation()"
+                class="text-slate-400 hover:text-blue-600 transition-colors w-8 h-8 flex items-center justify-center rounded hover:bg-slate-50"
               >
                 <i class="fi fi-rr-pencil"></i>
               </button>
               <button
-                class="text-slate-400 hover:text-red-500 transition-colors min-h-11 min-w-11 flex items-center justify-center p-2 rounded-lg hover:bg-red-50"
-                (click)="$event.stopPropagation()"
+                class="text-slate-400 hover:text-red-600 transition-colors w-8 h-8 flex items-center justify-center rounded hover:bg-red-50"
               >
                 <i class="fi fi-rr-trash"></i>
               </button>
             </div>
           </div>
-        </div>
-        }
-      </div>
-      } @else {
-      <!-- View 2: Danh sách Từ vựng -->
 
-      <!-- Toolbar -->
-      <div
-        class="flex flex-col md:flex-row items-stretch md:items-center justify-between mb-6 md:mb-8 pb-6 md:pb-8 border-b border-slate-200 gap-4"
-      >
-        <div
-          class="flex flex-col md:flex-row items-stretch md:items-center gap-4"
-        >
-          <!-- Segmented Control -->
-          <div class="flex bg-slate-100/80 p-1 rounded-xl w-full md:w-auto">
-            <button
-              class="flex-1 md:flex-none px-3 md:px-5 py-2 min-h-11 rounded-lg text-xs md:text-sm font-semibold transition-colors shadow-sm bg-white text-slate-800"
-              (click)="activeStatusFilter.set('ALL')"
-            >
-              Tất cả
-            </button>
-            <button
-              class="flex-1 md:flex-none px-3 md:px-5 py-2 min-h-11 rounded-lg text-xs md:text-sm font-medium text-slate-600 hover:text-slate-800 transition-colors"
-              (click)="activeStatusFilter.set('MASTERED')"
-            >
-              Đã thuộc
-            </button>
-            <button
-              class="flex-1 md:flex-none px-3 md:px-5 py-2 min-h-11 rounded-lg text-xs md:text-sm font-medium text-slate-600 hover:text-slate-800 transition-colors whitespace-nowrap"
-              (click)="activeStatusFilter.set('REVIEW_SOON')"
-            >
-              Sắp quên
-            </button>
-          </div>
+          <p class="text-slate-700 text-sm leading-relaxed mb-3">
+            {{ word.meaning }}
+          </p>
 
-          <!-- Dropdown -->
-          <div class="relative w-full md:w-auto">
-            <button
-              class="w-full bg-white border border-slate-200 text-slate-800 px-5 py-2 md:py-2.5 min-h-11 rounded-xl text-sm font-semibold flex items-center justify-between md:justify-center gap-3 hover:bg-slate-50 transition-colors shadow-sm"
-            >
-              <span>Tất cả bộ sưu tập</span>
-              <i class="fi fi-rr-angle-small-down pt-1 text-slate-500"></i>
-            </button>
-          </div>
-        </div>
-
-        <div class="flex items-center gap-3 w-full md:w-auto">
-          <button
-            class="flex-1 md:flex-none bg-white border border-slate-200 text-slate-700 px-3 md:px-5 py-2.5 min-h-11 rounded-xl text-sm font-semibold hover:bg-slate-50 transition-colors shadow-sm flex items-center justify-center gap-2"
-            (click)="openImportModal()"
-          >
-            <i class="fi fi-rr-upload text-slate-500"></i>
-            <span class="hidden sm:inline">Nhập dữ liệu</span>
-            <span class="sm:hidden">Nhập</span>
-          </button>
-          <button
-            class="flex-1 md:flex-none bg-blue-700 text-white px-3 md:px-5 py-2.5 min-h-11 rounded-xl text-sm font-semibold hover:bg-blue-800 transition-colors shadow-sm flex items-center justify-center gap-2"
-            (click)="openVocabularyModal()"
-          >
-            <i class="fi fi-rr-plus"></i>
-            <span class="hidden sm:inline">Thêm từ mới</span>
-            <span class="sm:hidden">Thêm</span>
-          </button>
-        </div>
-      </div>
-
-      <!-- Quick Nav Header -->
-      <div class="flex items-center gap-3 mb-4 md:mb-6">
-        <button
-          class="text-slate-400 hover:text-blue-700 transition-colors text-sm font-medium flex items-center gap-1 min-h-11"
-          (click)="goBackToCollections()"
-        >
-          <i class="fi fi-rr-arrow-left"></i> Quay lại
-        </button>
-      </div>
-
-      <!-- Data Table Desktop -->
-      <div
-        class="hidden md:block bg-white rounded-2xl border border-slate-200 shadow-sm overflow-x-auto text-sm"
-      >
-        <table class="w-full text-left min-w-200">
-          <thead>
-            <tr class="border-b border-slate-200 bg-slate-50/50">
-              <th
-                class="px-6 py-4 font-mono text-xs font-bold text-slate-500 uppercase tracking-widest w-[25%]"
-              >
-                Từ vựng
-              </th>
-              <th
-                class="px-6 py-4 font-mono text-xs font-bold text-slate-500 uppercase tracking-widest w-[30%]"
-              >
-                Nghĩa
-              </th>
-              <th
-                class="px-6 py-4 font-mono text-xs font-bold text-slate-500 uppercase tracking-widest w-[30%]"
-              >
-                Ví dụ
-              </th>
-              <th
-                class="px-6 py-4 font-mono text-xs font-bold text-slate-500 uppercase tracking-widest w-[15%]"
-              >
-                Trạng thái SM-2
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            @for (word of words; track word.id) {
-            <tr
-              class="border-b border-slate-100 hover:bg-slate-50/50 transition-colors"
-            >
-              <td class="px-6 py-5 align-top">
-                <div class="font-bold text-[15px] text-slate-900 mb-1.5">
-                  {{ word.target }}
-                </div>
-                <div
-                  class="text-slate-500 font-mono text-[13px] tracking-tight"
-                >
-                  {{ word.ipa }} <span class="mx-1.5">•</span> {{ word.type }}
-                </div>
-              </td>
-              <td class="px-6 py-5 align-top">
-                <p class="text-slate-700 leading-relaxed">{{ word.meaning }}</p>
-              </td>
-              <td class="px-6 py-5 align-top">
-                <div
-                  class="bg-slate-100/70 text-slate-600 rounded-lg p-3 text-sm italic leading-relaxed border border-slate-200/50"
-                >
-                  {{ word.example }}
-                </div>
-              </td>
-              <td class="px-6 py-5 align-top">
-                <!-- Status Badge -->
-                <div class="mb-3">
-                  @if (word.status === 'Mastered') {
-                  <span
-                    class="inline-flex items-center gap-1.5 bg-emerald-100 text-emerald-800 px-2.5 py-1 rounded font-medium text-xs font-mono"
-                  >
-                    <div class="w-1.5 h-1.5 rounded-full bg-emerald-500"></div>
-                    Mastered
-                  </span>
-                  } @else if (word.status === 'Learning') {
-                  <span
-                    class="inline-flex items-center gap-1.5 bg-amber-100 text-amber-800 px-2.5 py-1 rounded font-medium text-xs font-mono"
-                  >
-                    <div class="w-1.5 h-1.5 rounded-full bg-amber-500"></div>
-                    Learning
-                  </span>
-                  } @else {
-                  <span
-                    class="inline-flex items-center gap-1.5 bg-red-100 text-red-800 px-2.5 py-1 rounded font-medium text-xs font-mono"
-                  >
-                    <div class="w-1.5 h-1.5 rounded-full bg-red-500"></div>
-                    Review Soon
-                  </span>
-                  }
-                </div>
-
-                <!-- Next Review -->
-                <div
-                  class="font-mono text-[11px] font-bold uppercase mb-2 tracking-wide text-slate-500 group"
-                >
-                  Next:
-                  <span [class.text-red-600]="word.nextReview === 'Today'"
-                    >{{ word.nextReview }}</span
-                  >
-                </div>
-
-                <!-- Progress Bar -->
-                <div class="flex gap-1">
-                  <div
-                    class="h-1.5 flex-1 rounded-full"
-                    [class.bg-emerald-600]="word.progress >= 1 && word.status === 'Mastered'"
-                    [class.bg-emerald-200]="word.progress < 1 && word.status === 'Mastered'"
-                    [class.bg-amber-700]="word.progress >= 1 && word.status === 'Learning'"
-                    [class.bg-slate-200]="word.progress < 1 && word.status === 'Learning'"
-                    [class.bg-red-600]="word.progress >= 1 && word.status === 'Review Soon'"
-                    [class.bg-slate-200]="word.progress < 1 && word.status === 'Review Soon'"
-                  ></div>
-                  <div
-                    class="h-1.5 flex-1 rounded-full"
-                    [class.bg-emerald-600]="word.progress >= 2 && word.status === 'Mastered'"
-                    [class.bg-emerald-200]="word.progress < 2 && word.status === 'Mastered'"
-                    [class.bg-amber-700]="word.progress >= 2 && word.status === 'Learning'"
-                    [class.bg-slate-200]="word.progress < 2 && word.status === 'Learning'"
-                    [class.bg-red-600]="word.progress >= 2 && word.status === 'Review Soon'"
-                    [class.bg-slate-200]="word.progress < 2 && word.status === 'Review Soon'"
-                  ></div>
-                  <div
-                    class="h-1.5 flex-1 rounded-full"
-                    [class.bg-emerald-600]="word.progress >= 3 && word.status === 'Mastered'"
-                    [class.bg-emerald-200]="word.progress < 3 && word.status === 'Mastered'"
-                    [class.bg-amber-700]="word.progress >= 3 && word.status === 'Learning'"
-                    [class.bg-slate-200]="word.progress < 3 && word.status === 'Learning'"
-                    [class.bg-red-600]="word.progress >= 3 && word.status === 'Review Soon'"
-                    [class.bg-slate-200]="word.progress < 3 && word.status === 'Review Soon'"
-                  ></div>
-                  <div
-                    class="h-1.5 flex-1 rounded-full"
-                    [class.bg-emerald-600]="word.progress >= 4 && word.status === 'Mastered'"
-                    [class.bg-emerald-200]="word.progress < 4 && word.status === 'Mastered'"
-                    [class.bg-amber-700]="word.progress >= 4 && word.status === 'Learning'"
-                    [class.bg-slate-200]="word.progress < 4 && word.status === 'Learning'"
-                    [class.bg-red-600]="word.progress >= 4 && word.status === 'Review Soon'"
-                    [class.bg-slate-200]="word.progress < 4 && word.status === 'Review Soon'"
-                  ></div>
-                </div>
-              </td>
-            </tr>
-            }
-          </tbody>
-        </table>
-
-        <!-- Pagination Desktop -->
-        <div
-          class="px-6 py-6 border-t border-slate-200 flex justify-center items-center gap-2"
-        >
-          <button
-            class="w-8 h-8 flex justify-center items-center rounded text-slate-400 hover:bg-slate-100 transition-colors min-h-11 min-w-11"
-          >
-            <i class="fi fi-rr-angle-small-left mt-1"></i>
-          </button>
-          <button
-            class="w-8 h-8 flex justify-center items-center rounded font-semibold text-white bg-blue-700 min-h-11 min-w-11"
-          >
-            1
-          </button>
-          <button
-            class="w-8 h-8 flex justify-center items-center rounded text-slate-600 hover:bg-slate-100 font-semibold transition-colors min-h-11 min-w-11"
-          >
-            2
-          </button>
-          <button
-            class="w-8 h-8 flex justify-center items-center rounded text-slate-600 hover:bg-slate-100 font-semibold transition-colors min-h-11 min-w-11"
-          >
-            3
-          </button>
-          <span class="text-slate-400 px-1">...</span>
-          <button
-            class="w-8 h-8 flex justify-center items-center rounded text-slate-400 hover:bg-slate-100 transition-colors min-h-11 min-w-11"
-          >
-            <i class="fi fi-rr-angle-small-right mt-1"></i>
-          </button>
-        </div>
-      </div>
-
-      <!-- Mobile Data Cards -->
-      <div class="md:hidden flex flex-col gap-4">
-        @for (word of words; track word.id) {
-        <div
-          class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm relative overflow-hidden"
-        >
-          <!-- Status Indicator Line -->
           <div
-            class="absolute left-0 top-0 bottom-0 w-1"
-            [class.bg-emerald-500]="word.status === 'Mastered'"
-            [class.bg-amber-500]="word.status === 'Learning'"
-            [class.bg-red-500]="word.status === 'Review Soon'"
-          ></div>
+            class="bg-slate-50 rounded-xl p-3 text-sm italic text-slate-600 mb-4 border border-slate-100"
+          >
+            {{ word.example }}
+          </div>
 
-          <div class="pl-2">
-            <div class="flex justify-between items-start mb-2">
-              <div>
-                <div class="font-bold text-lg text-slate-900">
-                  {{ word.target }}
-                </div>
-                <div
-                  class="text-slate-500 font-mono text-xs tracking-tight mt-1"
+          <div class="flex justify-between items-end">
+            <div>
+              <div
+                class="font-mono text-[10px] font-bold uppercase tracking-wide text-slate-500 mb-1.5"
+              >
+                Next:
+                <span [class.text-red-600]="word.nextReview === 'Today'"
+                  >{{ word.nextReview }}</span
                 >
-                  {{ word.ipa }} <span class="mx-1.5">•</span> {{ word.type }}
-                </div>
               </div>
-              <div class="flex items-center gap-1">
-                <button
-                  class="text-slate-400 hover:text-blue-600 transition-colors w-8 h-8 flex items-center justify-center rounded hover:bg-slate-50"
-                >
-                  <i class="fi fi-rr-pencil"></i>
-                </button>
-                <button
-                  class="text-slate-400 hover:text-red-600 transition-colors w-8 h-8 flex items-center justify-center rounded hover:bg-red-50"
-                >
-                  <i class="fi fi-rr-trash"></i>
-                </button>
-              </div>
-            </div>
-
-            <p class="text-slate-700 text-sm leading-relaxed mb-3">
-              {{ word.meaning }}
-            </p>
-
-            <div
-              class="bg-slate-50 rounded-xl p-3 text-sm italic text-slate-600 mb-4 border border-slate-100"
-            >
-              {{ word.example }}
-            </div>
-
-            <div class="flex justify-between items-end">
-              <div>
+              <!-- Progress -->
+              <div class="flex gap-1 w-24">
                 <div
-                  class="font-mono text-[10px] font-bold uppercase tracking-wide text-slate-500 mb-1.5"
-                >
-                  Next:
-                  <span [class.text-red-600]="word.nextReview === 'Today'"
-                    >{{ word.nextReview }}</span
-                  >
-                </div>
-                <!-- Progress -->
-                <div class="flex gap-1 w-24">
-                  <div
-                    class="h-1 flex-1 rounded-full"
-                    [class.bg-emerald-600]="word.progress >= 1 && word.status === 'Mastered'"
-                    [class.bg-emerald-200]="word.progress < 1 && word.status === 'Mastered'"
-                    [class.bg-amber-700]="word.progress >= 1 && word.status === 'Learning'"
-                    [class.bg-slate-200]="word.progress < 1 && word.status === 'Learning'"
-                    [class.bg-red-600]="word.progress >= 1 && word.status === 'Review Soon'"
-                    [class.bg-slate-200]="word.progress < 1 && word.status === 'Review Soon'"
-                  ></div>
-                  <div
-                    class="h-1 flex-1 rounded-full"
-                    [class.bg-emerald-600]="word.progress >= 2 && word.status === 'Mastered'"
-                    [class.bg-emerald-200]="word.progress < 2 && word.status === 'Mastered'"
-                    [class.bg-amber-700]="word.progress >= 2 && word.status === 'Learning'"
-                    [class.bg-slate-200]="word.progress < 2 && word.status === 'Learning'"
-                    [class.bg-red-600]="word.progress >= 2 && word.status === 'Review Soon'"
-                    [class.bg-slate-200]="word.progress < 2 && word.status === 'Review Soon'"
-                  ></div>
-                  <div
-                    class="h-1 flex-1 rounded-full"
-                    [class.bg-emerald-600]="word.progress >= 3 && word.status === 'Mastered'"
-                    [class.bg-emerald-200]="word.progress < 3 && word.status === 'Mastered'"
-                    [class.bg-amber-700]="word.progress >= 3 && word.status === 'Learning'"
-                    [class.bg-slate-200]="word.progress < 3 && word.status === 'Learning'"
-                    [class.bg-red-600]="word.progress >= 3 && word.status === 'Review Soon'"
-                    [class.bg-slate-200]="word.progress < 3 && word.status === 'Review Soon'"
-                  ></div>
-                  <div
-                    class="h-1 flex-1 rounded-full"
-                    [class.bg-emerald-600]="word.progress >= 4 && word.status === 'Mastered'"
-                    [class.bg-emerald-200]="word.progress < 4 && word.status === 'Mastered'"
-                    [class.bg-amber-700]="word.progress >= 4 && word.status === 'Learning'"
-                    [class.bg-slate-200]="word.progress < 4 && word.status === 'Learning'"
-                    [class.bg-red-600]="word.progress >= 4 && word.status === 'Review Soon'"
-                    [class.bg-slate-200]="word.progress < 4 && word.status === 'Review Soon'"
-                  ></div>
-                </div>
+                  class="h-1 flex-1 rounded-full"
+                  [class.bg-emerald-600]="word.progress >= 1 && word.status === 'Mastered'"
+                  [class.bg-emerald-200]="word.progress < 1 && word.status === 'Mastered'"
+                  [class.bg-amber-700]="word.progress >= 1 && word.status === 'Learning'"
+                  [class.bg-slate-200]="word.progress < 1 && word.status === 'Learning'"
+                  [class.bg-red-600]="word.progress >= 1 && word.status === 'Review Soon'"
+                  [class.bg-slate-200]="word.progress < 1 && word.status === 'Review Soon'"
+                ></div>
+                <div
+                  class="h-1 flex-1 rounded-full"
+                  [class.bg-emerald-600]="word.progress >= 2 && word.status === 'Mastered'"
+                  [class.bg-emerald-200]="word.progress < 2 && word.status === 'Mastered'"
+                  [class.bg-amber-700]="word.progress >= 2 && word.status === 'Learning'"
+                  [class.bg-slate-200]="word.progress < 2 && word.status === 'Learning'"
+                  [class.bg-red-600]="word.progress >= 2 && word.status === 'Review Soon'"
+                  [class.bg-slate-200]="word.progress < 2 && word.status === 'Review Soon'"
+                ></div>
+                <div
+                  class="h-1 flex-1 rounded-full"
+                  [class.bg-emerald-600]="word.progress >= 3 && word.status === 'Mastered'"
+                  [class.bg-emerald-200]="word.progress < 3 && word.status === 'Mastered'"
+                  [class.bg-amber-700]="word.progress >= 3 && word.status === 'Learning'"
+                  [class.bg-slate-200]="word.progress < 3 && word.status === 'Learning'"
+                  [class.bg-red-600]="word.progress >= 3 && word.status === 'Review Soon'"
+                  [class.bg-slate-200]="word.progress < 3 && word.status === 'Review Soon'"
+                ></div>
+                <div
+                  class="h-1 flex-1 rounded-full"
+                  [class.bg-emerald-600]="word.progress >= 4 && word.status === 'Mastered'"
+                  [class.bg-emerald-200]="word.progress < 4 && word.status === 'Mastered'"
+                  [class.bg-amber-700]="word.progress >= 4 && word.status === 'Learning'"
+                  [class.bg-slate-200]="word.progress < 4 && word.status === 'Learning'"
+                  [class.bg-red-600]="word.progress >= 4 && word.status === 'Review Soon'"
+                  [class.bg-slate-200]="word.progress < 4 && word.status === 'Review Soon'"
+                ></div>
               </div>
             </div>
           </div>
-        </div>
-        }
-        <!-- Pagination Mobile -->
-        <div class="py-4 flex justify-center items-center gap-1 w-full mt-2">
-          <button
-            class="w-10 h-10 flex justify-center items-center rounded text-slate-400 hover:bg-slate-100 transition-colors"
-          >
-            <i class="fi fi-rr-angle-small-left mt-1"></i>
-          </button>
-          <button
-            class="w-10 h-10 flex justify-center items-center rounded font-semibold text-white bg-blue-700"
-          >
-            1
-          </button>
-          <button
-            class="w-10 h-10 flex justify-center items-center rounded text-slate-600 hover:bg-slate-100 font-semibold transition-colors"
-          >
-            2
-          </button>
-          <span class="text-slate-400 px-1">...</span>
-          <button
-            class="w-10 h-10 flex justify-center items-center rounded text-slate-400 hover:bg-slate-100 transition-colors"
-          >
-            <i class="fi fi-rr-angle-small-right mt-1"></i>
-          </button>
         </div>
       </div>
       }
+      <!-- Pagination Mobile -->
+      <div class="py-4 flex justify-center items-center gap-1 w-full mt-2">
+        <button
+          class="w-10 h-10 flex justify-center items-center rounded text-slate-400 hover:bg-slate-100 transition-colors"
+        >
+          <i class="fi fi-rr-angle-small-left mt-1"></i>
+        </button>
+        <button
+          class="w-10 h-10 flex justify-center items-center rounded font-semibold text-white bg-blue-700"
+        >
+          1
+        </button>
+        <button
+          class="w-10 h-10 flex justify-center items-center rounded text-slate-600 hover:bg-slate-100 font-semibold transition-colors"
+        >
+          2
+        </button>
+        <span class="text-slate-400 px-1">...</span>
+        <button
+          class="w-10 h-10 flex justify-center items-center rounded text-slate-400 hover:bg-slate-100 transition-colors"
+        >
+          <i class="fi fi-rr-angle-small-right mt-1"></i>
+        </button>
+      </div>
     </div>
-  </main>
-</div>
+    }
+  </div>
+</main>
 
 <!-- Modal Import Data -->
 @if (showImportModal()) {

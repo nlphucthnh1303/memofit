@@ -3,7 +3,7 @@ import { Sidebar } from '../sidebar/sidebar';
 
 @Component({
   selector: 'app-vocabulary',
-  imports: [Sidebar],
+  imports: [],
   templateUrl: './vocabulary.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -13,7 +13,7 @@ export class Vocabulary {
   showCollectionModal = signal<boolean>(false);
   showVocabularyModal = signal<boolean>(false);
   activeStatusFilter = signal<'ALL' | 'MASTERED' | 'REVIEW_SOON'>('ALL');
-  
+
   // Modal Stepper State
   importStep = signal<1 | 2 | 3>(1);
 

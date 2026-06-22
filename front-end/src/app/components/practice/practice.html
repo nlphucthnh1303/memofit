@@ -1,617 +1,562 @@
-<div
-  class="flex min-h-dvh font-sans md:pb-0"
-  [class.pb-[72px]]="currentView() === 'list'"
-  [class.bg-slate-50]="currentView() === 'list'"
-  [class.bg-slate-50]="currentView() === 'session'"
->
-  <app-sidebar [hidden]="currentView() === 'session'"></app-sidebar>
-
-  <!-- Main Content -->
-  <main
-    class="flex-1 w-full flex flex-col h-dvh overflow-hidden relative"
-    [class.fixed]="currentView() === 'session'"
-    [class.inset-0]="currentView() === 'session'"
-    [class.z-50]="currentView() === 'session'"
-    [class.bg-white]="currentView() === 'session'"
+@if (currentView() === 'list') {
+<!-- ==== MÀN HÌNH 1: DANH SÁCH ĐỀ ==== -->
+<main class="flex-1 overflow-y-auto w-full p-4 md:p-10 pb-20 md:pb-10">
+  <!-- Filter & Sort Bar -->
+  <div
+    class="flex flex-col md:flex-row md:justify-between items-stretch md:items-center mb-6 md:mb-8 gap-4"
   >
-    @if (currentView() === 'list') {
-    <!-- ==== MÀN HÌNH 1: DANH SÁCH ĐỀ ==== -->
-    <header
-      class="flex justify-between items-center px-4 md:px-10 py-4 md:py-6 border-b border-slate-200 bg-white z-10 shrink-0 min-h-16 md:min-h-auto"
-    >
-      <h2 class="text-xl md:text-2xl font-bold text-blue-700">Luyện tập</h2>
-      <div class="flex items-center gap-3 md:gap-6">
-        <div class="relative w-48 md:w-80">
-          <i
-            class="fi fi-rr-search absolute left-3 md:left-4 top-1/2 transform -translate-y-1/2 text-slate-400 text-sm md:text-base"
-          ></i>
-          <input
-            type="search"
-            placeholder="Tìm kiếm..."
-            class="w-full bg-slate-50 border border-slate-200 pl-9 md:pl-11 pr-3 md:pr-4 py-2 md:py-2.5 rounded-full text-xs md:text-sm font-sans focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all placeholder:text-slate-400"
-          />
-        </div>
-        <button
-          class="relative text-slate-600 hover:text-slate-900 transition-colors p-1 md:p-2 min-h-11 min-w-11"
-        >
-          <i class="fi fi-rr-bell text-lg md:text-xl"></i>
-          <span
-            class="absolute top-2.5 md:top-1.5 right-2.5 md:right-2 w-2 h-2 rounded-full bg-red-500 border-2 border-white"
-          ></span>
-        </button>
-      </div>
-    </header>
-
     <div
-      class="flex-1 overflow-y-auto w-full p-4 md:p-10 bg-slate-50 pb-20 md:pb-10"
+      class="flex overflow-x-auto gap-2 md:gap-3 pb-2 md:pb-0 hide-scrollbar"
+      style="-webkit-overflow-scrolling: touch"
     >
-      <div class="max-w-310 mx-auto">
-        <!-- Filter & Sort Bar -->
-        <div
-          class="flex flex-col md:flex-row md:justify-between items-stretch md:items-center mb-6 md:mb-8 gap-4"
-        >
-          <div
-            class="flex overflow-x-auto gap-2 md:gap-3 pb-2 md:pb-0 hide-scrollbar"
-            style="-webkit-overflow-scrolling: touch"
-          >
-            <button
-              class="shrink-0 px-4 md:px-5 py-2 min-h-11 rounded-full text-xs md:text-sm font-semibold transition-colors"
-              [class.bg-blue-600]="activeFilter() === 'ALL'"
-              [class.text-white]="activeFilter() === 'ALL'"
-              [class.bg-white]="activeFilter() !== 'ALL'"
-              [class.border]="activeFilter() !== 'ALL'"
-              [class.border-slate-200]="activeFilter() !== 'ALL'"
-              [class.text-slate-700]="activeFilter() !== 'ALL'"
-              [class.hover:bg-slate-50]="activeFilter() !== 'ALL'"
-              (click)="activeFilter.set('ALL')"
-            >
-              Tất cả
-            </button>
-            <button
-              class="shrink-0 px-4 md:px-5 py-2 min-h-11 rounded-full text-xs md:text-sm font-semibold transition-colors"
-              [class.bg-blue-600]="activeFilter() === 'IT'"
-              [class.text-white]="activeFilter() === 'IT'"
-              [class.bg-white]="activeFilter() !== 'IT'"
-              [class.border]="activeFilter() !== 'IT'"
-              [class.border-slate-200]="activeFilter() !== 'IT'"
-              [class.text-slate-700]="activeFilter() !== 'IT'"
-              [class.hover:bg-slate-50]="activeFilter() !== 'IT'"
-              (click)="activeFilter.set('IT')"
-            >
-              Từ vựng IT
-            </button>
-            <button
-              class="shrink-0 px-4 md:px-5 py-2 min-h-11 rounded-full text-xs md:text-sm font-semibold transition-colors"
-              [class.bg-blue-600]="activeFilter() === 'GRAMMAR'"
-              [class.text-white]="activeFilter() === 'GRAMMAR'"
-              [class.bg-white]="activeFilter() !== 'GRAMMAR'"
-              [class.border]="activeFilter() !== 'GRAMMAR'"
-              [class.border-slate-200]="activeFilter() !== 'GRAMMAR'"
-              [class.text-slate-700]="activeFilter() !== 'GRAMMAR'"
-              [class.hover:bg-slate-50]="activeFilter() !== 'GRAMMAR'"
-              (click)="activeFilter.set('GRAMMAR')"
-            >
-              Ngữ pháp B2
-            </button>
-            <button
-              class="shrink-0 px-4 md:px-5 py-2 min-h-11 rounded-full text-xs md:text-sm font-semibold transition-colors"
-              [class.bg-blue-600]="activeFilter() === 'BUSINESS'"
-              [class.text-white]="activeFilter() === 'BUSINESS'"
-              [class.bg-white]="activeFilter() !== 'BUSINESS'"
-              [class.border]="activeFilter() !== 'BUSINESS'"
-              [class.border-slate-200]="activeFilter() !== 'BUSINESS'"
-              [class.text-slate-700]="activeFilter() !== 'BUSINESS'"
-              [class.hover:bg-slate-50]="activeFilter() !== 'BUSINESS'"
-              (click)="activeFilter.set('BUSINESS')"
-            >
-              Giao tiếp Công sở
-            </button>
-          </div>
-
-          <div class="flex items-center gap-3">
-            <span class="hidden md:inline text-sm text-slate-500 font-medium"
-              >Sắp xếp:</span
-            >
-            <button
-              class="w-full md:w-auto bg-white border border-slate-200 px-4 py-2 min-h-11 rounded-xl text-sm font-medium text-slate-700 flex items-center justify-between md:justify-start gap-2 hover:bg-slate-50 transition-colors shadow-sm"
-            >
-              <span>Mới nhất</span>
-              <i class="fi fi-rr-angle-small-down text-xs mt-0.5"></i>
-            </button>
-          </div>
-        </div>
-
-        <!-- Grid -->
-        <div
-          class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6"
-        >
-          @for (test of tests; track test.id) {
-          <div
-            class="bg-white border border-slate-200 rounded-2xl p-5 md:p-6 flex flex-col transition-all hover:shadow-md hover:border-blue-200"
-          >
-            <h3 class="text-base md:text-lg font-bold text-slate-900 mb-4">
-              {{ test.title }}
-            </h3>
-
-            <div
-              class="flex items-center gap-3 md:gap-5 mb-6 md:mb-8 flex-wrap"
-            >
-              <div
-                class="flex items-center gap-1.5 text-slate-500 text-[12px] md:text-sm font-medium"
-              >
-                <i
-                  class="fi fi-rr-interrogation text-[11px] md:text-[13px] mt-0.5"
-                ></i>
-                {{ test.questions }} câu
-              </div>
-              <div
-                class="flex items-center gap-1.5 text-slate-500 text-[12px] md:text-sm font-medium"
-              >
-                <i class="fi fi-rr-clock text-[11px] md:text-[13px] mt-0.5"></i>
-                {{ test.time }} ph
-              </div>
-              <div
-                class="flex items-center gap-1.5 text-slate-500 text-[12px] md:text-sm font-medium"
-              >
-                <i class="fi fi-rr-stats text-[11px] md:text-[13px] mt-0.5"></i>
-                {{ test.difficulty }}
-              </div>
-            </div>
-
-            <div
-              class="mt-auto flex flex-col sm:flex-row md:flex-col lg:flex-row xl:flex-col gap-2 md:gap-3"
-            >
-              <button
-                class="flex-1 min-h-11 border shadow-sm border-slate-200 text-blue-700 bg-white hover:bg-slate-50 py-2 md:py-2.5 rounded-xl text-[14px] md:text-[15px] font-bold transition-colors"
-                (click)="startPractice()"
-              >
-                Luyện tập ngay
-              </button>
-              <button
-                class="flex-1 min-h-11 border border-slate-200 text-slate-500 bg-white hover:text-slate-700 py-2 md:py-2.5 rounded-xl text-[14px] md:text-[15px] font-bold transition-colors"
-              >
-                Xem lại
-              </button>
-            </div>
-          </div>
-          }
-
-          <!-- AI Generate Card -->
-          <div
-            class="border-2 border-dashed border-slate-300 rounded-2xl p-5 md:p-6 flex flex-col items-center justify-center text-center bg-slate-50/50 hover:bg-blue-50/50 hover:border-blue-300 transition-all group min-h-60"
-          >
-            <div
-              class="w-12 h-12 md:w-14 md:h-14 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center mb-3 md:mb-4 group-hover:scale-110 transition-transform"
-            >
-              <i class="fi fi-rr-sparkles text-xl md:text-2xl"></i>
-            </div>
-            <h3 class="text-base md:text-[17px] font-bold text-slate-900 mb-2">
-              Tạo đề thi bằng AI
-            </h3>
-            <p
-              class="text-slate-500 text-[13px] md:text-sm mb-4 md:mb-6 max-w-55 leading-relaxed"
-            >
-              Bạn muốn ôn luyện chủ đề cụ thể? Để AI thiết kế bộ đề riêng.
-            </p>
-            <button
-              routerLink="/generate-questions"
-              class="w-full min-h-11 border border-blue-200 text-blue-700 bg-white hover:bg-blue-50 py-2 md:py-2.5 rounded-xl text-[14px] md:text-[15px] font-bold transition-colors shadow-sm mt-auto"
-            >
-              Khởi tạo ngay
-            </button>
-          </div>
-        </div>
-      </div>
+      <button
+        class="shrink-0 px-4 md:px-5 py-2 min-h-11 rounded-full text-xs md:text-sm font-semibold transition-colors"
+        [class.bg-blue-600]="activeFilter() === 'ALL'"
+        [class.text-white]="activeFilter() === 'ALL'"
+        [class.bg-white]="activeFilter() !== 'ALL'"
+        [class.border]="activeFilter() !== 'ALL'"
+        [class.border-slate-200]="activeFilter() !== 'ALL'"
+        [class.text-slate-700]="activeFilter() !== 'ALL'"
+        [class.hover:bg-slate-50]="activeFilter() !== 'ALL'"
+        (click)="activeFilter.set('ALL')"
+      >
+        Tất cả
+      </button>
+      <button
+        class="shrink-0 px-4 md:px-5 py-2 min-h-11 rounded-full text-xs md:text-sm font-semibold transition-colors"
+        [class.bg-blue-600]="activeFilter() === 'IT'"
+        [class.text-white]="activeFilter() === 'IT'"
+        [class.bg-white]="activeFilter() !== 'IT'"
+        [class.border]="activeFilter() !== 'IT'"
+        [class.border-slate-200]="activeFilter() !== 'IT'"
+        [class.text-slate-700]="activeFilter() !== 'IT'"
+        [class.hover:bg-slate-50]="activeFilter() !== 'IT'"
+        (click)="activeFilter.set('IT')"
+      >
+        Từ vựng IT
+      </button>
+      <button
+        class="shrink-0 px-4 md:px-5 py-2 min-h-11 rounded-full text-xs md:text-sm font-semibold transition-colors"
+        [class.bg-blue-600]="activeFilter() === 'GRAMMAR'"
+        [class.text-white]="activeFilter() === 'GRAMMAR'"
+        [class.bg-white]="activeFilter() !== 'GRAMMAR'"
+        [class.border]="activeFilter() !== 'GRAMMAR'"
+        [class.border-slate-200]="activeFilter() !== 'GRAMMAR'"
+        [class.text-slate-700]="activeFilter() !== 'GRAMMAR'"
+        [class.hover:bg-slate-50]="activeFilter() !== 'GRAMMAR'"
+        (click)="activeFilter.set('GRAMMAR')"
+      >
+        Ngữ pháp B2
+      </button>
+      <button
+        class="shrink-0 px-4 md:px-5 py-2 min-h-11 rounded-full text-xs md:text-sm font-semibold transition-colors"
+        [class.bg-blue-600]="activeFilter() === 'BUSINESS'"
+        [class.text-white]="activeFilter() === 'BUSINESS'"
+        [class.bg-white]="activeFilter() !== 'BUSINESS'"
+        [class.border]="activeFilter() !== 'BUSINESS'"
+        [class.border-slate-200]="activeFilter() !== 'BUSINESS'"
+        [class.text-slate-700]="activeFilter() !== 'BUSINESS'"
+        [class.hover:bg-slate-50]="activeFilter() !== 'BUSINESS'"
+        (click)="activeFilter.set('BUSINESS')"
+      >
+        Giao tiếp Công sở
+      </button>
     </div>
 
-    } @else {
-    <!-- ==== MÀN HÌNH 2: BÀI LUYỆN TẬP ==== -->
-    <div class="flex-1 flex flex-col bg-white w-full h-dvh">
-      <!-- Session Shell - Top Bar -->
-      <header
-        class="flex items-center justify-between px-4 md:px-8 py-3 md:py-5 border-b border-slate-100 shrink-0 bg-white relative z-10 min-h-15"
+    <div class="flex items-center gap-3">
+      <span class="hidden md:inline text-sm text-slate-500 font-medium"
+        >Sắp xếp:</span
       >
-        <div class="flex items-center gap-3 md:gap-6 flex-1">
-          <button
-            class="text-slate-500 hover:text-slate-900 transition-colors p-2 min-h-11 min-w-11 -ml-2 rounded-lg flex items-center justify-center"
-            (click)="exitPractice()"
-          >
-            <i class="fi fi-rr-cross text-lg"></i>
-          </button>
+      <button
+        class="w-full md:w-auto bg-white border border-slate-200 px-4 py-2 min-h-11 rounded-xl text-sm font-medium text-slate-700 flex items-center justify-between md:justify-start gap-2 hover:bg-slate-50 transition-colors shadow-sm"
+      >
+        <span>Mới nhất</span>
+        <i class="fi fi-rr-angle-small-down text-xs mt-0.5"></i>
+      </button>
+    </div>
+  </div>
 
-          <div class="flex flex-col gap-1.5 w-full max-w-30 md:max-w-sm">
-            <div
-              class="flex justify-between flex-col md:flex-row md:items-center text-[9px] md:text-[11px] font-mono font-bold uppercase tracking-wider text-slate-800"
-            >
-              <span class="hidden md:inline">Session Progress</span>
-              <span class="md:hidden">Progress</span>
-              <span class="text-blue-700 md:ml-auto">14/20 Words</span>
-            </div>
-            <div class="h-1.5 md:h-2 bg-slate-200 rounded-full overflow-hidden">
-              <div
-                class="h-full bg-blue-600 rounded-full"
-                style="width: 70%"
-              ></div>
-            </div>
-          </div>
-        </div>
+  <!-- Grid -->
+  <div
+    class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6"
+  >
+    @for (test of tests; track test.id) {
+    <div
+      class="bg-white border border-slate-200 rounded-2xl p-5 md:p-6 flex flex-col transition-all hover:shadow-md hover:border-blue-200"
+    >
+      <h3 class="text-base md:text-lg font-bold text-slate-900 mb-4">
+        {{ test.title }}
+      </h3>
 
+      <div class="flex items-center gap-3 md:gap-5 mb-6 md:mb-8 flex-wrap">
         <div
-          class="flex items-center gap-3 md:gap-6 font-mono text-[11px] md:text-[13px] font-bold text-slate-700"
+          class="flex items-center gap-1.5 text-slate-500 text-[12px] md:text-sm font-medium"
         >
-          <div
-            class="flex items-center gap-1.5 md:gap-2 text-blue-700 bg-blue-50 px-2 py-1.5 md:py-1 rounded-md min-h-8"
-          >
-            <i class="fi fi-rr-clock text-[13px] md:text-[15px] mt-0.5"></i>
-            <span>04:12</span>
-          </div>
-          <div class="flex items-center gap-1 md:gap-2">
-            <i
-              class="fi fi-rr-bolt text-orange-500 text-[13px] md:text-[15px]"
-            ></i>
-            <span class="hidden md:inline">14 streak</span>
-            <span class="md:hidden">14</span>
-          </div>
-          <div class="flex items-center gap-1 md:gap-2">
-            <i
-              class="fi fi-rr-bullseye text-blue-600 text-[13px] md:text-[15px]"
-            ></i>
-            <span class="hidden md:inline">85%</span>
-            <span class="md:hidden">85</span>
-          </div>
+          <i
+            class="fi fi-rr-interrogation text-[11px] md:text-[13px] mt-0.5"
+          ></i>
+          {{ test.questions }} câu
         </div>
-      </header>
-
-      <!-- Session Shell - Main Content Area -->
-      <div
-        class="flex-1 overflow-y-auto flex items-center justify-center p-4 md:p-12 bg-slate-50/20"
-      >
-        <div class="w-full max-w-3xl flex flex-col items-center">
-          @switch (sessionType()) { @case ('cloze') {
-          <!-- Dạng 1: CLOZE TEST -->
-          <div class="flex flex-col items-center w-full">
-            <div
-              class="text-[9px] md:text-[11px] font-mono font-bold text-blue-600 tracking-[0.2em] md:tracking-[0.25em] mb-8 md:mb-16 uppercase flex justify-center w-full text-center"
-            >
-              CLOZE TEST
-            </div>
-
-            <div
-              class="flex items-center gap-2 md:gap-4 text-[15px] md:text-xl text-slate-800 mb-8 md:mb-16 justify-center font-medium leading-loose flex-wrap max-w-2xl mx-auto text-center"
-            >
-              <span>The scientist's</span>
-              <input
-                type="text"
-                class="w-24 md:w-56 h-10 md:h-12 border border-blue-500 rounded-lg px-2 md:px-4 text-center focus:outline-none focus:ring-2 focus:ring-blue-100 transition-all bg-white"
-                placeholder="........"
-              />
-              <span>remained consistent throughout the experiment.</span>
-            </div>
-
-            <div
-              class="bg-white border border-slate-200 rounded-xl p-6 md:p-8 shadow-sm w-full max-w-xl self-center flex gap-4 md:gap-6 text-left"
-            >
-              <div class="shrink-0 text-blue-600 mt-1 md:mt-0">
-                <i class="fi fi-rr-language text-xl md:text-2xl"></i>
-              </div>
-              <div>
-                <p
-                  class="text-[15px] md:text-[17px] text-slate-600 mb-4 leading-relaxed"
-                >
-                  "A hipótese do cientista permaneceu consistente durante todo o
-                  experimento."
-                </p>
-                <div class="inline-flex items-center gap-3">
-                  <span
-                    class="bg-blue-50 text-slate-500 text-[10px] md:text-[11px] font-bold font-mono tracking-wider px-2 py-1 rounded"
-                    >HINT</span
-                  >
-                  <span class="font-mono text-sm md:text-[15px] text-slate-700"
-                    >Starts with 'h', ends with 'is'</span
-                  >
-                </div>
-              </div>
-            </div>
-          </div>
-          } @case ('listen_meaning') {
-          <!-- Dạng 2: LISTEN & TYPE MEANING -->
-          <div class="flex flex-col items-center">
-            <div
-              class="text-[11px] font-mono font-bold text-blue-600 tracking-[0.25em] mb-4 uppercase"
-            >
-              LISTEN & TYPE MEANING
-            </div>
-            <h2 class="text-[28px] font-bold text-slate-900 mb-10 text-center">
-              Translate what you hear into Vietnamese
-            </h2>
-
-            <div class="flex flex-col items-center mb-10">
-              <button
-                class="w-24 h-24 bg-blue-700 text-white rounded-full flex items-center justify-center shadow-[0_0_30px_-5px_rgba(29,78,216,0.3)] hover:scale-105 hover:bg-blue-800 transition-all"
-              >
-                <i class="fi fi-rr-volume text-4xl ml-2"></i>
-              </button>
-              <p class="mt-6 text-sm font-mono text-slate-500">
-                Press Space or Click to hear
-              </p>
-            </div>
-
-            <div class="w-full max-w-lg relative">
-              <input
-                type="text"
-                class="w-full border border-slate-300 rounded-xl px-5 py-4 text-[15px] text-slate-900 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all bg-white"
-                placeholder="Type the Vietnamese meaning..."
-              />
-              <div
-                class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-300 border border-slate-200 rounded p-1"
-              >
-                <i class="fi fi-rr-keyboard text-sm"></i>
-              </div>
-            </div>
-          </div>
-          } @case ('listen_type') {
-          <!-- Dạng 3: LISTEN & TYPE -->
-          <div class="flex flex-col items-center">
-            <div
-              class="text-[11px] font-mono font-bold text-blue-600 tracking-[0.25em] mb-4 uppercase"
-            >
-              LISTEN & TYPE
-            </div>
-            <h2 class="text-[28px] font-bold text-slate-900 mb-10 text-center">
-              Spelling Accuracy
-            </h2>
-
-            <div class="flex flex-col items-center mb-10">
-              <button
-                class="w-24 h-24 bg-blue-700 text-white rounded-full flex items-center justify-center shadow-[0_0_30px_-5px_rgba(29,78,216,0.3)] hover:scale-105 hover:bg-blue-800 transition-all"
-              >
-                <i class="fi fi-rr-volume text-4xl ml-2"></i>
-              </button>
-              <p class="mt-6 text-sm font-mono text-slate-500">
-                Press Space or Click to hear
-              </p>
-            </div>
-
-            <div class="w-full max-w-lg relative">
-              <input
-                type="text"
-                class="w-full border border-slate-300 rounded-xl px-5 py-4 text-[15px] text-slate-900 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all bg-white"
-                placeholder="Type What Your Hear..."
-              />
-              <div
-                class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-300 border border-slate-200 rounded p-1"
-              >
-                <i class="fi fi-rr-keyboard text-sm"></i>
-              </div>
-            </div>
-          </div>
-          } @case ('multiple_choice') {
-          <!-- Dạng 4: MULTIPLE CHOICE -->
-          <div class="flex flex-col items-center w-full">
-            <div
-              class="text-[11px] font-mono font-bold text-blue-600 tracking-[0.25em] mb-6 md:mb-10 uppercase"
-            >
-              MULTIPLE CHOICE
-            </div>
-
-            <h2
-              class="text-4xl md:text-5xl font-bold text-slate-900 mb-6 md:mb-10 text-center tracking-tight"
-            >
-              Ephemeral
-            </h2>
-
-            <p
-              class="text-[17px] md:text-xl text-slate-600 mb-12 md:mb-16 text-center max-w-2xl leading-relaxed"
-            >
-              "The beauty of the sunset is
-              <span class="text-blue-600 font-medium">ephemeral</span>, lasting
-              only a few minutes before the stars emerge."
-            </p>
-
-            <div
-              class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 lg:gap-8 w-full max-w-4xl mx-auto"
-            >
-              <button
-                class="bg-blue-50 border-2 border-blue-600 rounded-xl p-5 md:p-6 text-left flex items-center gap-4 md:gap-6 transition-all w-full relative"
-              >
-                <div
-                  class="w-8 h-8 md:w-10 md:h-10 rounded bg-blue-600 text-white font-mono text-sm md:text-base font-bold flex items-center justify-center shrink-0"
-                >
-                  <i class="fi fi-rr-check"></i>
-                </div>
-                <span class="text-blue-900 font-bold text-[15px] md:text-[17px]"
-                  >Lasting for a very short time</span
-                >
-              </button>
-              <button
-                class="bg-white border-2 border-slate-200 hover:border-blue-400 rounded-xl p-5 md:p-6 text-left flex items-center gap-4 md:gap-6 transition-all w-full group"
-              >
-                <div
-                  class="w-8 h-8 md:w-10 md:h-10 rounded bg-slate-100 text-slate-500 font-mono text-sm md:text-base font-bold flex items-center justify-center shrink-0 group-hover:bg-blue-50 group-hover:text-blue-600"
-                >
-                  B
-                </div>
-                <span
-                  class="text-slate-900 font-medium text-[15px] md:text-[17px] group-hover:text-blue-700"
-                  >Intense and deeply felt</span
-                >
-              </button>
-              <button
-                class="bg-white border-2 border-slate-200 hover:border-blue-400 rounded-xl p-5 md:p-6 text-left flex items-center gap-4 md:gap-6 transition-all w-full group"
-              >
-                <div
-                  class="w-8 h-8 md:w-10 md:h-10 rounded bg-slate-100 text-slate-500 font-mono text-sm md:text-base font-bold flex items-center justify-center shrink-0 group-hover:bg-blue-50 group-hover:text-blue-600"
-                >
-                  C
-                </div>
-                <span
-                  class="text-slate-900 font-medium text-[15px] md:text-[17px] group-hover:text-blue-700"
-                  >Easily understood or clear</span
-                >
-              </button>
-              <button
-                class="bg-white border-2 border-slate-200 hover:border-blue-400 rounded-xl p-5 md:p-6 text-left flex items-center gap-4 md:gap-6 transition-all w-full group"
-              >
-                <div
-                  class="w-8 h-8 md:w-10 md:h-10 rounded bg-slate-100 text-slate-500 font-mono text-sm md:text-base font-bold flex items-center justify-center shrink-0 group-hover:bg-blue-50 group-hover:text-blue-600"
-                >
-                  D
-                </div>
-                <span
-                  class="text-slate-900 font-medium text-[15px] md:text-[17px] group-hover:text-blue-700"
-                  >Belonging to a distant past</span
-                >
-              </button>
-            </div>
-          </div>
-          } @case ('meaning_word') {
-          <!-- Dạng 5: SEE MEANING -> TYPE WORD -->
-          <div class="flex flex-col items-center">
-            <div
-              class="text-[11px] font-mono font-bold text-blue-600 tracking-[0.25em] mb-4 uppercase"
-            >
-              SEE MEANING &rarr; TYPE WORD
-            </div>
-
-            <h2
-              class="text-4xl font-bold text-slate-900 mb-4 text-center tracking-tight"
-            >
-              Sự kiên trì, bền bỉ
-            </h2>
-            <p
-              class="text-slate-500 mb-12 text-center max-w-md text-[16px] leading-relaxed"
-            >
-              The quality of being persistent; determination to keep doing
-              something despite difficulties.
-            </p>
-
-            <div class="w-full max-w-lg">
-              <input
-                type="text"
-                class="w-full border border-blue-500 rounded-xl px-5 py-4 text-[17px] text-slate-900 text-center focus:outline-none focus:ring-2 focus:ring-blue-100 transition-all bg-white"
-                placeholder="Type the English word..."
-              />
-            </div>
-          </div>
-          } @case ('word_meaning') {
-          <!-- Dạng 6: SEE WORD -> TYPE MEANING -->
-          <div class="flex flex-col items-center">
-            <div
-              class="text-[11px] font-mono font-bold text-blue-600 tracking-[0.25em] mb-4 uppercase"
-            >
-              SEE WORD &rarr; TYPE MEANING
-            </div>
-
-            <h2
-              class="text-5xl font-bold text-slate-900 mb-2 text-center tracking-tight"
-            >
-              Ambiguous
-            </h2>
-            <div class="flex items-center gap-2 mb-12 text-slate-700">
-              <button
-                class="text-blue-600 hover:text-blue-800 transition-colors p-1"
-              >
-                <i class="fi fi-rr-volume text-sm"></i>
-              </button>
-              <span class="font-mono text-sm font-medium tracking-wide"
-                >/æmˈbɪɡ.ju.əs/</span
-              >
-            </div>
-
-            <div class="w-full max-w-lg relative">
-              <input
-                type="text"
-                class="w-full border border-blue-500 rounded-xl pl-5 pr-16 py-4 text-[17px] text-slate-900 text-center focus:outline-none focus:ring-2 focus:ring-blue-100 transition-all bg-white"
-                placeholder="Nhập nghĩa tiếng Việt..."
-              />
-              <div
-                class="absolute right-3 top-1/2 -translate-y-1/2 bg-slate-200/60 px-2 py-1 rounded text-slate-600 text-[9px] font-mono font-bold tracking-widest border border-slate-200"
-              >
-                ENTER
-              </div>
-            </div>
-          </div>
-          } }
+        <div
+          class="flex items-center gap-1.5 text-slate-500 text-[12px] md:text-sm font-medium"
+        >
+          <i class="fi fi-rr-clock text-[11px] md:text-[13px] mt-0.5"></i>
+          {{ test.time }} ph
+        </div>
+        <div
+          class="flex items-center gap-1.5 text-slate-500 text-[12px] md:text-sm font-medium"
+        >
+          <i class="fi fi-rr-stats text-[11px] md:text-[13px] mt-0.5"></i>
+          {{ test.difficulty }}
         </div>
       </div>
 
-      <!-- Session Shell - Footer Actions -->
-      @if (!isAnswerRevealed()) {
-      <footer
-        class="p-4 py-6 md:p-8 md:pb-12 flex items-center justify-between shrink-0 max-w-4xl w-full mx-auto bg-transparent relative z-10"
+      <div
+        class="mt-auto flex flex-col sm:flex-row md:flex-col lg:flex-row xl:flex-col gap-2 md:gap-3"
       >
         <button
-          class="flex items-center gap-2 text-emerald-600 hover:text-emerald-700 font-bold px-4 py-2 text-[13px] md:text-[15px] font-mono transition-colors"
+          class="flex-1 min-h-11 border shadow-sm border-slate-200 text-blue-700 bg-white hover:bg-slate-50 py-2 md:py-2.5 rounded-xl text-[14px] md:text-[15px] font-bold transition-colors"
+          (click)="startPractice()"
         >
-          <i class="fi fi-rr-lightbulb text-lg md:text-xl"></i> Get a Hint
+          Luyện tập ngay
         </button>
         <button
-          class="bg-blue-700 text-white px-8 md:px-10 py-3 md:py-4 rounded-xl font-bold hover:bg-blue-800 text-[15px] md:text-[17px] transition-colors shadow-sm"
-          (click)="submitAnswer()"
+          class="flex-1 min-h-11 border border-slate-200 text-slate-500 bg-white hover:text-slate-700 py-2 md:py-2.5 rounded-xl text-[14px] md:text-[15px] font-bold transition-colors"
         >
-          Submit
+          Xem lại
         </button>
-      </footer>
-      } @else {
-      <footer
-        class="p-4 py-6 md:p-8 md:pb-12 flex flex-col items-center justify-center shrink-0 w-full mx-auto bg-white/90 backdrop-blur-md relative z-10 border-t border-slate-200"
-      >
-        <div
-          class="text-[11px] font-mono font-bold text-slate-500 uppercase tracking-widest mb-4"
-        >
-          Bạn đánh giá câu hỏi này thế nào?
-        </div>
-        <div
-          class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 w-full max-w-2xl px-4 md:px-0"
-        >
-          <button
-            class="bg-red-50 hover:bg-red-100 border border-red-200 text-red-700 rounded-xl py-3 px-2 transition-colors flex flex-col items-center justify-center gap-1.5 group"
-            (click)="submitAnswer()"
-          >
-            <span class="font-bold text-[15px]">Quên</span>
-            <div
-              class="hidden md:flex items-center justify-center bg-white border border-red-200 text-red-500 w-7 h-7 rounded-md text-[11px] font-mono group-hover:bg-red-200 group-hover:text-red-700 transition-colors shadow-sm font-bold"
-            >
-              1
-            </div>
-          </button>
-          <button
-            class="bg-orange-50 hover:bg-orange-100 border border-orange-200 text-orange-700 rounded-xl py-3 px-2 transition-colors flex flex-col items-center justify-center gap-1.5 group"
-            (click)="submitAnswer()"
-          >
-            <span class="font-bold text-[15px]">Khó</span>
-            <div
-              class="hidden md:flex items-center justify-center bg-white border border-orange-200 text-orange-500 w-7 h-7 rounded-md text-[11px] font-mono group-hover:bg-orange-200 group-hover:text-orange-700 transition-colors shadow-sm font-bold"
-            >
-              2
-            </div>
-          </button>
-          <button
-            class="bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-emerald-700 rounded-xl py-3 px-2 transition-colors flex flex-col items-center justify-center gap-1.5 group"
-            (click)="submitAnswer()"
-          >
-            <span class="font-bold text-[15px]">Tốt</span>
-            <div
-              class="hidden md:flex items-center justify-center bg-white border border-emerald-200 text-emerald-500 w-7 h-7 rounded-md text-[11px] font-mono group-hover:bg-emerald-200 group-hover:text-emerald-700 transition-colors shadow-sm font-bold"
-            >
-              3
-            </div>
-          </button>
-          <button
-            class="bg-teal-50 hover:bg-teal-100 border border-teal-200 text-teal-700 rounded-xl py-3 px-2 transition-colors flex flex-col items-center justify-center gap-1.5 group"
-            (click)="submitAnswer()"
-          >
-            <span class="font-bold text-[15px]">Dễ</span>
-            <div
-              class="hidden md:flex items-center justify-center bg-white border border-teal-200 text-teal-500 w-7 h-7 rounded-md text-[11px] font-mono group-hover:bg-teal-200 group-hover:text-teal-700 transition-colors shadow-sm font-bold"
-            >
-              4
-            </div>
-          </button>
-        </div>
-      </footer>
-      }
+      </div>
     </div>
     }
-  </main>
-</div>
+
+    <!-- AI Generate Card -->
+    <div
+      class="border-2 border-dashed border-slate-300 rounded-2xl p-5 md:p-6 flex flex-col items-center justify-center text-center bg-slate-50/50 hover:bg-blue-50/50 hover:border-blue-300 transition-all group min-h-60"
+    >
+      <div
+        class="w-12 h-12 md:w-14 md:h-14 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center mb-3 md:mb-4 group-hover:scale-110 transition-transform"
+      >
+        <i class="fi fi-rr-sparkles text-xl md:text-2xl"></i>
+      </div>
+      <h3 class="text-base md:text-[17px] font-bold text-slate-900 mb-2">
+        Tạo đề thi bằng AI
+      </h3>
+      <p
+        class="text-slate-500 text-[13px] md:text-sm mb-4 md:mb-6 max-w-55 leading-relaxed"
+      >
+        Bạn muốn ôn luyện chủ đề cụ thể? Để AI thiết kế bộ đề riêng.
+      </p>
+      <button
+        routerLink="/generate-questions"
+        class="w-full min-h-11 border border-blue-200 text-blue-700 bg-white hover:bg-blue-50 py-2 md:py-2.5 rounded-xl text-[14px] md:text-[15px] font-bold transition-colors shadow-sm mt-auto"
+      >
+        Khởi tạo ngay
+      </button>
+    </div>
+  </div>
+</main>
+
+} @else {
+<!-- ==== MÀN HÌNH 2: BÀI LUYỆN TẬP ==== -->
+<main class="flex-1 flex flex-col bg-white w-full h-dvh">
+  <!-- Session Shell - Top Bar -->
+  <header
+    class="flex items-center justify-between px-4 md:px-8 py-3 md:py-5 border-b border-slate-100 shrink-0 bg-white relative z-10 min-h-15"
+  >
+    <div class="flex items-center gap-3 md:gap-6 flex-1">
+      <button
+        class="text-slate-500 hover:text-slate-900 transition-colors p-2 min-h-11 min-w-11 -ml-2 rounded-lg flex items-center justify-center"
+        (click)="exitPractice()"
+      >
+        <i class="fi fi-rr-cross text-lg"></i>
+      </button>
+
+      <div class="flex flex-col gap-1.5 w-full max-w-30 md:max-w-sm">
+        <div
+          class="flex justify-between flex-col md:flex-row md:items-center text-[9px] md:text-[11px] font-mono font-bold uppercase tracking-wider text-slate-800"
+        >
+          <span class="hidden md:inline">Session Progress</span>
+          <span class="md:hidden">Progress</span>
+          <span class="text-blue-700 md:ml-auto">14/20 Words</span>
+        </div>
+        <div class="h-1.5 md:h-2 bg-slate-200 rounded-full overflow-hidden">
+          <div class="h-full bg-blue-600 rounded-full" style="width: 70%"></div>
+        </div>
+      </div>
+    </div>
+
+    <div
+      class="flex items-center gap-3 md:gap-6 font-mono text-[11px] md:text-[13px] font-bold text-slate-700"
+    >
+      <div
+        class="flex items-center gap-1.5 md:gap-2 text-blue-700 bg-blue-50 px-2 py-1.5 md:py-1 rounded-md min-h-8"
+      >
+        <i class="fi fi-rr-clock text-[13px] md:text-[15px] mt-0.5"></i>
+        <span>04:12</span>
+      </div>
+      <div class="flex items-center gap-1 md:gap-2">
+        <i class="fi fi-rr-bolt text-orange-500 text-[13px] md:text-[15px]"></i>
+        <span class="hidden md:inline">14 streak</span>
+        <span class="md:hidden">14</span>
+      </div>
+      <div class="flex items-center gap-1 md:gap-2">
+        <i
+          class="fi fi-rr-bullseye text-blue-600 text-[13px] md:text-[15px]"
+        ></i>
+        <span class="hidden md:inline">85%</span>
+        <span class="md:hidden">85</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Session Shell - Main Content Area -->
+  <div
+    class="flex-1 overflow-y-auto flex items-center justify-center p-4 md:p-12 bg-slate-50/20"
+  >
+    <div class="w-full max-w-3xl flex flex-col items-center">
+      @switch (sessionType()) { @case ('cloze') {
+      <!-- Dạng 1: CLOZE TEST -->
+      <div class="flex flex-col items-center w-full">
+        <div
+          class="text-[9px] md:text-[11px] font-mono font-bold text-blue-600 tracking-[0.2em] md:tracking-[0.25em] mb-8 md:mb-16 uppercase flex justify-center w-full text-center"
+        >
+          CLOZE TEST
+        </div>
+
+        <div
+          class="flex items-center gap-2 md:gap-4 text-[15px] md:text-xl text-slate-800 mb-8 md:mb-16 justify-center font-medium leading-loose flex-wrap max-w-2xl mx-auto text-center"
+        >
+          <span>The scientist's</span>
+          <input
+            type="text"
+            class="w-24 md:w-56 h-10 md:h-12 border border-blue-500 rounded-lg px-2 md:px-4 text-center focus:outline-none focus:ring-2 focus:ring-blue-100 transition-all bg-white"
+            placeholder="........"
+          />
+          <span>remained consistent throughout the experiment.</span>
+        </div>
+
+        <div
+          class="bg-white border border-slate-200 rounded-xl p-6 md:p-8 shadow-sm w-full max-w-xl self-center flex gap-4 md:gap-6 text-left"
+        >
+          <div class="shrink-0 text-blue-600 mt-1 md:mt-0">
+            <i class="fi fi-rr-language text-xl md:text-2xl"></i>
+          </div>
+          <div>
+            <p
+              class="text-[15px] md:text-[17px] text-slate-600 mb-4 leading-relaxed"
+            >
+              "A hipótese do cientista permaneceu consistente durante todo o
+              experimento."
+            </p>
+            <div class="inline-flex items-center gap-3">
+              <span
+                class="bg-blue-50 text-slate-500 text-[10px] md:text-[11px] font-bold font-mono tracking-wider px-2 py-1 rounded"
+                >HINT</span
+              >
+              <span class="font-mono text-sm md:text-[15px] text-slate-700"
+                >Starts with 'h', ends with 'is'</span
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+      } @case ('listen_meaning') {
+      <!-- Dạng 2: LISTEN & TYPE MEANING -->
+      <div class="flex flex-col items-center">
+        <div
+          class="text-[11px] font-mono font-bold text-blue-600 tracking-[0.25em] mb-4 uppercase"
+        >
+          LISTEN & TYPE MEANING
+        </div>
+        <h2 class="text-[28px] font-bold text-slate-900 mb-10 text-center">
+          Translate what you hear into Vietnamese
+        </h2>
+
+        <div class="flex flex-col items-center mb-10">
+          <button
+            class="w-24 h-24 bg-blue-700 text-white rounded-full flex items-center justify-center shadow-[0_0_30px_-5px_rgba(29,78,216,0.3)] hover:scale-105 hover:bg-blue-800 transition-all"
+          >
+            <i class="fi fi-rr-volume text-4xl ml-2"></i>
+          </button>
+          <p class="mt-6 text-sm font-mono text-slate-500">
+            Press Space or Click to hear
+          </p>
+        </div>
+
+        <div class="w-full max-w-lg relative">
+          <input
+            type="text"
+            class="w-full border border-slate-300 rounded-xl px-5 py-4 text-[15px] text-slate-900 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all bg-white"
+            placeholder="Type the Vietnamese meaning..."
+          />
+          <div
+            class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-300 border border-slate-200 rounded p-1"
+          >
+            <i class="fi fi-rr-keyboard text-sm"></i>
+          </div>
+        </div>
+      </div>
+      } @case ('listen_type') {
+      <!-- Dạng 3: LISTEN & TYPE -->
+      <div class="flex flex-col items-center">
+        <div
+          class="text-[11px] font-mono font-bold text-blue-600 tracking-[0.25em] mb-4 uppercase"
+        >
+          LISTEN & TYPE
+        </div>
+        <h2 class="text-[28px] font-bold text-slate-900 mb-10 text-center">
+          Spelling Accuracy
+        </h2>
+
+        <div class="flex flex-col items-center mb-10">
+          <button
+            class="w-24 h-24 bg-blue-700 text-white rounded-full flex items-center justify-center shadow-[0_0_30px_-5px_rgba(29,78,216,0.3)] hover:scale-105 hover:bg-blue-800 transition-all"
+          >
+            <i class="fi fi-rr-volume text-4xl ml-2"></i>
+          </button>
+          <p class="mt-6 text-sm font-mono text-slate-500">
+            Press Space or Click to hear
+          </p>
+        </div>
+
+        <div class="w-full max-w-lg relative">
+          <input
+            type="text"
+            class="w-full border border-slate-300 rounded-xl px-5 py-4 text-[15px] text-slate-900 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all bg-white"
+            placeholder="Type What Your Hear..."
+          />
+          <div
+            class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-300 border border-slate-200 rounded p-1"
+          >
+            <i class="fi fi-rr-keyboard text-sm"></i>
+          </div>
+        </div>
+      </div>
+      } @case ('multiple_choice') {
+      <!-- Dạng 4: MULTIPLE CHOICE -->
+      <div class="flex flex-col items-center w-full">
+        <div
+          class="text-[11px] font-mono font-bold text-blue-600 tracking-[0.25em] mb-6 md:mb-10 uppercase"
+        >
+          MULTIPLE CHOICE
+        </div>
+
+        <h2
+          class="text-4xl md:text-5xl font-bold text-slate-900 mb-6 md:mb-10 text-center tracking-tight"
+        >
+          Ephemeral
+        </h2>
+
+        <p
+          class="text-[17px] md:text-xl text-slate-600 mb-12 md:mb-16 text-center max-w-2xl leading-relaxed"
+        >
+          "The beauty of the sunset is
+          <span class="text-blue-600 font-medium">ephemeral</span>, lasting only
+          a few minutes before the stars emerge."
+        </p>
+
+        <div
+          class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 lg:gap-8 w-full max-w-4xl mx-auto"
+        >
+          <button
+            class="bg-blue-50 border-2 border-blue-600 rounded-xl p-5 md:p-6 text-left flex items-center gap-4 md:gap-6 transition-all w-full relative"
+          >
+            <div
+              class="w-8 h-8 md:w-10 md:h-10 rounded bg-blue-600 text-white font-mono text-sm md:text-base font-bold flex items-center justify-center shrink-0"
+            >
+              <i class="fi fi-rr-check"></i>
+            </div>
+            <span class="text-blue-900 font-bold text-[15px] md:text-[17px]"
+              >Lasting for a very short time</span
+            >
+          </button>
+          <button
+            class="bg-white border-2 border-slate-200 hover:border-blue-400 rounded-xl p-5 md:p-6 text-left flex items-center gap-4 md:gap-6 transition-all w-full group"
+          >
+            <div
+              class="w-8 h-8 md:w-10 md:h-10 rounded bg-slate-100 text-slate-500 font-mono text-sm md:text-base font-bold flex items-center justify-center shrink-0 group-hover:bg-blue-50 group-hover:text-blue-600"
+            >
+              B
+            </div>
+            <span
+              class="text-slate-900 font-medium text-[15px] md:text-[17px] group-hover:text-blue-700"
+              >Intense and deeply felt</span
+            >
+          </button>
+          <button
+            class="bg-white border-2 border-slate-200 hover:border-blue-400 rounded-xl p-5 md:p-6 text-left flex items-center gap-4 md:gap-6 transition-all w-full group"
+          >
+            <div
+              class="w-8 h-8 md:w-10 md:h-10 rounded bg-slate-100 text-slate-500 font-mono text-sm md:text-base font-bold flex items-center justify-center shrink-0 group-hover:bg-blue-50 group-hover:text-blue-600"
+            >
+              C
+            </div>
+            <span
+              class="text-slate-900 font-medium text-[15px] md:text-[17px] group-hover:text-blue-700"
+              >Easily understood or clear</span
+            >
+          </button>
+          <button
+            class="bg-white border-2 border-slate-200 hover:border-blue-400 rounded-xl p-5 md:p-6 text-left flex items-center gap-4 md:gap-6 transition-all w-full group"
+          >
+            <div
+              class="w-8 h-8 md:w-10 md:h-10 rounded bg-slate-100 text-slate-500 font-mono text-sm md:text-base font-bold flex items-center justify-center shrink-0 group-hover:bg-blue-50 group-hover:text-blue-600"
+            >
+              D
+            </div>
+            <span
+              class="text-slate-900 font-medium text-[15px] md:text-[17px] group-hover:text-blue-700"
+              >Belonging to a distant past</span
+            >
+          </button>
+        </div>
+      </div>
+      } @case ('meaning_word') {
+      <!-- Dạng 5: SEE MEANING -> TYPE WORD -->
+      <div class="flex flex-col items-center">
+        <div
+          class="text-[11px] font-mono font-bold text-blue-600 tracking-[0.25em] mb-4 uppercase"
+        >
+          SEE MEANING &rarr; TYPE WORD
+        </div>
+
+        <h2
+          class="text-4xl font-bold text-slate-900 mb-4 text-center tracking-tight"
+        >
+          Sự kiên trì, bền bỉ
+        </h2>
+        <p
+          class="text-slate-500 mb-12 text-center max-w-md text-[16px] leading-relaxed"
+        >
+          The quality of being persistent; determination to keep doing something
+          despite difficulties.
+        </p>
+
+        <div class="w-full max-w-lg">
+          <input
+            type="text"
+            class="w-full border border-blue-500 rounded-xl px-5 py-4 text-[17px] text-slate-900 text-center focus:outline-none focus:ring-2 focus:ring-blue-100 transition-all bg-white"
+            placeholder="Type the English word..."
+          />
+        </div>
+      </div>
+      } @case ('word_meaning') {
+      <!-- Dạng 6: SEE WORD -> TYPE MEANING -->
+      <div class="flex flex-col items-center">
+        <div
+          class="text-[11px] font-mono font-bold text-blue-600 tracking-[0.25em] mb-4 uppercase"
+        >
+          SEE WORD &rarr; TYPE MEANING
+        </div>
+
+        <h2
+          class="text-5xl font-bold text-slate-900 mb-2 text-center tracking-tight"
+        >
+          Ambiguous
+        </h2>
+        <div class="flex items-center gap-2 mb-12 text-slate-700">
+          <button
+            class="text-blue-600 hover:text-blue-800 transition-colors p-1"
+          >
+            <i class="fi fi-rr-volume text-sm"></i>
+          </button>
+          <span class="font-mono text-sm font-medium tracking-wide"
+            >/æmˈbɪɡ.ju.əs/</span
+          >
+        </div>
+
+        <div class="w-full max-w-lg relative">
+          <input
+            type="text"
+            class="w-full border border-blue-500 rounded-xl pl-5 pr-16 py-4 text-[17px] text-slate-900 text-center focus:outline-none focus:ring-2 focus:ring-blue-100 transition-all bg-white"
+            placeholder="Nhập nghĩa tiếng Việt..."
+          />
+          <div
+            class="absolute right-3 top-1/2 -translate-y-1/2 bg-slate-200/60 px-2 py-1 rounded text-slate-600 text-[9px] font-mono font-bold tracking-widest border border-slate-200"
+          >
+            ENTER
+          </div>
+        </div>
+      </div>
+      } }
+    </div>
+  </div>
+
+  <!-- Session Shell - Footer Actions -->
+  @if (!isAnswerRevealed()) {
+  <footer
+    class="p-4 py-6 md:p-8 md:pb-12 flex items-center justify-between shrink-0 max-w-4xl w-full mx-auto bg-transparent relative z-10"
+  >
+    <button
+      class="flex items-center gap-2 text-emerald-600 hover:text-emerald-700 font-bold px-4 py-2 text-[13px] md:text-[15px] font-mono transition-colors"
+    >
+      <i class="fi fi-rr-lightbulb text-lg md:text-xl"></i> Get a Hint
+    </button>
+    <button
+      class="bg-blue-700 text-white px-8 md:px-10 py-3 md:py-4 rounded-xl font-bold hover:bg-blue-800 text-[15px] md:text-[17px] transition-colors shadow-sm"
+      (click)="submitAnswer()"
+    >
+      Submit
+    </button>
+  </footer>
+  } @else {
+  <footer
+    class="p-4 py-6 md:p-8 md:pb-12 flex flex-col items-center justify-center shrink-0 w-full mx-auto bg-white/90 backdrop-blur-md relative z-10 border-t border-slate-200"
+  >
+    <div
+      class="text-[11px] font-mono font-bold text-slate-500 uppercase tracking-widest mb-4"
+    >
+      Bạn đánh giá câu hỏi này thế nào?
+    </div>
+    <div
+      class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 w-full max-w-2xl px-4 md:px-0"
+    >
+      <button
+        class="bg-red-50 hover:bg-red-100 border border-red-200 text-red-700 rounded-xl py-3 px-2 transition-colors flex flex-col items-center justify-center gap-1.5 group"
+        (click)="submitAnswer()"
+      >
+        <span class="font-bold text-[15px]">Quên</span>
+        <div
+          class="hidden md:flex items-center justify-center bg-white border border-red-200 text-red-500 w-7 h-7 rounded-md text-[11px] font-mono group-hover:bg-red-200 group-hover:text-red-700 transition-colors shadow-sm font-bold"
+        >
+          1
+        </div>
+      </button>
+      <button
+        class="bg-orange-50 hover:bg-orange-100 border border-orange-200 text-orange-700 rounded-xl py-3 px-2 transition-colors flex flex-col items-center justify-center gap-1.5 group"
+        (click)="submitAnswer()"
+      >
+        <span class="font-bold text-[15px]">Khó</span>
+        <div
+          class="hidden md:flex items-center justify-center bg-white border border-orange-200 text-orange-500 w-7 h-7 rounded-md text-[11px] font-mono group-hover:bg-orange-200 group-hover:text-orange-700 transition-colors shadow-sm font-bold"
+        >
+          2
+        </div>
+      </button>
+      <button
+        class="bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-emerald-700 rounded-xl py-3 px-2 transition-colors flex flex-col items-center justify-center gap-1.5 group"
+        (click)="submitAnswer()"
+      >
+        <span class="font-bold text-[15px]">Tốt</span>
+        <div
+          class="hidden md:flex items-center justify-center bg-white border border-emerald-200 text-emerald-500 w-7 h-7 rounded-md text-[11px] font-mono group-hover:bg-emerald-200 group-hover:text-emerald-700 transition-colors shadow-sm font-bold"
+        >
+          3
+        </div>
+      </button>
+      <button
+        class="bg-teal-50 hover:bg-teal-100 border border-teal-200 text-teal-700 rounded-xl py-3 px-2 transition-colors flex flex-col items-center justify-center gap-1.5 group"
+        (click)="submitAnswer()"
+      >
+        <span class="font-bold text-[15px]">Dễ</span>
+        <div
+          class="hidden md:flex items-center justify-center bg-white border border-teal-200 text-teal-500 w-7 h-7 rounded-md text-[11px] font-mono group-hover:bg-teal-200 group-hover:text-teal-700 transition-colors shadow-sm font-bold"
+        >
+          4
+        </div>
+      </button>
+    </div>
+  </footer>
+  }
+</main>
+}

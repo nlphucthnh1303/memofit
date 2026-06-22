@@ -4,7 +4,7 @@ import { Sidebar } from '../sidebar/sidebar';
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-settings',
-  imports: [Sidebar],
+  imports: [],
   templateUrl: './settings.html',
 })
 export class Settings {
