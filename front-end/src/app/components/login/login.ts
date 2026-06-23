@@ -40,6 +40,9 @@ export class Login {
           this.toastService.show('Đăng nhập thành công!', 'success');
 
           if (isPlatformBrowser(this.platformId)) {
+            localStorage.removeItem('user_login');
+            sessionStorage.removeItem('user_login');
+
             const storage = rememberMe ? localStorage : sessionStorage;
 
             localStorage.setItem('storage_type', rememberMe ? 'local' : 'session');

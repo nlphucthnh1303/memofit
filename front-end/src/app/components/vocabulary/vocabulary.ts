@@ -1,9 +1,17 @@
-import { Component, ChangeDetectionStrategy, signal } from '@angular/core';
+import { Component, ChangeDetectionStrategy, signal, inject, CUSTOM_ELEMENTS_SCHEMA, ChangeDetectorRef } from '@angular/core';
 import { Sidebar } from '../sidebar/sidebar';
-
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { HttpClient } from '@angular/common/http';
+import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
+import { ToastService } from '../../shared/ui/toast/toast.service';
+import { CollectionsService } from '../../services/collections.service';
+import { UploadService } from '../../services/upload.service';
+import { concatMap, of } from 'rxjs'
+import { Collections } from '../../models/collections.model';
 @Component({
   selector: 'app-vocabulary',
-  imports: [],
+  imports: [ReactiveFormsModule, NgxSpinnerModule],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './vocabulary.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -13,6 +21,98 @@ export class Vocabulary {
   showCollectionModal = signal<boolean>(false);
   showVocabularyModal = signal<boolean>(false);
   activeStatusFilter = signal<'ALL' | 'MASTERED' | 'REVIEW_SOON'>('ALL');
+  private cdr = inject(ChangeDetectorRef);
+  private fb = inject(FormBuilder);
+  private http = inject(HttpClient);
+  private spinner = inject(NgxSpinnerService);
+  private toastService = inject(ToastService);
+  private collectionsService = inject(CollectionsService);
+  collectionForm!: FormGroup;
+  imagePreview: string | ArrayBuffer | null = null;
+  private uploadService = inject(UploadService);
+  imageUrl: string = '';
+  ngOnInit(): void {
+    this.collectionForm = this.fb.group({
+      collectionTitle: ['', [Validators.required, Validators.minLength(3)]],
+      collectionDescription: [''],
+      collectionImage: [null]
+    });
+  }
+
+  onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      const file = input.files[0];
+      this.collectionForm.patchValue({ collectionImage: file });
+      this.collectionForm.get('collectionImage')?.updateValueAndValidity();
+      const reader = new FileReader();
+
+      reader.onload = () => {
+        this.imagePreview = reader.result;
+        this.spinner.hide()
+        this.cdr.detectChanges();
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+  onSubmit(): void {
+    this.spinner.show()
+    if (this.collectionForm.invalid) {
+      this.collectionForm.markAllAsTouched();
+      this.spinner.hide()
+      return;
+    }
+    const imageFile = this.collectionForm.get('collectionImage')?.value;
+    let user_login = null;
+
+    const storageType = localStorage.getItem('storage_type');
+    const storage = storageType === 'session' ? sessionStorage : localStorage;
+    const userLoginStr = storage.getItem('user_login');
+    console.log(localStorage.getItem('user_login'));
+    if (userLoginStr) {
+      try {
+        user_login = JSON.parse(userLoginStr);
+      } catch (e) {
+        console.error('Dữ liệu user_login trong storage bị lỗi định dạng JSON:', e);
+
+      }
+    }
+
+    (imageFile ? this.uploadService.uploadImage(imageFile) : of({ url: '' }))
+      .pipe(
+        concatMap((uploadRes) => {
+          const payload: Collections = {
+            "user_id": user_login.user.id,
+            "title": this.collectionForm.get('collectionTitle')?.value,
+            "description": this.collectionForm.get('collectionDescription')?.value,
+            "cover_image": uploadRes.url,
+            "is_delete": "0",
+            "id": undefined,
+            "created_at": undefined
+          };
+
+          return this.collectionsService.createCollection(payload);
+        })
+      )
+      .subscribe({
+        next: (res) => {
+          console.log('Bộ từ vựng đã được tạo thành công!', res);
+          this.toastService.show(res?.message || 'Tạo thành công!', 'success');
+          this.spinner.hide();
+        },
+        error: (err) => {
+          console.error(err);
+          this.toastService.show(err?.error.message || 'Có lỗi xảy ra!', 'error');
+        }
+      });
+  }
+
+
+
+
+
+
 
   // Modal Stepper State
   importStep = signal<1 | 2 | 3>(1);
@@ -150,4 +250,8 @@ export class Vocabulary {
   closeVocabularyModal() {
     this.showVocabularyModal.set(false);
   }
+
+
+
+
 }

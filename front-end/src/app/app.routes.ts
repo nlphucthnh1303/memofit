@@ -24,7 +24,7 @@ export const routes: Routes = [
   {
     path: 'dashboard',
     component: Dashboard,
-    // canActivate: [authGuard],
+    canActivate: [authGuard],
     children: [
       { path: '', redirectTo: 'overview', pathMatch: 'full' },
       { path: 'overview', component: Overview, data: { headerTitle: 'Tổng Quan' } },

@@ -5,7 +5,7 @@ const swaggerUi = require("swagger-ui-express");
 require("dotenv").config(); // Đảm bảo đã nạp biến môi trường
 const swaggerSpec = require("./config/swagger");
 const PORT = process.env.PORT || 3000;
-
+const path = require("path");
 const app = express();
 
 // --- 1. Middleware ---
@@ -40,6 +40,9 @@ app.use((err, req, res, next) => {
     .status(500)
     .json({ message: "Something went wrong!", error: err.message });
 });
+app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
+const mediaRoute = require("./routes/media.route");
+app.use("/api/media", mediaRoute);
 
 // --- 5. Start Server ---
 app.listen(PORT, () => {
