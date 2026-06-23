@@ -5,22 +5,22 @@ import { Sidebar } from '../sidebar/sidebar';
 
 @Component({
   selector: 'app-practice',
-  imports: [RouterLink, Sidebar],
+  imports: [RouterLink],
   templateUrl: './practice.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Practice {
   layout = inject(LayoutService);
-  
+
   currentView = signal<'list' | 'session'>('list');
   activeFilter = signal<'ALL' | 'IT' | 'GRAMMAR' | 'BUSINESS'>('ALL');
-  
+
   // Practice session state
   sessionType = signal<'cloze' | 'listen_meaning' | 'listen_type' | 'multiple_choice' | 'meaning_word' | 'word_meaning'>('cloze');
   isAnswerRevealed = signal<boolean>(false);
-  
+
   tests = [
-               {
+    {
       id: 1,
       title: 'Kiểm tra từ vựng IT',
       questions: 40,
@@ -64,7 +64,7 @@ export class Practice {
     this.currentView.set('list');
     this.layout.setForceCollapse(false);
   }
-  
+
   // Method to cycle through test variants to showcase all designs
   submitAnswer() {
     if (!this.isAnswerRevealed()) {

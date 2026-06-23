@@ -1,11 +1,9 @@
-import { Component } from '@angular/core';
-import { RouterLink } from '@angular/router';
-import { Sidebar } from '../sidebar/sidebar';
-import { Header } from "../header/header";
+import { Component, Input } from '@angular/core';
+
 
 @Component({
   selector: 'app-overview',
-  imports: [Header],
+  imports: [],
   templateUrl: './overview.html',
 })
 export class Overview {

@@ -27,11 +27,11 @@ export const routes: Routes = [
     // canActivate: [authGuard],
     children: [
       { path: '', redirectTo: 'overview', pathMatch: 'full' },
-      { path: 'overview', component: Overview },
-      { path: 'vocabulary', component: Vocabulary },
-      { path: 'generate-questions', component: GenerateQuestions },
-      { path: 'settings', component: Settings },
-      { path: 'practice', component: Practice }
+      { path: 'overview', component: Overview, data: { headerTitle: 'Tổng Quan' } },
+      { path: 'vocabulary', component: Vocabulary, data: { headerTitle: 'Từ Vựng' } },
+      { path: 'generate-questions', component: GenerateQuestions, data: { headerTitle: 'Tạo Câu Hỏi' } },
+      { path: 'settings', component: Settings, data: { headerTitle: 'Cài Đặt' } },
+      { path: 'practice', component: Practice, data: { headerTitle: 'Luyên Tập' } }
     ]
   },
   { path: '', redirectTo: 'login', pathMatch: 'full' },
