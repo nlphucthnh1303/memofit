@@ -6,8 +6,9 @@ import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 import { ToastService } from '../../shared/ui/toast/toast.service';
 import { CollectionsService } from '../../services/collections.service';
 import { UploadService } from '../../services/upload.service';
-import { concatMap, of } from 'rxjs'
+import { concatMap, finalize, of } from 'rxjs'
 import { Collections } from '../../models/collections.model';
+import { DialogService } from '../../shared/ui/dialog/dialog.service';
 @Component({
   selector: 'app-vocabulary',
   imports: [ReactiveFormsModule, NgxSpinnerModule],
@@ -21,17 +22,27 @@ export class Vocabulary {
   showCollectionModal = signal<boolean>(false);
   showVocabularyModal = signal<boolean>(false);
   activeStatusFilter = signal<'ALL' | 'MASTERED' | 'REVIEW_SOON'>('ALL');
+  collectionsList = signal<Collections[]>([]);
+  isEditMode = signal<boolean>(false);
+  currentCollectionId = signal<number | null>(null);
+
   private cdr = inject(ChangeDetectorRef);
   private fb = inject(FormBuilder);
   private http = inject(HttpClient);
   private spinner = inject(NgxSpinnerService);
   private toastService = inject(ToastService);
+  private dialogService = inject(DialogService);
   private collectionsService = inject(CollectionsService);
   collectionForm!: FormGroup;
   imagePreview: string | ArrayBuffer | null = null;
   private uploadService = inject(UploadService);
   imageUrl: string = '';
   ngOnInit(): void {
+    this.initForm();
+    this.getCollectionsList();
+  }
+
+  private initForm(): void {
     this.collectionForm = this.fb.group({
       collectionTitle: ['', [Validators.required, Validators.minLength(3)]],
       collectionDescription: [''],
@@ -57,55 +68,116 @@ export class Vocabulary {
   }
 
   onSubmit(): void {
-    this.spinner.show()
     if (this.collectionForm.invalid) {
       this.collectionForm.markAllAsTouched();
-      this.spinner.hide()
       return;
     }
-    const imageFile = this.collectionForm.get('collectionImage')?.value;
-    let user_login = null;
 
+    this.spinner.show();
+    const imageFile = this.collectionForm.get('collectionImage')?.value;
+    let user_login = this.getUserLogin();
+
+    if (!user_login) {
+      this.toastService.show('Vui lòng đăng nhập để thực hiện!', 'error');
+      this.spinner.hide();
+      return;
+    }
+
+    const upload$ = (imageFile instanceof File) 
+      ? this.uploadService.uploadImage(imageFile) 
+      : of({ url: this.imageUrl });
+
+    upload$.pipe(
+      concatMap((uploadRes) => {
+        const payload: Collections = {
+          user_id: user_login.user.id,
+          title: this.collectionForm.get('collectionTitle')?.value,
+          description: this.collectionForm.get('collectionDescription')?.value,
+          cover_image: uploadRes.url || this.imageUrl,
+          is_delete: "0",
+          id: this.currentCollectionId() || undefined,
+          created_at: undefined
+        };
+
+        return this.isEditMode() 
+          ? this.collectionsService.updateCollection(this.currentCollectionId()!, payload)
+          : this.collectionsService.createCollection(payload);
+      }),
+      finalize(() => this.spinner.hide())
+    ).subscribe({
+      next: (res) => {
+        this.toastService.show(res?.message || (this.isEditMode() ? 'Cập nhật thành công!' : 'Tạo thành công!'), 'success');
+        this.closeCollectionModal();
+        this.getCollectionsList();
+      },
+      error: (err) => {
+        console.error(err);
+        this.toastService.show(err?.error?.message || 'Có lỗi xảy ra!', 'error');
+      }
+    });
+  }
+
+  private getUserLogin() {
     const storageType = localStorage.getItem('storage_type');
     const storage = storageType === 'session' ? sessionStorage : localStorage;
     const userLoginStr = storage.getItem('user_login');
-    console.log(localStorage.getItem('user_login'));
     if (userLoginStr) {
       try {
-        user_login = JSON.parse(userLoginStr);
+        return JSON.parse(userLoginStr);
       } catch (e) {
-        console.error('Dữ liệu user_login trong storage bị lỗi định dạng JSON:', e);
-
+        console.error('Lỗi parse user_login:', e);
       }
     }
+    return null;
+  }
 
-    (imageFile ? this.uploadService.uploadImage(imageFile) : of({ url: '' }))
-      .pipe(
-        concatMap((uploadRes) => {
-          const payload: Collections = {
-            "user_id": user_login.user.id,
-            "title": this.collectionForm.get('collectionTitle')?.value,
-            "description": this.collectionForm.get('collectionDescription')?.value,
-            "cover_image": uploadRes.url,
-            "is_delete": "0",
-            "id": undefined,
-            "created_at": undefined
-          };
+  // 1. Lấy danh sách bộ sưu tập
+  getCollectionsList(): void {
+    this.spinner.show();
+    this.collectionsService.getCollections().subscribe({
+      next: (res) => {
+        this.collectionsList.set(res.data || []);
+        this.spinner.hide();
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        this.spinner.hide();
+        this.toastService.show('Không thể tải danh sách bộ sưu tập', 'error');
+      }
+    });
+  }
 
-          return this.collectionsService.createCollection(payload);
-        })
-      )
-      .subscribe({
-        next: (res) => {
-          console.log('Bộ từ vựng đã được tạo thành công!', res);
-          this.toastService.show(res?.message || 'Tạo thành công!', 'success');
-          this.spinner.hide();
+  // 2. Xóa bộ sưu tập
+  onDeleteCollection(id: number): void {
+    if (window.confirm('Bạn có chắc chắn muốn xóa bộ sưu tập này? Hành động này không thể hoàn tác.')) {
+      this.spinner.show();
+      this.collectionsService.deleteCollection(id).subscribe({
+        next: () => {
+          this.toastService.show('Đã xóa bộ sưu tập', 'success');
+          this.getCollectionsList();
         },
         error: (err) => {
-          console.error(err);
-          this.toastService.show(err?.error.message || 'Có lỗi xảy ra!', 'error');
+          this.spinner.hide();
+          this.toastService.show('Lỗi khi xóa bộ sưu tập', 'error');
         }
       });
+    }
+  }
+
+  // 3. Cập nhật bộ sưu tập (Mở modal edit)
+  onEditCollection(collection: Collections): void {
+    this.isEditMode.set(true);
+    this.currentCollectionId.set(collection.id!);
+    this.imageUrl = collection.cover_image || '';
+    this.imagePreview = collection.cover_image || '';
+    
+    this.collectionForm.patchValue({
+      collectionTitle: collection.title,
+      collectionDescription: collection.description,
+      collectionImage: null // Reset file input
+    });
+    
+    this.showCollectionModal.set(true);
   }
 
 
@@ -120,24 +192,10 @@ export class Vocabulary {
   collections = [
     {
       id: 1,
-      title: 'Tiếng Anh Thương Mại',
+      title: 'Tiếng Anh Thương Mại (Mẫu)',
       description: 'Từ vựng cốt lõi cho các cuộc họp, đàm phán và email trong...',
       wordCount: 142,
       imageUrl: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=2426&auto=format&fit=crop'
-    },
-    {
-      id: 2,
-      title: 'Thuật ngữ IT & Lập trình',
-      description: 'Tập hợp các khái niệm lập trình, kiến trúc hệ thống và từ vựng...',
-      wordCount: 350,
-      imageUrl: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=2370&auto=format&fit=crop'
-    },
-    {
-      id: 3,
-      title: 'Giao tiếp Hàng ngày',
-      description: 'Các mẫu câu và từ vựng thông dụng để sinh tồn và giao tiếp tự nhiên trong cuộc sống thường...',
-      wordCount: 89,
-      imageUrl: 'https://images.unsplash.com/photo-1543269865-cbf427effbad?q=80&w=2370&auto=format&fit=crop'
     }
   ];
 
@@ -236,6 +294,11 @@ export class Vocabulary {
   }
 
   openCollectionModal() {
+    this.isEditMode.set(false);
+    this.currentCollectionId.set(null);
+    this.imagePreview = null;
+    this.imageUrl = '';
+    this.collectionForm.reset();
     this.showCollectionModal.set(true);
   }
 

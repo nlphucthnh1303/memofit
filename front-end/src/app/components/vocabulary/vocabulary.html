@@ -16,7 +16,7 @@
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 md:gap-8">
-      @for (col of collections; track col.id) {
+      @for (col of collectionsList(); track col.id) {
       <div
         class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-md hover:border-blue-300 transition-all cursor-pointer group flex flex-col h-full"
         (click)="openCollection()"
@@ -25,7 +25,7 @@
         <div class="h-32 md:h-44 w-full relative overflow-hidden">
           <div class="absolute inset-0 bg-slate-200">
             <img
-              [src]="col.imageUrl"
+              [src]="col.cover_image || 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=2426&auto=format&fit=crop'"
               class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
               alt="Cover"
               referrerpolicy="no-referrer"
@@ -35,7 +35,7 @@
             class="absolute top-3 left-3 bg-white/90 backdrop-blur-sm text-slate-800 text-xs font-bold px-3 py-1.5 rounded flex items-center gap-2 shadow-sm font-mono"
           >
             <i class="fi fi-rr-document"></i>
-            {{ col.wordCount }} từ
+            {{ col.id }} từ
           </div>
         </div>
 
@@ -63,13 +63,13 @@
           <div class="flex gap-2 md:gap-4">
             <button
               class="text-slate-400 hover:text-slate-700 transition-colors min-h-11 min-w-11 flex items-center justify-center p-2 rounded-lg hover:bg-slate-50"
-              (click)="$event.stopPropagation()"
+              (click)="$event.stopPropagation(); onEditCollection(col)"
             >
               <i class="fi fi-rr-pencil"></i>
             </button>
             <button
               class="text-slate-400 hover:text-red-500 transition-colors min-h-11 min-w-11 flex items-center justify-center p-2 rounded-lg hover:bg-red-50"
-              (click)="$event.stopPropagation()"
+              (click)="$event.stopPropagation(); onDeleteCollection(col.id!)"
             >
               <i class="fi fi-rr-trash"></i>
             </button>
@@ -823,7 +823,7 @@
         class="px-6 md:px-8 py-4 md:py-6 border-b border-slate-100 flex justify-between items-center relative shrink-0"
       >
         <h2 class="text-xl md:text-2xl font-bold text-slate-900">
-          Tạo Bộ từ vựng
+          {{ isEditMode() ? 'Cập Nhật' : 'Tạo' }} Bộ từ vựng
         </h2>
         <button
           type="button"
@@ -914,7 +914,7 @@
           type="submit"
           class="bg-blue-700 text-white px-8 py-2.5 min-h-11 rounded-xl font-semibold hover:bg-blue-800 transition-colors shadow-sm text-[15px]"
         >
-          Lưu
+          {{ isEditMode() ? 'Cập nhật' : 'Lưu' }}
         </button>
       </div>
     </form>
