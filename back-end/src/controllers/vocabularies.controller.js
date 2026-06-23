@@ -146,3 +146,21 @@ exports.deleteVocabulary = async (req, res) => {
     res.status(500).json({ error: "Lỗi máy chủ nội bộ" });
   }
 };
+exports.getVocabulariesByCollectionId = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const vocabularies = await prisma.vocabularies.findMany({
+      where: { collection_id: parseInt(id), is_delete: "0" },
+    });
+    if (!vocabularies) {
+      return res.status(404).json({ error: "Không tìm thấy từ vựng" });
+    }
+    res.status(200).json({
+      message: "Lấy thông tin từ vựng thành công",
+      data: vocabularies,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Lỗi máy chủ nội bộ" });
+  }
+};

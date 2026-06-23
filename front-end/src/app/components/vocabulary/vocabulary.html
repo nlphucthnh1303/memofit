@@ -19,7 +19,7 @@
       @for (col of collectionsList(); track col.id) {
       <div
         class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-md hover:border-blue-300 transition-all cursor-pointer group flex flex-col h-full"
-        (click)="openCollection()"
+        (click)="openCollection(col.id!)"
       >
         <!-- Cover Image -->
         <div class="h-32 md:h-44 w-full relative overflow-hidden">
@@ -178,19 +178,24 @@
             >
               Trạng thái SM-2
             </th>
+            <th
+              class="px-6 py-4 font-mono text-xs font-bold text-slate-500 uppercase tracking-widest w-[15%]"
+            >
+              Thao tác
+            </th>
           </tr>
         </thead>
         <tbody>
-          @for (word of words; track word.id) {
+          @for (word of wordsList(); track word.id) {
           <tr
             class="border-b border-slate-100 hover:bg-slate-50/50 transition-colors"
           >
             <td class="px-6 py-5 align-top">
               <div class="font-bold text-[15px] text-slate-900 mb-1.5">
-                {{ word.target }}
+                {{ word.word }}
               </div>
               <div class="text-slate-500 font-mono text-[13px] tracking-tight">
-                {{ word.ipa }} <span class="mx-1.5">•</span> {{ word.type }}
+                {{ word.ipa }} <span class="mx-1.5">•</span> {{ word.pos }}
               </div>
             </td>
             <td class="px-6 py-5 align-top">
@@ -200,84 +205,43 @@
               <div
                 class="bg-slate-100/70 text-slate-600 rounded-lg p-3 text-sm italic leading-relaxed border border-slate-200/50"
               >
-                {{ word.example }}
+                {{ word.example_sentence }}
               </div>
             </td>
             <td class="px-6 py-5 align-top">
               <!-- Status Badge -->
               <div class="mb-3">
-                @if (word.status === 'Mastered') {
+                @if (word.is_delete === '0') {
                 <span
                   class="inline-flex items-center gap-1.5 bg-emerald-100 text-emerald-800 px-2.5 py-1 rounded font-medium text-xs font-mono"
                 >
                   <div class="w-1.5 h-1.5 rounded-full bg-emerald-500"></div>
-                  Mastered
-                </span>
-                } @else if (word.status === 'Learning') {
-                <span
-                  class="inline-flex items-center gap-1.5 bg-amber-100 text-amber-800 px-2.5 py-1 rounded font-medium text-xs font-mono"
-                >
-                  <div class="w-1.5 h-1.5 rounded-full bg-amber-500"></div>
-                  Learning
+                  Active
                 </span>
                 } @else {
                 <span
                   class="inline-flex items-center gap-1.5 bg-red-100 text-red-800 px-2.5 py-1 rounded font-medium text-xs font-mono"
                 >
                   <div class="w-1.5 h-1.5 rounded-full bg-red-500"></div>
-                  Review Soon
+                  Inactive
                 </span>
                 }
               </div>
-
-              <!-- Next Review -->
-              <div
-                class="font-mono text-[11px] font-bold uppercase mb-2 tracking-wide text-slate-500 group"
-              >
-                Next:
-                <span [class.text-red-600]="word.nextReview === 'Today'"
-                  >{{ word.nextReview }}</span
+            </td>
+            <td class="px-6 py-5 align-top">
+              <div class="flex gap-2">
+                <button
+                  class="text-slate-400 hover:text-blue-600 transition-colors min-h-11 min-w-11 flex items-center justify-center p-2 rounded-lg hover:bg-blue-50"
+                  (click)="onEditWord(word)"
                 >
-              </div>
-
-              <!-- Progress Bar -->
-              <div class="flex gap-1">
-                <div
-                  class="h-1.5 flex-1 rounded-full"
-                  [class.bg-emerald-600]="word.progress >= 1 && word.status === 'Mastered'"
-                  [class.bg-emerald-200]="word.progress < 1 && word.status === 'Mastered'"
-                  [class.bg-amber-700]="word.progress >= 1 && word.status === 'Learning'"
-                  [class.bg-slate-200]="word.progress < 1 && word.status === 'Learning'"
-                  [class.bg-red-600]="word.progress >= 1 && word.status === 'Review Soon'"
-                  [class.bg-slate-200]="word.progress < 1 && word.status === 'Review Soon'"
-                ></div>
-                <div
-                  class="h-1.5 flex-1 rounded-full"
-                  [class.bg-emerald-600]="word.progress >= 2 && word.status === 'Mastered'"
-                  [class.bg-emerald-200]="word.progress < 2 && word.status === 'Mastered'"
-                  [class.bg-amber-700]="word.progress >= 2 && word.status === 'Learning'"
-                  [class.bg-slate-200]="word.progress < 2 && word.status === 'Learning'"
-                  [class.bg-red-600]="word.progress >= 2 && word.status === 'Review Soon'"
-                  [class.bg-slate-200]="word.progress < 2 && word.status === 'Review Soon'"
-                ></div>
-                <div
-                  class="h-1.5 flex-1 rounded-full"
-                  [class.bg-emerald-600]="word.progress >= 3 && word.status === 'Mastered'"
-                  [class.bg-emerald-200]="word.progress < 3 && word.status === 'Mastered'"
-                  [class.bg-amber-700]="word.progress >= 3 && word.status === 'Learning'"
-                  [class.bg-slate-200]="word.progress < 3 && word.status === 'Learning'"
-                  [class.bg-red-600]="word.progress >= 3 && word.status === 'Review Soon'"
-                  [class.bg-slate-200]="word.progress < 3 && word.status === 'Review Soon'"
-                ></div>
-                <div
-                  class="h-1.5 flex-1 rounded-full"
-                  [class.bg-emerald-600]="word.progress >= 4 && word.status === 'Mastered'"
-                  [class.bg-emerald-200]="word.progress < 4 && word.status === 'Mastered'"
-                  [class.bg-amber-700]="word.progress >= 4 && word.status === 'Learning'"
-                  [class.bg-slate-200]="word.progress < 4 && word.status === 'Learning'"
-                  [class.bg-red-600]="word.progress >= 4 && word.status === 'Review Soon'"
-                  [class.bg-slate-200]="word.progress < 4 && word.status === 'Review Soon'"
-                ></div>
+                  <i class="fi fi-rr-pencil"></i>
+                </button>
+                <button
+                  class="text-slate-400 hover:text-red-500 transition-colors min-h-11 min-w-11 flex items-center justify-center p-2 rounded-lg hover:bg-red-50"
+                  (click)="onDeleteWord(word?.id!)"
+                >
+                  <i class="fi fi-rr-trash"></i>
+                </button>
               </div>
             </td>
           </tr>
@@ -320,39 +284,42 @@
 
     <!-- Mobile Data Cards -->
     <div class="md:hidden flex flex-col gap-4">
-      @for (word of words; track word.id) {
+      @for (word of wordsList(); track word.id) {
       <div
         class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm relative overflow-hidden"
       >
         <!-- Status Indicator Line -->
         <div
           class="absolute left-0 top-0 bottom-0 w-1"
-          [class.bg-emerald-500]="word.status === 'Mastered'"
-          [class.bg-amber-500]="word.status === 'Learning'"
-          [class.bg-red-500]="word.status === 'Review Soon'"
+          [class.bg-emerald-500]="word.is_delete === '0'"
+          [class.bg-red-500]="word.is_delete !== '0'"
         ></div>
 
         <div class="pl-2">
           <div class="flex justify-between items-start mb-2">
             <div>
               <div class="font-bold text-lg text-slate-900">
-                {{ word.target }}
+                {{ word.word }}
               </div>
               <div class="text-slate-500 font-mono text-xs tracking-tight mt-1">
-                {{ word.ipa }} <span class="mx-1.5">•</span> {{ word.type }}
+                {{ word.ipa }} <span class="mx-1.5">•</span> {{ word.pos }}
               </div>
             </div>
             <div class="flex items-center gap-1">
               <button
                 class="text-slate-400 hover:text-blue-600 transition-colors w-8 h-8 flex items-center justify-center rounded hover:bg-slate-50"
+                (click)="onEditWord(word)"
               >
                 <i class="fi fi-rr-pencil"></i>
               </button>
+              @if (word.id !== undefined) {
               <button
                 class="text-slate-400 hover:text-red-600 transition-colors w-8 h-8 flex items-center justify-center rounded hover:bg-red-50"
+                (click)="onDeleteWord(word.id!)"
               >
                 <i class="fi fi-rr-trash"></i>
               </button>
+              }
             </div>
           </div>
 
@@ -363,59 +330,7 @@
           <div
             class="bg-slate-50 rounded-xl p-3 text-sm italic text-slate-600 mb-4 border border-slate-100"
           >
-            {{ word.example }}
-          </div>
-
-          <div class="flex justify-between items-end">
-            <div>
-              <div
-                class="font-mono text-[10px] font-bold uppercase tracking-wide text-slate-500 mb-1.5"
-              >
-                Next:
-                <span [class.text-red-600]="word.nextReview === 'Today'"
-                  >{{ word.nextReview }}</span
-                >
-              </div>
-              <!-- Progress -->
-              <div class="flex gap-1 w-24">
-                <div
-                  class="h-1 flex-1 rounded-full"
-                  [class.bg-emerald-600]="word.progress >= 1 && word.status === 'Mastered'"
-                  [class.bg-emerald-200]="word.progress < 1 && word.status === 'Mastered'"
-                  [class.bg-amber-700]="word.progress >= 1 && word.status === 'Learning'"
-                  [class.bg-slate-200]="word.progress < 1 && word.status === 'Learning'"
-                  [class.bg-red-600]="word.progress >= 1 && word.status === 'Review Soon'"
-                  [class.bg-slate-200]="word.progress < 1 && word.status === 'Review Soon'"
-                ></div>
-                <div
-                  class="h-1 flex-1 rounded-full"
-                  [class.bg-emerald-600]="word.progress >= 2 && word.status === 'Mastered'"
-                  [class.bg-emerald-200]="word.progress < 2 && word.status === 'Mastered'"
-                  [class.bg-amber-700]="word.progress >= 2 && word.status === 'Learning'"
-                  [class.bg-slate-200]="word.progress < 2 && word.status === 'Learning'"
-                  [class.bg-red-600]="word.progress >= 2 && word.status === 'Review Soon'"
-                  [class.bg-slate-200]="word.progress < 2 && word.status === 'Review Soon'"
-                ></div>
-                <div
-                  class="h-1 flex-1 rounded-full"
-                  [class.bg-emerald-600]="word.progress >= 3 && word.status === 'Mastered'"
-                  [class.bg-emerald-200]="word.progress < 3 && word.status === 'Mastered'"
-                  [class.bg-amber-700]="word.progress >= 3 && word.status === 'Learning'"
-                  [class.bg-slate-200]="word.progress < 3 && word.status === 'Learning'"
-                  [class.bg-red-600]="word.progress >= 3 && word.status === 'Review Soon'"
-                  [class.bg-slate-200]="word.progress < 3 && word.status === 'Review Soon'"
-                ></div>
-                <div
-                  class="h-1 flex-1 rounded-full"
-                  [class.bg-emerald-600]="word.progress >= 4 && word.status === 'Mastered'"
-                  [class.bg-emerald-200]="word.progress < 4 && word.status === 'Mastered'"
-                  [class.bg-amber-700]="word.progress >= 4 && word.status === 'Learning'"
-                  [class.bg-slate-200]="word.progress < 4 && word.status === 'Learning'"
-                  [class.bg-red-600]="word.progress >= 4 && word.status === 'Review Soon'"
-                  [class.bg-slate-200]="word.progress < 4 && word.status === 'Review Soon'"
-                ></div>
-              </div>
-            </div>
+            {{ word.example_sentence }}
           </div>
         </div>
       </div>
@@ -816,7 +731,7 @@
     <form
       id="CollectionForm"
       [formGroup]="collectionForm"
-      (ngSubmit)="onSubmit()"
+      (ngSubmit)="onSubmitCollectionForm()"
       class="flex flex-col h-full md:h-auto"
     >
       <div
@@ -928,116 +843,158 @@
   class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex flex-col items-center justify-end md:justify-center p-0 md:p-4"
 >
   <div
-    class="bg-white rounded-t-3xl md:rounded-3xl shadow-xl w-full max-w-3xl flex flex-col font-sans mb-0 md:mb-auto transform transition-transform h-dvh md:h-auto md:max-h-[90vh]"
+    class="bg-white rounded-t-3xl md:rounded-3xl shadow-xl w-full max-w-3xl flex flex-col font-sans mb-0 md:mb-auto transform transition-transform h-full h-dvh md:h-auto md:max-h-[90vh] overflow-hidden"
   >
-    <!-- Header -->
-    <div
-      class="px-6 md:px-8 py-4 md:py-6 border-b border-slate-100 flex justify-between items-center relative shrink-0"
+    <form
+      [formGroup]="vocabularyForm"
+      (ngSubmit)="onSubmitVocabularyForm()"
+      class="flex flex-col h-full md:h-auto"
     >
-      <h2 class="text-xl md:text-2xl font-bold text-slate-900">
-        Thêm Từ vựng mới
-      </h2>
-      <button
-        class="text-slate-400 hover:text-slate-800 transition-colors p-2 min-h-11 min-w-11 -mr-2"
-        (click)="closeVocabularyModal()"
+      <div
+        class="px-6 md:px-8 py-4 md:py-6 border-b border-slate-100 flex justify-between items-center relative shrink-0"
       >
-        <i class="fi fi-rr-cross text-lg md:text-xl"></i>
-      </button>
-    </div>
-    <!-- Body -->
-    <div class="flex-1 overflow-y-auto p-6 md:p-8">
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div>
-          <label class="block text-sm font-semibold text-slate-700 mb-2"
-            >Từ vựng (Word)</label
-          >
-          <input
-            type="text"
-            class="w-full bg-white border border-slate-200 px-4 py-3 min-h-11 rounded-xl text-sm font-sans focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all placeholder:text-slate-400"
-            placeholder="Hello"
-          />
-        </div>
-        <div>
-          <label class="block text-sm font-semibold text-slate-700 mb-2"
-            >Phiên âm (Phonetic)</label
-          >
-          <input
-            type="text"
-            class="w-full bg-white border border-slate-200 px-4 py-3 min-h-11 rounded-xl text-sm font-sans focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all placeholder:text-slate-400"
-            placeholder="/həˈləʊ/"
-          />
-        </div>
-        <div>
-          <label class="block text-sm font-semibold text-slate-700 mb-2"
-            >Từ loại (Part of speech)</label
-          >
-          <div class="relative">
-            <select
-              class="w-full bg-white border border-slate-200 px-4 py-3 min-h-11 rounded-xl text-sm font-sans focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all appearance-none cursor-pointer"
+        <h2 class="text-xl md:text-2xl font-bold text-slate-900">
+          Thêm Từ vựng mới
+        </h2>
+        <button
+          type="button"
+          class="text-slate-400 hover:text-slate-800 transition-colors p-2 min-h-11 min-w-11 -mr-2"
+          (click)="closeVocabularyModal()"
+        >
+          <i class="fi fi-rr-cross text-lg md:text-xl"></i>
+        </button>
+      </div>
+
+      <div
+        class="flex-1 overflow-y-auto p-6 md:p-8 space-y-6"
+        style="max-height: 400px; overflow-y: auto"
+      >
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label class="block text-sm font-semibold text-slate-700 mb-2"
+              >Từ vựng (Word) <span class="text-red-500">*</span></label
             >
-              <option>Nouns (Danh từ)</option>
-              <option>Verbs (Động từ)</option>
-              <option>Adjectives (Tính từ)</option>
-              <option>Adverbs (Trạng từ)</option>
-            </select>
-            <i
-              class="fi fi-rr-angle-small-down absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
-            ></i>
+            <input
+              type="text"
+              formControlName="word"
+              class="w-full bg-white border border-slate-200 px-4 py-3 min-h-11 rounded-xl text-sm font-sans focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all placeholder:text-slate-400"
+              [class.border-red-500]="isFieldInvalid('word')"
+              placeholder="Hello"
+            />
+            @if (isFieldInvalid('word')) {
+            <p class="text-red-500 text-xs mt-1">Từ vựng không được bỏ trống</p>
+            }
           </div>
-        </div>
-        <div>
-          <label class="block text-sm font-semibold text-slate-700 mb-2"
-            >Bộ sưu tập (Collection)</label
-          >
-          <div class="relative">
-            <select
-              class="w-full bg-white border border-slate-200 px-4 py-3 min-h-11 rounded-xl text-sm font-sans focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all appearance-none cursor-pointer"
+
+          <div>
+            <label class="block text-sm font-semibold text-slate-700 mb-2"
+              >Phiên âm (ipa)</label
             >
-              <option>Tiếng Anh Thương Mại</option>
-              <option>Thuật ngữ IT & Lập trình</option>
-              <option>Giao tiếp Hàng ngày</option>
-            </select>
-            <i
-              class="fi fi-rr-angle-small-down absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
-            ></i>
+            <input
+              type="text"
+              formControlName="ipa"
+              class="w-full bg-white border border-slate-200 px-4 py-3 min-h-11 rounded-xl text-sm font-sans focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all placeholder:text-slate-400"
+              placeholder="/həˈləʊ/"
+            />
           </div>
-        </div>
-        <div class="md:col-span-2">
-          <label class="block text-sm font-semibold text-slate-700 mb-2"
-            >Định nghĩa (Definition)</label
-          >
-          <textarea
-            class="w-full bg-white border border-slate-200 px-4 py-3 rounded-xl text-sm font-sans focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all placeholder:text-slate-400 resize-none min-h-25"
-            placeholder="Xin chào..."
-          ></textarea>
-        </div>
-        <div class="md:col-span-2">
-          <label class="block text-sm font-semibold text-slate-700 mb-2"
-            >Câu ví dụ (Example)</label
-          >
-          <textarea
-            class="w-full bg-white border border-slate-200 px-4 py-3 rounded-xl text-sm font-sans focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all placeholder:text-slate-400 resize-none min-h-25"
-            placeholder="Hello world..."
-          ></textarea>
+
+          <div>
+            <label class="block text-sm font-semibold text-slate-700 mb-2"
+              >Từ loại (Part of speech)</label
+            >
+            <div class="relative">
+              <select
+                formControlName="pos"
+                class="w-full bg-white border border-slate-200 px-4 py-3 min-h-11 rounded-xl text-sm font-sans focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all appearance-none cursor-pointer"
+              >
+                <option value="Nouns" selected>Nouns (Danh từ)</option>
+                <option value="Verbs">Verbs (Động từ)</option>
+                <option value="Adjectives">Adjectives (Tính từ)</option>
+                <option value="Adverbs">Adverbs (Trạng từ)</option>
+              </select>
+              <i
+                class="fi fi-rr-angle-small-down absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
+              ></i>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-sm font-semibold text-slate-700 mb-2"
+              >Bộ sưu tập (Collection)
+              <span class="text-red-500">*</span></label
+            >
+            <div class="relative">
+              <select
+                formControlName="collection_id"
+                class="w-full bg-white border border-slate-200 px-4 py-3 min-h-11 rounded-xl text-sm font-sans focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all appearance-none cursor-pointer"
+                [class.border-red-500]="isFieldInvalid('collection_id')"
+              >
+                <option value="" disabled selected>
+                  -- Chọn bộ sưu tập --
+                </option>
+                @for (col of collectionsList(); track col.id) {
+                <option [value]="col.id">{{ col.title }}</option>
+                }
+              </select>
+              <i
+                class="fi fi-rr-angle-small-down absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
+              ></i>
+            </div>
+            @if (isFieldInvalid('collection_id')) {
+            <p class="text-red-500 text-xs mt-1">
+              Vui lòng lựa chọn một bộ từ vựng
+            </p>
+            }
+          </div>
+
+          <div class="md:col-span-2">
+            <label class="block text-sm font-semibold text-slate-700 mb-2"
+              >Định nghĩa (Meaning) <span class="text-red-500">*</span></label
+            >
+            <textarea
+              formControlName="meaning"
+              class="w-full bg-white border border-slate-200 px-4 py-3 rounded-xl text-sm font-sans focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all placeholder:text-slate-400 resize-none min-h-25"
+              [class.border-red-500]="isFieldInvalid('meaning')"
+              placeholder="Xin chào..."
+            ></textarea>
+            @if (isFieldInvalid('meaning')) {
+            <p class="text-red-500 text-xs mt-1">
+              Định nghĩa không được để trống
+            </p>
+            }
+          </div>
+
+          <div class="md:col-span-2">
+            <label class="block text-sm font-semibold text-slate-700 mb-2"
+              >Câu ví dụ (Example)</label
+            >
+            <textarea
+              formControlName="example_sentence"
+              class="w-full bg-white border border-slate-200 px-4 py-3 rounded-xl text-sm font-sans focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all placeholder:text-slate-400 resize-none min-h-25"
+              placeholder="Hello world..."
+            ></textarea>
+          </div>
         </div>
       </div>
-    </div>
-    <!-- Footer -->
-    <div
-      class="px-6 md:px-8 py-4 md:py-6 border-t border-slate-100 flex justify-end gap-3 shrink-0"
-    >
-      <button
-        class="px-6 py-2.5 min-h-11 rounded-xl font-semibold text-slate-600 border border-slate-200 hover:bg-slate-50 transition-colors text-[15px]"
-        (click)="closeVocabularyModal()"
+
+      <div
+        class="px-6 md:px-8 py-4 md:py-6 border-t border-slate-100 flex justify-end gap-3 shrink-0 bg-white"
       >
-        Hủy bỏ
-      </button>
-      <button
-        class="bg-blue-700 text-white px-8 py-2.5 min-h-11 rounded-xl font-semibold hover:bg-blue-800 transition-colors shadow-sm text-[15px]"
-      >
-        Lưu
-      </button>
-    </div>
+        <button
+          type="button"
+          class="px-6 py-2.5 min-h-11 rounded-xl font-semibold text-slate-600 border border-slate-200 hover:bg-slate-50 transition-colors text-[15px]"
+          (click)="closeVocabularyModal()"
+        >
+          Hủy bỏ
+        </button>
+        <button
+          type="submit"
+          class="bg-blue-700 text-white px-8 py-2.5 min-h-11 rounded-xl font-semibold hover:bg-blue-800 transition-colors shadow-sm text-[15px]"
+        >
+          Lưu
+        </button>
+      </div>
+    </form>
   </div>
 </div>
 }

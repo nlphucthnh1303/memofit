@@ -7,6 +7,7 @@ const {
   createVocabulary,
   updateVocabulary,
   deleteVocabulary,
+  getVocabulariesByCollectionId,
 } = require("../controllers/vocabularies.controller");
 
 router.route("/").get(getVocabularies).post(createVocabulary);
@@ -15,5 +16,5 @@ router
   .get(getVocabulary)
   .put(updateVocabulary)
   .delete(deleteVocabulary);
-
+router.route("/collection/:id").get(getVocabulariesByCollectionId);
 module.exports = router;

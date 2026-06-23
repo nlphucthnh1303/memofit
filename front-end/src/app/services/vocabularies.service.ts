@@ -16,6 +16,10 @@ export class VocabulariesService {
         return this.http.get<any>(this.baseApi);
     }
 
+    getVocabulariesByCollectionId(collectionId: number): Observable<any> {
+        return this.http.get<any>(`${this.baseApi}/collection/${collectionId}`);
+    }
+
     getVocabulary(id: number): Observable<any> {
         return this.http.get<any>(`${this.baseApi}/${id}`);
     }

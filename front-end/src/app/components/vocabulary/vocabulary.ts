@@ -1,14 +1,16 @@
-import { Component, ChangeDetectionStrategy, signal, inject, CUSTOM_ELEMENTS_SCHEMA, ChangeDetectorRef } from '@angular/core';
-import { Sidebar } from '../sidebar/sidebar';
+import { Component, ChangeDetectionStrategy, signal, inject, CUSTOM_ELEMENTS_SCHEMA, ChangeDetectorRef, SecurityContext } from '@angular/core';
+import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { HttpClient } from '@angular/common/http';
 import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 import { ToastService } from '../../shared/ui/toast/toast.service';
 import { CollectionsService } from '../../services/collections.service';
 import { UploadService } from '../../services/upload.service';
-import { concatMap, finalize, of } from 'rxjs'
+import { concatMap, finalize, of, pipe } from 'rxjs'
 import { Collections } from '../../models/collections.model';
 import { DialogService } from '../../shared/ui/dialog/dialog.service';
+import { ConfirmDialogComponent } from '../demo-ui/demo-ui';
+import { VocabulariesService } from '../../services/vocabularies.service';
+import { Vocabularies } from '../../models/vocabularies.model';
 @Component({
   selector: 'app-vocabulary',
   imports: [ReactiveFormsModule, NgxSpinnerModule],
@@ -21,22 +23,30 @@ export class Vocabulary {
   showImportModal = signal<boolean>(false);
   showCollectionModal = signal<boolean>(false);
   showVocabularyModal = signal<boolean>(false);
-  activeStatusFilter = signal<'ALL' | 'MASTERED' | 'REVIEW_SOON'>('ALL');
   collectionsList = signal<Collections[]>([]);
+  wordsList = signal<Vocabularies[]>([]);
   isEditMode = signal<boolean>(false);
   currentCollectionId = signal<number | null>(null);
-
+  currentvocabularyId = signal<number | null>(null);
   private cdr = inject(ChangeDetectorRef);
+  private sanitizer = inject(DomSanitizer);
   private fb = inject(FormBuilder);
-  private http = inject(HttpClient);
   private spinner = inject(NgxSpinnerService);
   private toastService = inject(ToastService);
   private dialogService = inject(DialogService);
   private collectionsService = inject(CollectionsService);
+  private vocabulariesService = inject(VocabulariesService);
+
   collectionForm!: FormGroup;
-  imagePreview: string | ArrayBuffer | null = null;
+  vocabularyForm!: FormGroup;
+
+
+  imagePreview: string | SafeUrl | null = null;
   private uploadService = inject(UploadService);
   imageUrl: string = '';
+  activeStatusFilter: any;
+
+
   ngOnInit(): void {
     this.initForm();
     this.getCollectionsList();
@@ -48,26 +58,46 @@ export class Vocabulary {
       collectionDescription: [''],
       collectionImage: [null]
     });
+    this.vocabularyForm = this.fb.group({
+      word: ['', [Validators.required, Validators.minLength(2)]],
+      ipa: [''],
+      pos: [''],
+      collection_id: ['', [Validators.required]],
+      meaning: ['', [Validators.required, Validators.minLength(5)]],
+      example_sentence: ['']
+    });
   }
+
+
+
+
+  isFieldInvalid(fieldName: string): boolean {
+    const control = this.vocabularyForm.get(fieldName);
+    return !!(control && control.touched && control.invalid);
+  }
+
+
 
   onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length > 0) {
+      this.spinner.show();
       const file = input.files[0];
       this.collectionForm.patchValue({ collectionImage: file });
       this.collectionForm.get('collectionImage')?.updateValueAndValidity();
       const reader = new FileReader();
-
       reader.onload = () => {
-        this.imagePreview = reader.result;
-        this.spinner.hide()
-        this.cdr.detectChanges();
+        setTimeout(() => {
+          this.imagePreview = this.sanitizer.bypassSecurityTrustUrl(reader.result as string);
+          this.spinner.hide();
+          this.cdr.detectChanges();
+        });
       };
       reader.readAsDataURL(file);
     }
   }
 
-  onSubmit(): void {
+  onSubmitCollectionForm(): void {
     if (this.collectionForm.invalid) {
       this.collectionForm.markAllAsTouched();
       return;
@@ -83,8 +113,8 @@ export class Vocabulary {
       return;
     }
 
-    const upload$ = (imageFile instanceof File) 
-      ? this.uploadService.uploadImage(imageFile) 
+    const upload$ = (imageFile instanceof File)
+      ? this.uploadService.uploadImage(imageFile)
       : of({ url: this.imageUrl });
 
     upload$.pipe(
@@ -99,7 +129,7 @@ export class Vocabulary {
           created_at: undefined
         };
 
-        return this.isEditMode() 
+        return this.isEditMode()
           ? this.collectionsService.updateCollection(this.currentCollectionId()!, payload)
           : this.collectionsService.createCollection(payload);
       }),
@@ -115,6 +145,67 @@ export class Vocabulary {
         this.toastService.show(err?.error?.message || 'Có lỗi xảy ra!', 'error');
       }
     });
+  }
+
+  onSubmitVocabularyForm(): void {
+    if (this.vocabularyForm.invalid) {
+      this.vocabularyForm.markAllAsTouched();
+      return;
+    }
+
+    this.spinner.show();
+    let user_login = this.getUserLogin();
+
+    if (!user_login) {
+      this.toastService.show('Vui lòng đăng nhập để thực hiện!', 'error');
+      this.spinner.hide();
+      return;
+    }
+
+    if (this.vocabularyForm.invalid) {
+      this.vocabularyForm.markAllAsTouched();
+      return;
+    }
+
+
+    const payload: Vocabularies = {
+      id: this.isEditMode() ? (this.currentvocabularyId() || undefined) : undefined,
+      collection_id: Number(this.vocabularyForm.get('collection_id')?.value),
+      word: this.vocabularyForm.get('word')?.value,
+      pos: this.vocabularyForm.get('pos')?.value,
+      ipa: this.vocabularyForm.get('ipa')?.value || '',
+      meaning: this.vocabularyForm.get('meaning')?.value,
+      example_sentence: this.vocabularyForm.get('example_sentence')?.value || '',
+      example_meaning: undefined,
+      audio_word_path: undefined,
+      audio_example_path: undefined,
+      created_at: undefined,
+      is_delete: undefined
+    };
+    const request$ = this.isEditMode()
+      ? this.vocabulariesService.updateVocabulary(payload.id!, payload) // DấugetVocabularies ! an toàn vì đã check editMode và payload.id
+      : this.vocabulariesService.createVocabulary(payload);
+    request$
+      .pipe(
+        finalize(() => {
+          this.spinner.hide();
+          this.cdr.detectChanges();
+        })
+      )
+      .subscribe({
+        next: (res) => {
+          const successMsg = res?.message || (this.isEditMode() ? 'Cập nhật từ vựng thành công!' : 'Thêm từ vựng thành công!');
+          this.toastService.show(successMsg, 'success');
+          this.closeVocabularyModal();
+          this.getVocabularies(this.currentCollectionId()!);
+        },
+        error: (err) => {
+          console.error('Lỗi khi lưu từ vựng:', err);
+          // Hiển thị thông báo lỗi trả về từ Backend
+          const errorMsg = err?.error?.message || 'Có lỗi xảy ra khi lưu từ vựng!';
+          this.toastService.show(errorMsg, 'error');
+        }
+      });
   }
 
   private getUserLogin() {
@@ -149,19 +240,31 @@ export class Vocabulary {
 
   // 2. Xóa bộ sưu tập
   onDeleteCollection(id: number): void {
-    if (window.confirm('Bạn có chắc chắn muốn xóa bộ sưu tập này? Hành động này không thể hoàn tác.')) {
-      this.spinner.show();
-      this.collectionsService.deleteCollection(id).subscribe({
-        next: () => {
-          this.toastService.show('Đã xóa bộ sưu tập', 'success');
-          this.getCollectionsList();
-        },
-        error: (err) => {
-          this.spinner.hide();
-          this.toastService.show('Lỗi khi xóa bộ sưu tập', 'error');
-        }
-      });
-    }
+    const dialogRef = this.dialogService.open(ConfirmDialogComponent, {
+      width: '450px',
+      data: {
+        title: 'Xóa Bộ Sưu Tập',
+        message: 'Bạn có chắc chắn muốn xóa bộ sưu tập này? Hành động này không thể hoàn tác.'
+      }
+    });
+
+    dialogRef.afterClosed$.subscribe(result => {
+      if (result) {
+        this.spinner.show();
+        this.collectionsService.deleteCollection(id).subscribe({
+          next: () => {
+            this.toastService.show('Đã xóa bộ sưu tập', 'success');
+            this.getCollectionsList();
+          },
+          error: (err) => {
+            this.spinner.hide();
+            this.toastService.show('Lỗi khi xóa bộ sưu tập', 'error');
+          }
+        });
+      } else if (result === false) {
+        this.toastService.show('Đã hủy thao tác.', 'info');
+      }
+    });
   }
 
   // 3. Cập nhật bộ sưu tập (Mở modal edit)
@@ -170,21 +273,75 @@ export class Vocabulary {
     this.currentCollectionId.set(collection.id!);
     this.imageUrl = collection.cover_image || '';
     this.imagePreview = collection.cover_image || '';
-    
+
     this.collectionForm.patchValue({
       collectionTitle: collection.title,
       collectionDescription: collection.description,
       collectionImage: null // Reset file input
     });
-    
+
     this.showCollectionModal.set(true);
   }
 
 
 
+  // Vocabulary actions
+  getVocabularies(collectionId: number): void {
+    this.spinner.show();
+    this.vocabulariesService.getVocabulariesByCollectionId(collectionId).subscribe({
+      next: (res) => {
+        this.wordsList.set(res.data || []);
+        this.spinner.hide();
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        this.spinner.hide();
+        this.toastService.show('Không thể tải danh sách từ vựng', 'error');
+      }
+    });
+  }
 
+  onEditWord(vocabulary: Vocabularies) {
+    this.isEditMode.set(true);
+    this.currentvocabularyId.set(vocabulary.id!);
+    this.vocabularyForm.patchValue({
+      word: vocabulary.word,
+      ipa: vocabulary.ipa,
+      pos: vocabulary.pos,
+      collection_id: vocabulary.collection_id,
+      meaning: vocabulary.meaning,
+      example_sentence: vocabulary.example_sentence
+    })
+    this.showVocabularyModal.set(true);
+  }
 
+  onDeleteWord(id: number) {
+    const dialogRef = this.dialogService.open(ConfirmDialogComponent, {
+      width: '450px',
+      data: {
+        title: 'Xóa Từ Vựng',
+        message: 'Bạn có chắc chắn muốn xóa từ vựng này?'
+      }
+    });
 
+    dialogRef.afterClosed$.subscribe(result => {
+      if (result) {
+        this.spinner.show();
+        this.vocabulariesService.deleteVocabulary(id).subscribe({
+          next: () => {
+            this.toastService.show('Đã xóa từ vựng', 'success');
+            if (this.currentCollectionId()) {
+              this.getVocabularies(this.currentCollectionId()!);
+            }
+          },
+          error: (err) => {
+            this.spinner.hide();
+            this.toastService.show('Lỗi khi xóa từ vựng', 'error');
+          }
+        });
+      }
+    });
+  }
 
   // Modal Stepper State
   importStep = signal<1 | 2 | 3>(1);
@@ -199,74 +356,7 @@ export class Vocabulary {
     }
   ];
 
-  words = [
-    {
-      id: 1,
-      target: 'Ubiquitous',
-      ipa: '/juːˈbɪk.wɪ.təs/',
-      type: 'Adj',
-      meaning: 'Có mặt ở khắp mọi nơi; phổ biến.',
-      example: '"Mobile phones have become ubiquitous in our daily lives."',
-      status: 'Mastered', // Mastered, Learning, Review Soon
-      nextReview: '14 days',
-      progress: 4 // out of 4
-    },
-    {
-      id: 2,
-      target: 'Ephemeral',
-      ipa: '/ɪˈfem.ər.əl/',
-      type: 'Adj',
-      meaning: 'Phù du, chóng tàn, tồn tại trong thời gian ngắn.',
-      example: '"Fame in the world of rock and pop is largely ephemeral."',
-      status: 'Learning',
-      nextReview: 'Tomorrow',
-      progress: 2
-    },
-    {
-      id: 3,
-      target: 'Ephemeral',
-      ipa: '/ɪˈfem.ər.əl/',
-      type: 'Adj',
-      meaning: 'Phù du, chóng tàn, tồn tại trong thời gian ngắn.',
-      example: '"Fame in the world of rock and pop is largely ephemeral."',
-      status: 'Learning',
-      nextReview: 'Tomorrow',
-      progress: 2
-    },
-    {
-      id: 4,
-      target: 'Ephemeral',
-      ipa: '/ɪˈfem.ər.əl/',
-      type: 'Adj',
-      meaning: 'Phù du, chóng tàn, tồn tại trong thời gian ngắn.',
-      example: '"Fame in the world of rock and pop is largely ephemeral."',
-      status: 'Learning',
-      nextReview: 'Tomorrow',
-      progress: 2
-    },
-    {
-      id: 5,
-      target: 'Ephemeral',
-      ipa: '/ɪˈfem.ər.əl/',
-      type: 'Adj',
-      meaning: 'Phù du, chóng tàn, tồn tại trong thời gian ngắn.',
-      example: '"Fame in the world of rock and pop is largely ephemeral."',
-      status: 'Learning',
-      nextReview: 'Tomorrow',
-      progress: 2
-    },
-    {
-      id: 6,
-      target: 'Mitigate',
-      ipa: '/ˈmɪt.ɪ.ɡeɪt/',
-      type: 'Verb',
-      meaning: 'Làm giảm nhẹ, làm dịu bớt (tác hại, cơn đau).',
-      example: '"It is unclear how to mitigate the effects of tourism on the island."',
-      status: 'Review Soon',
-      nextReview: 'Today',
-      progress: 1
-    }
-  ];
+  words = []; // Keep old array for reference or remove if template is updated
 
   importedWords = [
     { stt: 1, target: 'Resilience', meaning: 'Khả năng phục hồi nhanh chóng', tags: ['IELTS'], status: 'Valid' },
@@ -276,7 +366,9 @@ export class Vocabulary {
     { stt: 5, target: 'Mitigate', meaning: 'Làm giảm nhẹ, làm dịu', tags: ['IELTS'], status: 'Valid' }
   ];
 
-  openCollection() {
+  openCollection(collectionId: number) {
+    this.currentCollectionId.set(collectionId);
+    this.getVocabularies(collectionId);
     this.currentView.set('words');
   }
 

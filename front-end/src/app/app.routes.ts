@@ -13,9 +13,10 @@ import { DemoUi } from './components/demo-ui/demo-ui';
 import { otpGuard } from './guards/otp.guard';
 import { authGuard } from './guards/auth.guard';
 import { Overview } from './components/overview/overview';
+import { autoLoginGuard } from './guards/auto-login.guard';
 
 export const routes: Routes = [
-  { path: 'login', component: Login },
+  { path: 'login', component: Login, canActivate: [autoLoginGuard] },
   { path: 'register', component: Register },
   { path: 'forgot-password', component: ForgotPassword },
   { path: 'otp', component: AuthencationOtp, canActivate: [otpGuard] },
