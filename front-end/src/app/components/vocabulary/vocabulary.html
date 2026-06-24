@@ -2,125 +2,12 @@
   <!-- Top Header -->
 
   <div class="p-4 md:p-10 max-w-300 mx-auto">
-    @if (currentView() === 'collections') {
-    <!-- View 1: Danh sách Bộ sưu tập -->
-    <div class="mb-6 md:mb-10">
-      <div class="flex justify-start md:justify-end mt-4">
-        <button
-          class="bg-blue-700 text-white px-4 md:px-5 py-2.5 md:py-2.5 rounded-xl text-sm font-semibold hover:bg-blue-800 transition-colors shadow-sm flex items-center gap-2 min-h-11 w-full md:w-auto justify-center"
-          (click)="openCollectionModal()"
-        >
-          <i class="fi fi-rr-plus"></i> Thêm Bộ sưu tập
-        </button>
-      </div>
-    </div>
-
-    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 md:gap-8">
-      @for (col of collectionsList(); track col.id) {
-      <div
-        class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-md hover:border-blue-300 transition-all cursor-pointer group flex flex-col h-full"
-        (click)="openCollection(col.id!)"
-      >
-        <!-- Cover Image -->
-        <div class="h-32 md:h-44 w-full relative overflow-hidden">
-          <div class="absolute inset-0 bg-slate-200">
-            <img
-              [src]="col.cover_image || 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=2426&auto=format&fit=crop'"
-              class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-              alt="Cover"
-              referrerpolicy="no-referrer"
-            />
-          </div>
-          <div
-            class="absolute top-3 left-3 bg-white/90 backdrop-blur-sm text-slate-800 text-xs font-bold px-3 py-1.5 rounded flex items-center gap-2 shadow-sm font-mono"
-          >
-            <i class="fi fi-rr-document"></i>
-            {{ col.id }} từ
-          </div>
-        </div>
-
-        <!-- Content -->
-        <div class="p-4 md:p-6 flex-1 flex flex-col">
-          <h4 class="text-lg md:text-xl font-bold text-slate-900 mb-2 md:mb-3">
-            {{ col.title }}
-          </h4>
-          <p
-            class="text-slate-600 text-[13px] md:text-[15px] leading-relaxed line-clamp-3"
-          >
-            {{ col.description }}
-          </p>
-        </div>
-
-        <!-- Footer -->
-        <div
-          class="px-4 md:px-6 py-4 border-t border-slate-100 flex justify-between items-center mt-auto"
-        >
-          <button
-            class="text-blue-700 font-mono text-[10px] md:text-xs font-bold flex items-center gap-2 uppercase tracking-wide group-hover:text-blue-800 transition-colors min-h-11 px-2 -ml-2"
-          >
-            Ôn tập ngay <i class="fi fi-rr-arrow-right"></i>
-          </button>
-          <div class="flex gap-2 md:gap-4">
-            <button
-              class="text-slate-400 hover:text-slate-700 transition-colors min-h-11 min-w-11 flex items-center justify-center p-2 rounded-lg hover:bg-slate-50"
-              (click)="$event.stopPropagation(); onEditCollection(col)"
-            >
-              <i class="fi fi-rr-pencil"></i>
-            </button>
-            <button
-              class="text-slate-400 hover:text-red-500 transition-colors min-h-11 min-w-11 flex items-center justify-center p-2 rounded-lg hover:bg-red-50"
-              (click)="$event.stopPropagation(); onDeleteCollection(col.id!)"
-            >
-              <i class="fi fi-rr-trash"></i>
-            </button>
-          </div>
-        </div>
-      </div>
-      }
-    </div>
-    } @else {
+    <!-- View 2: Danh sách Từ vựng -->
     <!-- View 2: Danh sách Từ vựng -->
 
-    <!-- Toolbar -->
     <div
-      class="flex flex-col md:flex-row items-stretch md:items-center justify-between mb-6 md:mb-8 pb-6 md:pb-8 border-b border-slate-200 gap-4"
+      class="flex flex-col md:flex-row items-stretch md:items-center justify-end mb-6 md:mb-8 pb-6 md:pb-8 gap-4"
     >
-      <div
-        class="flex flex-col md:flex-row items-stretch md:items-center gap-4"
-      >
-        <!-- Segmented Control -->
-        <div class="flex bg-slate-100/80 p-1 rounded-xl w-full md:w-auto">
-          <button
-            class="flex-1 md:flex-none px-3 md:px-5 py-2 min-h-11 rounded-lg text-xs md:text-sm font-semibold transition-colors shadow-sm bg-white text-slate-800"
-            (click)="activeStatusFilter.set('ALL')"
-          >
-            Tất cả
-          </button>
-          <button
-            class="flex-1 md:flex-none px-3 md:px-5 py-2 min-h-11 rounded-lg text-xs md:text-sm font-medium text-slate-600 hover:text-slate-800 transition-colors"
-            (click)="activeStatusFilter.set('MASTERED')"
-          >
-            Đã thuộc
-          </button>
-          <button
-            class="flex-1 md:flex-none px-3 md:px-5 py-2 min-h-11 rounded-lg text-xs md:text-sm font-medium text-slate-600 hover:text-slate-800 transition-colors whitespace-nowrap"
-            (click)="activeStatusFilter.set('REVIEW_SOON')"
-          >
-            Sắp quên
-          </button>
-        </div>
-
-        <!-- Dropdown -->
-        <div class="relative w-full md:w-auto">
-          <button
-            class="w-full bg-white border border-slate-200 text-slate-800 px-5 py-2 md:py-2.5 min-h-11 rounded-xl text-sm font-semibold flex items-center justify-between md:justify-center gap-3 hover:bg-slate-50 transition-colors shadow-sm"
-          >
-            <span>Tất cả bộ sưu tập</span>
-            <i class="fi fi-rr-angle-small-down pt-1 text-slate-500"></i>
-          </button>
-        </div>
-      </div>
-
       <div class="flex items-center gap-3 w-full md:w-auto">
         <button
           class="flex-1 md:flex-none bg-white border border-slate-200 text-slate-700 px-3 md:px-5 py-2.5 min-h-11 rounded-xl text-sm font-semibold hover:bg-slate-50 transition-colors shadow-sm flex items-center justify-center gap-2"
@@ -142,13 +29,24 @@
     </div>
 
     <!-- Quick Nav Header -->
-    <div class="flex items-center gap-3 mb-4 md:mb-6">
+    <div class="flex items-center justify-between gap-3 mb-4 md:mb-6">
       <button
         class="text-slate-400 hover:text-blue-700 transition-colors text-sm font-medium flex items-center gap-1 min-h-11"
         (click)="goBackToCollections()"
       >
         <i class="fi fi-rr-arrow-left"></i> Quay lại
       </button>
+      <div class="relative w-48 md:w-80">
+        <i
+          class="fi fi-rr-search absolute left-3 md:left-4 top-1/2 transform -translate-y-1/2 text-slate-400 text-sm md:text-base"
+        ></i>
+        <input
+          type="search"
+          (input)="searchVocabularies($event.target.value)"
+          placeholder="Tìm kiếm..."
+          class="w-full bg-white border border-slate-200 pl-9 md:pl-11 pr-3 md:pr-4 py-2 md:py-2.5 rounded-full text-xs md:text-sm font-sans focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all placeholder:text-slate-400 shadow-sm"
+        />
+      </div>
     </div>
 
     <!-- Data Table Desktop -->
@@ -186,11 +84,11 @@
           </tr>
         </thead>
         <tbody>
-          @for (word of wordsList(); track word.id) {
+          @for (word of paginatedWords(); track word.id) {
           <tr
             class="border-b border-slate-100 hover:bg-slate-50/50 transition-colors"
           >
-            <td class="px-6 py-5 align-top">
+            <td class="px-6 py-3 align-center">
               <div class="font-bold text-[15px] text-slate-900 mb-1.5">
                 {{ word.word }}
               </div>
@@ -198,37 +96,39 @@
                 {{ word.ipa }} <span class="mx-1.5">•</span> {{ word.pos }}
               </div>
             </td>
-            <td class="px-6 py-5 align-top">
+            <td class="px-6 py-3 align-center">
               <p class="text-slate-700 leading-relaxed">{{ word.meaning }}</p>
             </td>
-            <td class="px-6 py-5 align-top">
+            <td class="px-6 py-3 align-top">
               <div
                 class="bg-slate-100/70 text-slate-600 rounded-lg p-3 text-sm italic leading-relaxed border border-slate-200/50"
               >
                 {{ word.example_sentence }}
               </div>
             </td>
-            <td class="px-6 py-5 align-top">
+            <td class="px-6 py-3 align-center">
               <!-- Status Badge -->
               <div class="mb-3">
-                @if (word.is_delete === '0') {
-                <span
-                  class="inline-flex items-center gap-1.5 bg-emerald-100 text-emerald-800 px-2.5 py-1 rounded font-medium text-xs font-mono"
-                >
-                  <div class="w-1.5 h-1.5 rounded-full bg-emerald-500"></div>
-                  Active
-                </span>
-                } @else {
+                <!-- @if (word.is_delete === '0') {
+                  <span
+                    class="inline-flex items-center gap-1.5 bg-emerald-100 text-emerald-800 px-2.5 py-1 rounded font-medium text-xs font-mono"
+                  >
+                    <div class="w-1.5 h-1.5 rounded-full bg-emerald-500"></div>
+                    Active
+                  </span>
+                  } @else {
+                  
+                  } -->
+
                 <span
                   class="inline-flex items-center gap-1.5 bg-red-100 text-red-800 px-2.5 py-1 rounded font-medium text-xs font-mono"
                 >
                   <div class="w-1.5 h-1.5 rounded-full bg-red-500"></div>
                   Inactive
                 </span>
-                }
               </div>
             </td>
-            <td class="px-6 py-5 align-top">
+            <td class="px-6 py-3 align-center">
               <div class="flex gap-2">
                 <button
                   class="text-slate-400 hover:text-blue-600 transition-colors min-h-11 min-w-11 flex items-center justify-center p-2 rounded-lg hover:bg-blue-50"
@@ -245,6 +145,23 @@
               </div>
             </td>
           </tr>
+          } @empty {
+          <tr>
+            <td colspan="5" class="py-16 text-center">
+              <div class="flex flex-col items-center max-w-md mx-auto">
+                <h3 class="text-xl font-bold text-slate-800 my-2">
+                  Không tìm thấy dữ liệu
+                </h3>
+
+                <!-- Mô tả ngắn gọn -->
+                <p class="text-sm text-slate-500 mb-4 leading-relaxed">
+                  Hệ thống hiện tại chưa ghi nhận thông tin hoặc dữ liệu mà bạn
+                  đang tìm kiếm. Vui lòng thử tải lại trang hoặc thêm mới dữ
+                  liệu đầu tiên.
+                </p>
+              </div>
+            </td>
+          </tr>
           }
         </tbody>
       </table>
@@ -255,27 +172,35 @@
       >
         <button
           class="w-8 h-8 flex justify-center items-center rounded text-slate-400 hover:bg-slate-100 transition-colors min-h-11 min-w-11"
+          (click)="prevPage()"
+          [disabled]="currentPage() === 1"
+          [class.opacity-50]="currentPage() === 1"
+          [class.cursor-not-allowed]="currentPage() === 1"
         >
           <i class="fi fi-rr-angle-small-left mt-1"></i>
         </button>
-        <button
-          class="w-8 h-8 flex justify-center items-center rounded font-semibold text-white bg-blue-700 min-h-11 min-w-11"
-        >
-          1
-        </button>
-        <button
-          class="w-8 h-8 flex justify-center items-center rounded text-slate-600 hover:bg-slate-100 font-semibold transition-colors min-h-11 min-w-11"
-        >
-          2
-        </button>
-        <button
-          class="w-8 h-8 flex justify-center items-center rounded text-slate-600 hover:bg-slate-100 font-semibold transition-colors min-h-11 min-w-11"
-        >
-          3
-        </button>
+
+        @for (page of visiblePages(); track $index) { @if (page === '...') {
         <span class="text-slate-400 px-1">...</span>
+        } @else {
+        <button
+          class="w-8 h-8 flex justify-center items-center rounded font-semibold min-h-11 min-w-11 transition-colors"
+          [class.bg-blue-700]="currentPage() === page"
+          [class.text-white]="currentPage() === page"
+          [class.text-slate-600]="currentPage() !== page"
+          [class.hover:bg-slate-100]="currentPage() !== page"
+          (click)="goToPage(page)"
+        >
+          {{ page }}
+        </button>
+        } }
+
         <button
           class="w-8 h-8 flex justify-center items-center rounded text-slate-400 hover:bg-slate-100 transition-colors min-h-11 min-w-11"
+          (click)="nextPage()"
+          [disabled]="currentPage() === totalPages()"
+          [class.opacity-50]="currentPage() === totalPages()"
+          [class.cursor-not-allowed]="currentPage() === totalPages()"
         >
           <i class="fi fi-rr-angle-small-right mt-1"></i>
         </button>
@@ -284,7 +209,7 @@
 
     <!-- Mobile Data Cards -->
     <div class="md:hidden flex flex-col gap-4">
-      @for (word of wordsList(); track word.id) {
+      @for (word of paginatedWords(); track word.id) {
       <div
         class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm relative overflow-hidden"
       >
@@ -334,33 +259,59 @@
           </div>
         </div>
       </div>
+      } @empty {
+      <div
+        class="bg-white rounded-2xl border border-slate-200 p-8 shadow-sm text-center"
+      >
+        <h3 class="text-xl font-bold text-slate-800 mb-2">
+          Không tìm thấy dữ liệu
+        </h3>
+
+        <!-- Mô tả ngắn gọn -->
+        <p class="text-sm text-slate-500 mb-8 leading-relaxed">
+          Hệ thống hiện tại chưa ghi nhận thông tin hoặc dữ liệu mà bạn đang tìm
+          kiếm. Vui lòng thử tải lại trang hoặc thêm mới dữ liệu đầu tiên.
+        </p>
+      </div>
       }
       <!-- Pagination Mobile -->
       <div class="py-4 flex justify-center items-center gap-1 w-full mt-2">
         <button
           class="w-10 h-10 flex justify-center items-center rounded text-slate-400 hover:bg-slate-100 transition-colors"
+          (click)="prevPage()"
+          [disabled]="currentPage() === 1"
+          [class.opacity-50]="currentPage() === 1"
+          [class.cursor-not-allowed]="currentPage() === 1"
         >
           <i class="fi fi-rr-angle-small-left mt-1"></i>
         </button>
-        <button
-          class="w-10 h-10 flex justify-center items-center rounded font-semibold text-white bg-blue-700"
-        >
-          1
-        </button>
-        <button
-          class="w-10 h-10 flex justify-center items-center rounded text-slate-600 hover:bg-slate-100 font-semibold transition-colors"
-        >
-          2
-        </button>
+
+        @for (page of visiblePages(); track $index) { @if (page === '...') {
         <span class="text-slate-400 px-1">...</span>
+        } @else {
+        <button
+          class="w-10 h-10 flex justify-center items-center rounded font-semibold transition-colors"
+          [class.bg-blue-700]="currentPage() === page"
+          [class.text-white]="currentPage() === page"
+          [class.text-slate-600]="currentPage() !== page"
+          [class.hover:bg-slate-100]="currentPage() !== page"
+          (click)="goToPage(page)"
+        >
+          {{ page }}
+        </button>
+        } }
+
         <button
           class="w-10 h-10 flex justify-center items-center rounded text-slate-400 hover:bg-slate-100 transition-colors"
+          (click)="nextPage()"
+          [disabled]="currentPage() === totalPages()"
+          [class.opacity-50]="currentPage() === totalPages()"
+          [class.cursor-not-allowed]="currentPage() === totalPages()"
         >
           <i class="fi fi-rr-angle-small-right mt-1"></i>
         </button>
       </div>
     </div>
-    }
   </div>
 </main>
 
@@ -716,123 +667,6 @@
         </button>
       </div>
     </div>
-  </div>
-</div>
-}
-
-<!-- Modal Collection -->
-@if (showCollectionModal()) {
-<div
-  class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex flex-col items-center justify-end md:justify-center p-0 md:p-4"
->
-  <div
-    class="bg-white rounded-t-3xl md:rounded-3xl shadow-xl w-full max-w-xl flex flex-col font-sans mb-0 md:mb-auto transform transition-transform h-full h-dvh md:h-auto md:max-h-[90vh] overflow-hidden"
-  >
-    <form
-      id="CollectionForm"
-      [formGroup]="collectionForm"
-      (ngSubmit)="onSubmitCollectionForm()"
-      class="flex flex-col h-full md:h-auto"
-    >
-      <div
-        class="px-6 md:px-8 py-4 md:py-6 border-b border-slate-100 flex justify-between items-center relative shrink-0"
-      >
-        <h2 class="text-xl md:text-2xl font-bold text-slate-900">
-          {{ isEditMode() ? 'Cập Nhật' : 'Tạo' }} Bộ từ vựng
-        </h2>
-        <button
-          type="button"
-          class="text-slate-400 hover:text-slate-800 transition-colors p-2 min-h-11 min-w-11 -mr-2"
-          (click)="closeCollectionModal()"
-        >
-          <i class="fi fi-rr-cross text-lg md:text-xl"></i>
-        </button>
-      </div>
-
-      <div
-        class="flex-1 overflow-y-auto p-6 md:p-8 space-y-6 max-h-[calc(100vh-160px)] md:max-h-[calc(90vh-160px)]"
-      >
-        <div>
-          <label class="block text-sm font-semibold text-slate-700 mb-2"
-            >Tiêu đề</label
-          >
-          <input
-            type="text"
-            formControlName="collectionTitle"
-            class="w-full bg-white border border-slate-200 px-4 py-3 min-h-11 rounded-xl text-sm font-sans focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all placeholder:text-slate-400"
-            [class.border-red-500]="collectionForm.get('collectionTitle')?.touched && collectionForm.get('collectionTitle')?.invalid"
-            placeholder="Nhập tên bộ từ vựng..."
-          />
-          @if (collectionForm.get('collectionTitle')?.touched &&
-          collectionForm.get('collectionTitle')?.hasError('required')) {
-          <p class="text-red-500 text-xs mt-1">Tiêu đề không được để trống</p>
-          }
-        </div>
-
-        <div>
-          <label class="block text-sm font-semibold text-slate-700 mb-2"
-            >Mô tả</label
-          >
-          <textarea
-            formControlName="collectionDescription"
-            class="w-full bg-white border border-slate-200 px-4 py-3 rounded-xl text-sm font-sans focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all placeholder:text-slate-400 resize-none min-h-25"
-            placeholder="Thêm mô tả ngắn (Tùy chọn)..."
-          ></textarea>
-        </div>
-
-        <div>
-          <label class="block text-sm font-semibold text-slate-700 mb-2"
-            >Ảnh bìa</label
-          >
-
-          <input
-            type="file"
-            #fileInput
-            accept="image/*"
-            class="hidden"
-            (change)="onFileSelected($event)"
-          />
-
-          <div
-            (click)="fileInput.click()"
-            class="w-full h-32 border-2 border-dashed border-slate-300 rounded-xl bg-slate-50 flex flex-col items-center justify-center text-slate-500 hover:bg-slate-100 hover:border-blue-400 hover:text-blue-600 transition-colors cursor-pointer group overflow-hidden"
-          >
-            @if (imagePreview) {
-            <img
-              [src]="imagePreview"
-              alt="Preview"
-              class="w-full h-full object-cover"
-            />
-            } @else {
-            <i
-              class="fi fi-rr-picture text-3xl mb-2 text-slate-400 group-hover:text-blue-500 transition-colors"
-            ></i>
-            <span class="text-sm font-medium"
-              >Kéo thả hoặc nhấn để chọn ảnh bìa</span
-            >
-            }
-          </div>
-        </div>
-      </div>
-
-      <div
-        class="px-6 md:px-8 py-4 md:py-6 border-t border-slate-100 flex justify-end gap-3 shrink-0 bg-white"
-      >
-        <button
-          type="button"
-          class="px-6 py-2.5 min-h-11 rounded-xl font-semibold text-slate-600 border border-slate-200 hover:bg-slate-50 transition-colors text-[15px]"
-          (click)="closeCollectionModal()"
-        >
-          Hủy bỏ
-        </button>
-        <button
-          type="submit"
-          class="bg-blue-700 text-white px-8 py-2.5 min-h-11 rounded-xl font-semibold hover:bg-blue-800 transition-colors shadow-sm text-[15px]"
-        >
-          {{ isEditMode() ? 'Cập nhật' : 'Lưu' }}
-        </button>
-      </div>
-    </form>
   </div>
 </div>
 }

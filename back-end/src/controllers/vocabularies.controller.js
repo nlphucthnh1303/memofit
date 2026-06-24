@@ -146,6 +146,7 @@ exports.deleteVocabulary = async (req, res) => {
     res.status(500).json({ error: "Lỗi máy chủ nội bộ" });
   }
 };
+
 exports.getVocabulariesByCollectionId = async (req, res) => {
   try {
     const { id } = req.params;

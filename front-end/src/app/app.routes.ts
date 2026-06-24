@@ -7,6 +7,7 @@ import { ChangePassword } from './components/change-password/change-password';
 import { Dashboard } from './components/dashboard/dashboard';
 import { Settings } from './components/settings/settings';
 import { Vocabulary } from './components/vocabulary/vocabulary';
+import { Collection } from './components/collection/collection';
 import { GenerateQuestions } from './components/generate-questions/generate-questions';
 import { Practice } from './components/practice/practice';
 import { DemoUi } from './components/demo-ui/demo-ui';
@@ -29,7 +30,8 @@ export const routes: Routes = [
     children: [
       { path: '', redirectTo: 'overview', pathMatch: 'full' },
       { path: 'overview', component: Overview, data: { headerTitle: 'Tổng Quan' } },
-      { path: 'vocabulary', component: Vocabulary, data: { headerTitle: 'Từ Vựng' } },
+      { path: 'vocabulary', component: Collection, data: { headerTitle: 'Bộ sưu tập' } },
+      { path: 'vocabulary/:id', component: Vocabulary, data: { headerTitle: 'Từ Vựng' } },
       { path: 'generate-questions', component: GenerateQuestions, data: { headerTitle: 'Tạo Câu Hỏi' } },
       { path: 'settings', component: Settings, data: { headerTitle: 'Cài Đặt' } },
       { path: 'practice', component: Practice, data: { headerTitle: 'Luyên Tập' } }
