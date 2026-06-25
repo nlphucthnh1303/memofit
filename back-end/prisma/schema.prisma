@@ -25,7 +25,7 @@ model exam_questions {
   question_id Int?
   exams       exams?     @relation(fields: [exam_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
   questions   questions? @relation(fields: [question_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  is_delete    String         @default(dbgenerated("B'0'")) @db.Bit(1)
+  is_delete   String     @default(dbgenerated("B'0'")) @db.Bit(1)
 }
 
 model exams {
@@ -36,7 +36,7 @@ model exams {
   time_limit_minutes Int?
   created_at         DateTime?        @default(now()) @db.Timestamp(6)
   exam_questions     exam_questions[]
-  is_delete    String         @default(dbgenerated("B'0'")) @db.Bit(1)
+  is_delete          String           @default(dbgenerated("B'0'")) @db.Bit(1)
 }
 
 model questions {
@@ -52,7 +52,7 @@ model questions {
   exam_questions  exam_questions[]
   vocabularies    vocabularies?    @relation(fields: [vocabulary_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
   quiz_results    quiz_results[]
-  is_delete    String         @default(dbgenerated("B'0'")) @db.Bit(1)
+  is_delete       String           @default(dbgenerated("B'0'")) @db.Bit(1)
 }
 
 model quiz_results {
@@ -68,7 +68,8 @@ model quiz_results {
   questions        questions?     @relation(fields: [question_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   quiz_sessions    quiz_sessions? @relation(fields: [session_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
   vocabularies     vocabularies?  @relation(fields: [vocabulary_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  is_delete    String         @default(dbgenerated("B'0'")) @db.Bit(1)
+  is_delete        String         @default(dbgenerated("B'0'")) @db.Bit(1)
+
   @@index([session_id], map: "idx_quiz_results_user")
 }
 
@@ -95,7 +96,8 @@ model user_vocabulary_progress {
   last_reviewed_at DateTime?     @db.Timestamp(6)
   users            users?        @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
   vocabularies     vocabularies? @relation(fields: [vocabulary_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  is_delete    String         @default(dbgenerated("B'0'")) @db.Bit(1)
+  is_delete        String        @default(dbgenerated("B'0'")) @db.Bit(1)
+
   @@index([next_review_date], map: "idx_user_vocab_progress_next_review")
 }
 
@@ -113,7 +115,7 @@ model users {
   collections              collections[]
   quiz_sessions            quiz_sessions[]
   user_vocabulary_progress user_vocabulary_progress[]
-  password_resets password_resets[]
+  password_resets          password_resets[]
 }
 
 model password_resets {
@@ -121,13 +123,11 @@ model password_resets {
   otp        String   @db.VarChar(6)
   expires_at DateTime
   created_at DateTime @default(now())
-  type      String   @default("REGISTER") // "REGISTER" hoặc "FORGOT_PASSWORD"
-  email      String   // Đảm bảo bạn đã thêm trường này
-  user_id    Int?     // Thêm dấu ? vào đây để nó trở thành không bắt buộc
+  type       String   @default("REGISTER") // "REGISTER" hoặc "FORGOT_PASSWORD"
+  email      String // Đảm bảo bạn đã thêm trường này
+  user_id    Int? // Thêm dấu ? vào đây để nó trở thành không bắt buộc
   user       users?   @relation(fields: [user_id], references: [id]) // Cũng thêm ? vào đây
 }
-
-
 
 model vocabularies {
   id                       Int                        @id @default(autoincrement())
@@ -146,6 +146,8 @@ model vocabularies {
   user_vocabulary_progress user_vocabulary_progress[]
   collections              collections?               @relation(fields: [collection_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
   is_delete                String                     @default(dbgenerated("B'0'")) @db.Bit(1)
+
+  @@unique([word, pos, collection_id])
   @@index([collection_id], map: "idx_vocab_collection")
 }
 

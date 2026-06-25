@@ -35,4 +35,12 @@ export class VocabulariesService {
     deleteVocabulary(id: number): Observable<any> {
         return this.http.delete<any>(`${this.baseApi}/${id}`);
     }
+
+    getVocabulariesDetail(collectionId: number, userId: number): Observable<any> {
+        return this.http.get<any>(`${this.baseApi}/detail/collection/${collectionId}/${userId}`);
+    }
+
+    getVocabularyDetail(vocabularyId: number, userId: number): Observable<any> {
+        return this.http.get<any>(`${this.baseApi}/detail/${vocabularyId}/${userId}`);
+    }
 }
