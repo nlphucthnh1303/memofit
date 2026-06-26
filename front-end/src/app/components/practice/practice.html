@@ -1,7 +1,7 @@
 @if (currentView() === 'list') {
-<!-- ==== MÀN HÌNH 1: DANH SÁCH ĐỀ ==== -->
+
 <main class="flex-1 overflow-y-auto w-full p-4 md:p-10 pb-20 md:pb-10">
-  <!-- Filter & Sort Bar -->
+  
   <div
     class="flex flex-col md:flex-row md:justify-between items-stretch md:items-center mb-6 md:mb-8 gap-4"
   >
@@ -76,7 +76,7 @@
     </div>
   </div>
 
-  <!-- Grid -->
+  
   <div
     class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6"
   >
@@ -129,7 +129,7 @@
     </div>
     }
 
-    <!-- AI Generate Card -->
+    
     <div
       class="border-2 border-dashed border-slate-300 rounded-2xl p-5 md:p-6 flex flex-col items-center justify-center text-center bg-slate-50/50 hover:bg-blue-50/50 hover:border-blue-300 transition-all group min-h-60"
     >
@@ -157,9 +157,9 @@
 </main>
 
 } @else {
-<!-- ==== MÀN HÌNH 2: BÀI LUYỆN TẬP ==== -->
+
 <main class="flex-1 flex flex-col bg-white w-full h-dvh">
-  <!-- Session Shell - Top Bar -->
+  
   <header
     class="flex items-center justify-between px-4 md:px-8 py-3 md:py-5 border-b border-slate-100 shrink-0 bg-white relative z-10 min-h-15"
   >
@@ -209,13 +209,13 @@
     </div>
   </header>
 
-  <!-- Session Shell - Main Content Area -->
+  
   <div
     class="flex-1 overflow-y-auto flex items-center justify-center p-4 md:p-12 bg-slate-50/20"
   >
     <div class="w-full max-w-3xl flex flex-col items-center">
       @switch (sessionType()) { @case ('cloze') {
-      <!-- Dạng 1: CLOZE TEST -->
+      
       <div class="flex flex-col items-center w-full">
         <div
           class="text-[9px] md:text-[11px] font-mono font-bold text-blue-600 tracking-[0.2em] md:tracking-[0.25em] mb-8 md:mb-16 uppercase flex justify-center w-full text-center"
@@ -261,7 +261,7 @@
         </div>
       </div>
       } @case ('listen_meaning') {
-      <!-- Dạng 2: LISTEN & TYPE MEANING -->
+      
       <div class="flex flex-col items-center">
         <div
           class="text-[11px] font-mono font-bold text-blue-600 tracking-[0.25em] mb-4 uppercase"
@@ -297,7 +297,7 @@
         </div>
       </div>
       } @case ('listen_type') {
-      <!-- Dạng 3: LISTEN & TYPE -->
+      
       <div class="flex flex-col items-center">
         <div
           class="text-[11px] font-mono font-bold text-blue-600 tracking-[0.25em] mb-4 uppercase"
@@ -333,7 +333,7 @@
         </div>
       </div>
       } @case ('multiple_choice') {
-      <!-- Dạng 4: MULTIPLE CHOICE -->
+      
       <div class="flex flex-col items-center w-full">
         <div
           class="text-[11px] font-mono font-bold text-blue-600 tracking-[0.25em] mb-6 md:mb-10 uppercase"
@@ -412,7 +412,7 @@
         </div>
       </div>
       } @case ('meaning_word') {
-      <!-- Dạng 5: SEE MEANING -> TYPE WORD -->
+      
       <div class="flex flex-col items-center">
         <div
           class="text-[11px] font-mono font-bold text-blue-600 tracking-[0.25em] mb-4 uppercase"
@@ -441,7 +441,7 @@
         </div>
       </div>
       } @case ('word_meaning') {
-      <!-- Dạng 6: SEE WORD -> TYPE MEANING -->
+      
       <div class="flex flex-col items-center">
         <div
           class="text-[11px] font-mono font-bold text-blue-600 tracking-[0.25em] mb-4 uppercase"
@@ -482,7 +482,7 @@
     </div>
   </div>
 
-  <!-- Session Shell - Footer Actions -->
+  
   @if (!isAnswerRevealed()) {
   <footer
     class="p-4 py-6 md:p-8 md:pb-12 flex items-center justify-between shrink-0 max-w-4xl w-full mx-auto bg-transparent relative z-10"

@@ -97,30 +97,30 @@ export class GenerateQuestions {
   ];
 
   questionTypes = [
-    {
-      id: 'listen_meaning',
-      title: 'Nghe và gõ ý nghĩa',
-      subtitle: 'LISTEN -> TYPE MEANING',
-      icon: 'fi-rr-ear'
-    },
-    {
-      id: 'listen_word',
-      title: 'Nghe và gõ từ vựng',
-      subtitle: 'LISTEN -> TYPE WORD',
-      icon: 'fi-rr-keyboard'
-    },
-    {
-      id: 'see_word_meaning',
-      title: 'Nhìn từ và gõ ý nghĩa',
-      subtitle: 'SEE WORD -> TYPE MEANING',
-      icon: 'fi-rr-eye'
-    },
-    {
-      id: 'see_meaning_word',
-      title: 'Nhìn ý nghĩa và gõ từ vựng',
-      subtitle: 'SEE MEANING -> TYPE WORD',
-      icon: 'fi-rr-language'
-    },
+    // {
+    //   id: 'listen_meaning',
+    //   title: 'Nghe và gõ ý nghĩa',
+    //   subtitle: 'LISTEN -> TYPE MEANING',
+    //   icon: 'fi-rr-ear'
+    // },
+    // {
+    //   id: 'listen_word',
+    //   title: 'Nghe và gõ từ vựng',
+    //   subtitle: 'LISTEN -> TYPE WORD',
+    //   icon: 'fi-rr-keyboard'
+    // },
+    // {
+    //   id: 'see_word_meaning',
+    //   title: 'Nhìn từ và gõ ý nghĩa',
+    //   subtitle: 'SEE WORD -> TYPE MEANING',
+    //   icon: 'fi-rr-eye'
+    // },
+    // {
+    //   id: 'see_meaning_word',
+    //   title: 'Nhìn ý nghĩa và gõ từ vựng',
+    //   subtitle: 'SEE MEANING -> TYPE WORD',
+    //   icon: 'fi-rr-language'
+    // },
     {
       id: 'cloze',
       title: 'Điền vào chỗ trống',

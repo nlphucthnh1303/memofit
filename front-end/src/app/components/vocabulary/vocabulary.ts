@@ -12,10 +12,11 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { of, concatMap, finalize } from 'rxjs';
 import { UserVocabularyProgress } from '../../models/user-vocabulary-progress.model';
 import { UserVocabularyProgressService } from '../../services/user-vocabulary-progress.service';
-
+import { DecimalPipe } from '@angular/common';
+import { CommonModule } from '@angular/common';
 @Component({
   selector: 'app-vocabulary',
-  imports: [ReactiveFormsModule, NgxSpinnerModule],
+  imports: [ReactiveFormsModule, NgxSpinnerModule, DecimalPipe, CommonModule],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './vocabulary.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -91,13 +92,25 @@ export class Vocabulary implements OnInit {
   activeStatusFilter = signal<string>('ALL');
 
   importStep = signal<1 | 2 | 3>(1);
-  importedWords = [
-    { stt: 1, target: 'Resilience', meaning: 'Khả năng phục hồi nhanh chóng', tags: ['IELTS'], status: 'Valid' },
-    { stt: 2, target: 'Ephemeral', meaning: 'Phù du, chóng vánh', tags: ['GRE'], status: 'Valid' },
-    { stt: 3, target: 'Ubiquitous', meaning: 'Có mặt ở khắp nơi', tags: ['GRE'], status: 'Duplicate' },
-    { stt: 4, target: 'Pragmatic', meaning: '-- Thiếu định nghĩa --', tags: ['TOEFL'], status: 'Missing' },
-    { stt: 5, target: 'Mitigate', meaning: 'Làm giảm nhẹ, làm dịu', tags: ['IELTS'], status: 'Valid' }
-  ];
+  previewData = signal<any[]>([]);
+  selectedFile = signal<File | null>(null);
+  onlyShowErrors = signal<boolean>(false);
+
+  filteredPreviewData = computed(() => {
+    if (this.onlyShowErrors()) {
+      return this.previewData().filter(row => !row.isValid);
+    }
+    return this.previewData();
+  });
+
+  stats = computed(() => {
+    const data = this.previewData();
+    return {
+      total: data.length,
+      valid: data.filter(row => row.isValid).length,
+      invalid: data.filter(row => !row.isValid).length
+    };
+  });
 
   ngOnInit(): void {
     this.initForm();
@@ -155,7 +168,7 @@ export class Vocabulary implements OnInit {
 
   getVocabularies(collectionId: number): void {
     this.spinner.show();
-    this.vocabulariesService.getVocabulariesByCollectionId(collectionId).subscribe({
+    this.vocabulariesService.getVocabulariesDetailByCollectionId(collectionId, this.getUserLogin().user.id).subscribe({
       next: (res) => {
         this.wordsList.set(res.data || []);
         this.searchVocabularies("");
@@ -175,12 +188,103 @@ export class Vocabulary implements OnInit {
   }
 
   openImportModal() {
+    this.resetImport();
     this.showImportModal.set(true);
-    this.importStep.set(2);
   }
 
   closeImportModal() {
     this.showImportModal.set(false);
+    this.resetImport();
+  }
+
+  resetImport() {
+    this.importStep.set(1);
+    this.previewData.set([]);
+    this.selectedFile.set(null);
+    this.onlyShowErrors.set(false);
+  }
+
+  downloadTemplate() {
+    this.vocabulariesService.downloadImportTemplate().subscribe({
+      next: (blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'vocabulary_template.xlsx';
+        a.click();
+        window.URL.revokeObjectURL(url);
+      },
+      error: () => this.toastService.show('Không thể tải file mẫu', 'error')
+    });
+  }
+
+  onFileSelected(event: any) {
+    const file = event.target.files[0];
+    if (file) {
+      this.selectedFile.set(file);
+      this.previewImport(file);
+    }
+  }
+
+  previewImport(file: File) {
+    this.spinner.show();
+    this.vocabulariesService.previewImportTemplate(file).subscribe({
+      next: (res) => {
+        this.previewData.set(res.data || []);
+        this.importStep.set(2);
+        this.spinner.hide();
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        this.spinner.hide();
+        this.toastService.show(err?.error?.message || 'Lỗi khi kiểm tra file', 'error');
+      }
+    });
+  }
+
+  removePreviewRow(index: number) {
+    const currentData = [...this.previewData()];
+    currentData.splice(index, 1);
+    this.previewData.set(currentData);
+  }
+
+  toggleErrorFilter() {
+    this.onlyShowErrors.update(v => !v);
+  }
+
+  confirmImport() {
+    const validData = this.previewData()
+      .filter(row => row.isValid)
+      .map(row => row.data);
+
+    if (validData.length === 0) {
+      this.toastService.show('Không có dữ liệu hợp lệ để nhập', 'warning');
+      return;
+    }
+
+    const user = this.getUserLogin();
+    if (!user) {
+      this.toastService.show('Vui lòng đăng nhập', 'error');
+      return;
+    }
+
+    this.spinner.show();
+    this.vocabulariesService.confirmImportTemplate(
+      this.currentCollectionId()!,
+      user.user.id,
+      validData
+    ).subscribe({
+      next: (res) => {
+        this.toastService.show(res.message || 'Nhập dữ liệu thành công', 'success');
+        this.spinner.hide();
+        this.closeImportModal();
+        this.getVocabularies(this.currentCollectionId()!);
+      },
+      error: (err) => {
+        this.spinner.hide();
+        this.toastService.show(err?.error?.message || 'Lỗi khi nhập dữ liệu', 'error');
+      }
+    });
   }
 
   openVocabularyModal() {
@@ -278,7 +382,8 @@ export class Vocabulary implements OnInit {
       example_sentence: this.vocabularyForm.get('example_sentence')?.value || '',
       example_meaning: undefined,
       created_at: undefined,
-      is_delete: undefined
+      is_delete: undefined,
+      user_vocabulary_progress: undefined
     };
 
     const request$ = this.isEditMode()

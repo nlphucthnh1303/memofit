@@ -8,11 +8,12 @@ const {
   updateVocabulary,
   deleteVocabulary,
   getVocabulariesByCollectionId,
-  getVocabulariesDetail,
+  getVocabulariesDetailByCollectionId,
   getVocabularyDetail,
   downloadImportTemplate,
   previewImportTemplate,
   confirmImportTemplate,
+  getVocabulariesSearch,
 } = require("../controllers/vocabularies.controller");
 const auth = require("../middleware/auth");
 const multer = require("multer");
@@ -20,7 +21,7 @@ const upload = multer({ storage: multer.memoryStorage() });
 router.route("/").get(getVocabularies).post(createVocabulary);
 router
   .route("/detail/collection/:collection_id/:user_id")
-  .get(getVocabulariesDetail);
+  .get(getVocabulariesDetailByCollectionId);
 router.route("/detail/:vocabulary_id/:user_id").get(getVocabularyDetail);
 router
   .route("/:id")
@@ -33,7 +34,5 @@ router.route("/import/template").get(downloadImportTemplate);
 router
   .route("/import/preview")
   .post(upload.single("file"), previewImportTemplate);
-router
-  .route("/import/confirm")
-  .post(upload.single("file"), confirmImportTemplate);
+router.route("/import/confirm").post(confirmImportTemplate);
 module.exports = router;

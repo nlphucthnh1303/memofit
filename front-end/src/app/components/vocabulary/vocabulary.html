@@ -1,55 +1,56 @@
 <main class="flex-1 w-full overflow-y-auto">
-  <!-- Top Header -->
+  
 
   <div class="p-4 md:p-10 max-w-300 mx-auto">
-    <!-- View 2: Danh sách Từ vựng -->
-    <!-- View 2: Danh sách Từ vựng -->
+    
 
     <div
-      class="flex flex-col md:flex-row items-stretch md:items-center justify-end mb-6 md:mb-8 pb-6 md:pb-8 gap-4"
+      class="flex items-center justify-between gap-4 mb-2 md:mb-8 pb-6 md:pb-"
     >
-      <div class="flex items-center gap-3 w-full md:w-auto">
+      
+      <button
+        class="text-slate-400 hover:text-blue-700 transition-colors text-sm font-medium flex items-center gap-1 min-h-11 shrink-0"
+        (click)="goBackToCollections()"
+      >
+        <i class="fi fi-rr-arrow-left"></i>
+        <span class="hidden sm:inline">Quay lại</span>
+      </button>
+
+      
+      <div class="flex items-center gap-3">
+        
+        <div class="relative w-32 md:w-64">
+          <i
+            class="fi fi-rr-search absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 text-sm"
+          ></i>
+          <input
+            type="search"
+            (input)="searchVocabularies($event.target.value)"
+            placeholder="Tìm kiếm..."
+            class="w-full bg-white border border-slate-200 pl-9 pr-3 py-2.5 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all shadow-sm"
+          />
+        </div>
+
+        
         <button
-          class="flex-1 md:flex-none bg-white border border-slate-200 text-slate-700 px-3 md:px-5 py-2.5 min-h-11 rounded-xl text-sm font-semibold hover:bg-slate-50 transition-colors shadow-sm flex items-center justify-center gap-2"
+          class="bg-white border border-slate-200 text-slate-700 px-3 md:px-5 py-2.5 min-h-11 rounded-xl text-sm font-semibold hover:bg-slate-50 transition-colors shadow-sm flex items-center justify-center gap-2"
           (click)="openImportModal()"
         >
           <i class="fi fi-rr-upload text-slate-500"></i>
-          <span class="hidden sm:inline">Nhập dữ liệu</span>
-          <span class="sm:hidden">Nhập</span>
+          <span class="hidden sm:inline">Nhập</span>
         </button>
+
         <button
-          class="flex-1 md:flex-none bg-blue-700 text-white px-3 md:px-5 py-2.5 min-h-11 rounded-xl text-sm font-semibold hover:bg-blue-800 transition-colors shadow-sm flex items-center justify-center gap-2"
+          class="bg-blue-700 text-white px-3 md:px-5 py-2.5 min-h-11 rounded-xl text-sm font-semibold hover:bg-blue-800 transition-colors shadow-sm flex items-center justify-center gap-2"
           (click)="openVocabularyModal()"
         >
           <i class="fi fi-rr-plus"></i>
-          <span class="hidden sm:inline">Thêm từ mới</span>
-          <span class="sm:hidden">Thêm</span>
+          <span class="hidden sm:inline">Thêm mới</span>
         </button>
       </div>
     </div>
 
-    <!-- Quick Nav Header -->
-    <div class="flex items-center justify-between gap-3 mb-4 md:mb-6">
-      <button
-        class="text-slate-400 hover:text-blue-700 transition-colors text-sm font-medium flex items-center gap-1 min-h-11"
-        (click)="goBackToCollections()"
-      >
-        <i class="fi fi-rr-arrow-left"></i> Quay lại
-      </button>
-      <div class="relative w-48 md:w-80">
-        <i
-          class="fi fi-rr-search absolute left-3 md:left-4 top-1/2 transform -translate-y-1/2 text-slate-400 text-sm md:text-base"
-        ></i>
-        <input
-          type="search"
-          (input)="searchVocabularies($event.target.value)"
-          placeholder="Tìm kiếm..."
-          class="w-full bg-white border border-slate-200 pl-9 md:pl-11 pr-3 md:pr-4 py-2 md:py-2.5 rounded-full text-xs md:text-sm font-sans focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all placeholder:text-slate-400 shadow-sm"
-        />
-      </div>
-    </div>
-
-    <!-- Data Table Desktop -->
+    
     <div
       class="hidden md:block bg-white rounded-2xl border border-slate-200 shadow-sm overflow-x-auto text-sm"
     >
@@ -107,24 +108,29 @@
               </div>
             </td>
             <td class="px-6 py-3 align-center">
-              <!-- Status Badge -->
+              
               <div class="mb-3">
-                <!-- @if (word.is_delete === '0') {
-                  <span
-                    class="inline-flex items-center gap-1.5 bg-emerald-100 text-emerald-800 px-2.5 py-1 rounded font-medium text-xs font-mono"
-                  >
-                    <div class="w-1.5 h-1.5 rounded-full bg-emerald-500"></div>
-                    Active
-                  </span>
-                  } @else {
-                  
-                  } -->
-
                 <span
-                  class="inline-flex items-center gap-1.5 bg-red-100 text-red-800 px-2.5 py-1 rounded font-medium text-xs font-mono"
+                  class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded font-medium text-xs font-mono"
+                  [ngClass]="{
+                    'bg-blue-100 text-blue-800': word.user_vocabulary_progress[0]?.status === 'learning',
+                    'bg-green-100 text-green-800': word.user_vocabulary_progress[0]?.status === 'mastered',
+                    'bg-yellow-100 text-yellow-800': word.user_vocabulary_progress[0]?.status === 'warning',
+                    'bg-red-100 text-red-800': word.user_vocabulary_progress[0]?.status === 'expired'
+                  }"
                 >
-                  <div class="w-1.5 h-1.5 rounded-full bg-red-500"></div>
-                  Inactive
+                  
+                  <div
+                    class="w-1.5 h-1.5 rounded-full"
+                    [ngClass]="{
+                        'bg-blue-500': word.user_vocabulary_progress[0]?.status === 'learning',
+                        'bg-green-500': word.user_vocabulary_progress[0]?.status === 'mastered',
+                        'bg-yellow-500': word.user_vocabulary_progress[0]?.status === 'warning',
+                        'bg-red-500': word.user_vocabulary_progress[0]?.status === 'expired'
+                      }"
+                  ></div>
+
+                  {{ word.user_vocabulary_progress[0]?.status }}
                 </span>
               </div>
             </td>
@@ -153,7 +159,7 @@
                   Không tìm thấy dữ liệu
                 </h3>
 
-                <!-- Mô tả ngắn gọn -->
+                
                 <p class="text-sm text-slate-500 mb-4 leading-relaxed">
                   Hệ thống hiện tại chưa ghi nhận thông tin hoặc dữ liệu mà bạn
                   đang tìm kiếm. Vui lòng thử tải lại trang hoặc thêm mới dữ
@@ -166,7 +172,7 @@
         </tbody>
       </table>
 
-      <!-- Pagination Desktop -->
+      
       <div
         class="px-6 py-6 border-t border-slate-200 flex justify-center items-center gap-2"
       >
@@ -207,13 +213,11 @@
       </div>
     </div>
 
-    <!-- Mobile Data Cards -->
     <div class="md:hidden flex flex-col gap-4">
       @for (word of paginatedWords(); track word.id) {
       <div
         class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm relative overflow-hidden"
       >
-        <!-- Status Indicator Line -->
         <div
           class="absolute left-0 top-0 bottom-0 w-1"
           [class.bg-emerald-500]="word.is_delete === '0'"
@@ -267,14 +271,13 @@
           Không tìm thấy dữ liệu
         </h3>
 
-        <!-- Mô tả ngắn gọn -->
         <p class="text-sm text-slate-500 mb-8 leading-relaxed">
           Hệ thống hiện tại chưa ghi nhận thông tin hoặc dữ liệu mà bạn đang tìm
           kiếm. Vui lòng thử tải lại trang hoặc thêm mới dữ liệu đầu tiên.
         </p>
       </div>
       }
-      <!-- Pagination Mobile -->
+
       <div class="py-4 flex justify-center items-center gap-1 w-full mt-2">
         <button
           class="w-10 h-10 flex justify-center items-center rounded text-slate-400 hover:bg-slate-100 transition-colors"
@@ -315,16 +318,14 @@
   </div>
 </main>
 
-<!-- Modal Import Data -->
+
 @if (showImportModal()) {
 <div
   class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex flex-col items-center justify-center p-0 md:p-4"
 >
-  <!-- Fullscreen on mobile, Centered Modal on desktop -->
   <div
     class="bg-white md:rounded-3xl shadow-xl w-full max-w-4xl h-dvh md:h-auto md:max-h-[90vh] flex flex-col font-sans"
   >
-    <!-- Modal Header -->
     <div
       class="px-6 md:px-8 py-4 md:py-6 border-b border-slate-100 flex justify-between items-start relative shrink-0"
     >
@@ -332,10 +333,10 @@
         <h2
           class="text-xl md:text-2xl font-bold text-slate-900 mb-2 md:mb-1 leading-snug"
         >
-          Nhập Dữ Liệu Hàng Loạt
+          Nhập từ vựng bằng file
         </h2>
         <p class="text-slate-500 text-sm md:text-[15px] leading-relaxed">
-          Thêm nhiều từ vựng cùng lúc qua file CSV hoặc Excel.
+          Thêm nhiều từ vựng cùng lúc qua file Excel.
         </p>
       </div>
       <button
@@ -346,9 +347,7 @@
       </button>
     </div>
 
-    <!-- Modal Body (Scrollable) -->
     <div class="flex-1 overflow-y-auto p-4 md:p-8 bg-slate-50/50 pb-20 md:pb-8">
-      <!-- Stepper Desktop -->
       <div
         class="hidden md:flex items-center justify-center mb-8 md:mb-10 max-w-lg mx-auto"
       >
@@ -408,18 +407,63 @@
           >
         </div>
       </div>
-
-      <!-- Stepper Mobile Text -->
       <div class="md:hidden flex items-center justify-center mb-6">
         <div
           class="bg-blue-50 text-blue-700 px-4 py-2 rounded-full font-bold text-sm"
         >
-          Bước {{ importStep() }}/3: {{ importStep() === 1 ? 'Tải file lên' :
-          (importStep() === 2 ? 'Kiểm tra dữ liệu' : 'Hoàn tất') }}
+          Bước {{ importStep() }}/2: {{ importStep() === 1 ? 'Tải file lên' :
+          'Kiểm tra dữ liệu' }}
         </div>
       </div>
 
-      <!-- File Uploaded Info -->
+      @if (importStep() === 1) {
+      <div class="flex flex-col items-center justify-center py-10 space-y-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-2xl">
+          <div
+            (click)="downloadTemplate()"
+            class="bg-white border-2 border-dashed border-slate-200 rounded-2xl p-6 flex flex-col items-center text-center hover:border-blue-500 hover:bg-blue-50/30 transition-all cursor-pointer group"
+          >
+            <div
+              class="w-14 h-14 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform"
+            >
+              <i class="fi fi-rr-download text-2xl"></i>
+            </div>
+            <h4 class="font-bold text-slate-800 mb-1">Tải file mẫu</h4>
+            <p class="text-xs text-slate-500 mb-4">
+              File Excel (.xlsx) định dạng chuẩn
+            </p>
+            <span
+              class="text-blue-700 text-sm font-bold flex items-center gap-2"
+              >Tải về máy <i class="fi fi-rr-arrow-right"></i
+            ></span>
+          </div>
+
+          <div
+            class="bg-white border-2 border-dashed border-slate-200 rounded-2xl p-6 flex flex-col items-center text-center hover:border-blue-500 hover:bg-blue-50/30 transition-all cursor-pointer group relative"
+          >
+            <input
+              type="file"
+              (change)="onFileSelected($event)"
+              accept=".xlsx, .xls"
+              class="absolute inset-0 opacity-0 cursor-pointer z-10"
+            />
+            <div
+              class="w-14 h-14 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform"
+            >
+              <i class="fi fi-rr-upload text-2xl"></i>
+            </div>
+            <h4 class="font-bold text-slate-800 mb-1">Tải file dữ liệu</h4>
+            <p class="text-xs text-slate-500 mb-4">
+              Kéo thả hoặc nhấn để chọn file
+            </p>
+            <span
+              class="text-blue-700 text-sm font-bold flex items-center gap-2"
+              >Chọn file từ máy <i class="fi fi-rr-arrow-right"></i
+            ></span>
+          </div>
+        </div>
+      </div>
+      } @if (importStep() === 2) {
       <div
         class="bg-blue-50/50 border border-blue-100 rounded-xl p-5 mb-8 flex items-center justify-between"
       >
@@ -429,19 +473,29 @@
           </div>
           <div>
             <div class="font-bold text-slate-900 font-mono text-sm mb-1">
-              vocabulary_list_hsk4.csv
+              {{ selectedFile()?.name }}
             </div>
-            <div class="text-[13px] text-slate-500">Kích thước: 142 KB</div>
+            <div class="text-[13px] text-slate-500">
+              Kích thước: {{ (selectedFile()?.size || 0) / 1024 | number:'1.0-2'
+              }} KB
+            </div>
           </div>
         </div>
-        <button
-          class="text-blue-700 text-sm font-mono font-bold flex items-center gap-2 hover:bg-blue-100 px-4 py-2 rounded-lg transition-colors"
-        >
-          <i class="fi fi-rr-refresh"></i> Chọn file khác
-        </button>
+        <div class="relative">
+          <input
+            type="file"
+            (change)="onFileSelected($event)"
+            accept=".xlsx, .xls"
+            class="absolute inset-0 opacity-0 cursor-pointer z-10"
+          />
+          <button
+            class="text-blue-700 text-sm font-mono font-bold flex items-center gap-2 hover:bg-blue-100 px-4 py-2 rounded-lg transition-colors"
+          >
+            <i class="fi fi-rr-refresh"></i> Chọn file khác
+          </button>
+        </div>
       </div>
 
-      <!-- Stats Cards -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-6 mb-6 md:mb-8">
         <div
           class="bg-white border border-slate-200 rounded-xl p-4 md:p-6 flex flex-col justify-between md:h-32 shadow-sm"
@@ -451,7 +505,9 @@
           >
             Tổng số dòng
           </div>
-          <div class="text-3xl md:text-4xl font-bold text-slate-900">150</div>
+          <div class="text-3xl md:text-4xl font-bold text-slate-900">
+            {{ stats().total }}
+          </div>
         </div>
         <div
           class="bg-emerald-50/50 border border-emerald-200 rounded-xl p-4 md:p-6 flex flex-col justify-between md:h-32 relative overflow-hidden shadow-sm"
@@ -464,7 +520,7 @@
           <div
             class="text-3xl md:text-4xl font-bold text-emerald-700 relative z-10"
           >
-            142
+            {{ stats().valid }}
           </div>
           <i
             class="fi fi-rr-check-circle absolute -bottom-4 -right-4 text-emerald-100 text-7xl opacity-50"
@@ -474,12 +530,12 @@
           class="bg-red-50/50 border border-red-200 rounded-xl p-4 md:p-6 flex flex-col justify-between md:h-32 relative overflow-hidden shadow-sm"
         >
           <div class="text-xs md:text-sm font-medium text-red-700 mb-2 md:mb-0">
-            Cần chỉnh sửa
+            Dòng lỗi
           </div>
           <div
             class="text-3xl md:text-4xl font-bold text-red-600 relative z-10"
           >
-            8
+            {{ stats().invalid }}
           </div>
           <i
             class="fi fi-rr-triangle-warning absolute -bottom-4 -right-4 text-red-100 text-7xl opacity-50"
@@ -487,7 +543,6 @@
         </div>
       </div>
 
-      <!-- Preview Table -->
       <div
         class="bg-white border border-slate-200 rounded-xl shadow-sm flex flex-col"
       >
@@ -498,7 +553,12 @@
             Chi tiết dữ liệu
           </div>
           <button
-            class="bg-red-50 text-red-700 px-3 py-1.5 rounded-md text-xs font-semibold flex items-center gap-2 hover:bg-red-100 transition-colors"
+            (click)="toggleErrorFilter()"
+            [class.bg-blue-700]="onlyShowErrors()"
+            [class.text-white]="onlyShowErrors()"
+            [class.bg-red-50]="!onlyShowErrors()"
+            [class.text-red-700]="!onlyShowErrors()"
+            class="px-3 py-1.5 rounded-md text-xs font-semibold flex items-center gap-2 hover:opacity-80 transition-colors"
           >
             <i class="fi fi-rr-filter"></i> Chỉ hiện lỗi
           </button>
@@ -511,39 +571,42 @@
                 <th
                   class="px-6 py-4 w-12 font-mono text-xs font-bold text-slate-500 uppercase tracking-widest text-center"
                 >
-                  STT
+                  Dòng
                 </th>
                 <th
                   class="px-6 py-4 font-mono text-xs font-bold text-slate-500 uppercase tracking-widest"
                 >
-                  Từ vựng (Target)
+                  Từ vựng
                 </th>
                 <th
                   class="px-6 py-4 font-mono text-xs font-bold text-slate-500 uppercase tracking-widest"
                 >
-                  Định nghĩa (Definition)
+                  Nghĩa
                 </th>
                 <th
                   class="px-6 py-4 font-mono text-xs font-bold text-slate-500 uppercase tracking-widest"
                 >
-                  Phân loại (Tags)
+                  Thông tin khác
                 </th>
                 <th
                   class="px-6 py-4 font-mono text-xs font-bold text-slate-500 uppercase tracking-widest"
                 >
                   Trạng thái
                 </th>
+                <th
+                  class="px-6 py-4 font-mono text-xs font-bold text-slate-500 uppercase tracking-widest text-center"
+                >
+                  Thao tác
+                </th>
               </tr>
             </thead>
             <tbody
               class="flex flex-col p-4 gap-4 bg-slate-50 md:bg-transparent md:p-0 md:gap-0 md:table-row-group"
             >
-              @for (row of importedWords; track row.stt) {
+              @for (row of filteredPreviewData(); track $index) {
               <tr
                 class="flex flex-col bg-white border border-slate-200 rounded-xl p-4 shadow-sm md:table-row md:border-b md:border-slate-100 md:border-x-0 md:border-t-0 md:rounded-none md:p-0 md:shadow-none"
-                [class.border-red-300]="row.status !== 'Valid'"
-                [class.md:bg-red-50]="row.status !== 'Valid'"
-                [class.bg-red-50]="row.status !== 'Valid'"
+                [class.bg-red-50]="!row.isValid"
               >
                 <td
                   class="pb-2 mb-2 border-b border-slate-100 border-dashed md:border-none md:p-0 md:mb-0 md:table-cell text-left md:text-center text-slate-500 font-mono"
@@ -551,37 +614,40 @@
                   <div class="flex items-center justify-between md:hidden">
                     <span
                       class="font-bold text-[10px] uppercase tracking-wider text-slate-400"
-                      >STT</span
+                      >Dòng</span
                     >
-                    <span class="font-bold text-sm">#{{ row.stt }}</span>
+                    <span class="font-bold text-sm">#{{ row.row }}</span>
                   </div>
-                  <span class="hidden md:inline px-6 py-4">{{ row.stt }}</span>
+                  <span class="hidden md:inline px-6 py-4">{{ row.row }}</span>
                 </td>
                 <td
                   class="py-1 md:px-6 md:py-4 font-medium md:table-cell flex flex-col md:block"
-                  [class.text-slate-900]="row.status === 'Valid'"
-                  [class.text-red-600]="row.status !== 'Valid'"
                 >
                   <span
                     class="md:hidden font-mono font-bold text-[10px] uppercase tracking-wider text-slate-400 mb-0.5"
                     >Từ vựng</span
                   >
-                  {{ row.target }}
+                  <div
+                    [class.text-red-600]="!row.isValid && row.errors.some(e => e.includes('Từ vựng'))"
+                  >
+                    {{ row.data.word || '(Trống)' }}
+                  </div>
+                  <div class="text-[11px] text-slate-400 font-normal">
+                    {{ row.data.ipa }}
+                  </div>
                 </td>
                 <td
                   class="py-1 md:px-6 md:py-4 md:table-cell flex flex-col md:block"
                 >
                   <span
                     class="md:hidden font-mono font-bold text-[10px] uppercase tracking-wider text-slate-400 mb-0.5"
-                    >Định nghĩa</span
+                    >Nghĩa</span
                   >
                   <span
                     class="wrap-break-word"
-                    [class.text-slate-600]="row.status === 'Valid'"
-                    [class.text-red-500]="row.status !== 'Valid' && row.meaning.includes('--')"
-                    [class.italic]="row.status !== 'Valid' && row.meaning.includes('--')"
+                    [class.text-red-600]="!row.isValid && row.errors.some(e => e.includes('Nghĩa'))"
                   >
-                    {{ row.meaning }}
+                    {{ row.data.meaning || '(Trống)' }}
                   </span>
                 </td>
                 <td
@@ -589,13 +655,13 @@
                 >
                   <span
                     class="md:hidden font-mono font-bold text-[10px] uppercase tracking-wider text-slate-400 mb-1"
-                    >Phân loại</span
+                    >Khác</span
                   >
                   <div class="flex flex-wrap gap-1.5">
-                    @for (tag of row.tags; track tag) {
+                    @if (row.data.pos) {
                     <span
                       class="bg-slate-200/70 text-slate-600 px-2 py-0.5 rounded text-[11px] font-mono font-bold uppercase"
-                      >{{ tag }}</span
+                      >{{ row.data.pos }}</span
                     >
                     }
                   </div>
@@ -603,25 +669,34 @@
                 <td
                   class="pt-2 mt-2 md:px-6 md:py-4 border-t border-slate-100 border-dashed md:border-none md:table-cell flex items-center md:block"
                 >
-                  @if (row.status === 'Valid') {
+                  @if (row.isValid) {
                   <div
-                    class="flex items-center gap-1.5 text-slate-700 font-medium text-[13px]"
+                    class="flex items-center gap-1.5 text-emerald-600 font-medium text-[13px]"
                   >
                     <i class="fi fi-rr-check-circle"></i> Hợp lệ
                   </div>
-                  } @else if (row.status === 'Duplicate') {
-                  <div
-                    class="flex items-center gap-1.5 text-red-600 font-medium text-[13px]"
-                  >
-                    <i class="fi fi-rr-info"></i> Trùng lặp
-                  </div>
                   } @else {
                   <div
-                    class="flex items-center gap-1.5 text-red-600 font-medium text-[13px]"
+                    class="flex flex-col gap-1 text-red-600 font-medium text-[13px]"
                   >
-                    <i class="fi fi-rr-triangle-warning"></i> Thiếu dữ liệu
+                    <div class="flex items-center gap-1.5">
+                      <i class="fi fi-rr-triangle-warning"></i> Lỗi
+                    </div>
+                    @for (err of row.errors; track err) {
+                    <div class="text-[11px] font-normal italic">
+                      • {{ err }}
+                    </div>
+                    }
                   </div>
                   }
+                </td>
+                <td class="md:px-6 md:py-4 md:table-cell text-center">
+                  <button
+                    (click)="removePreviewRow($index)"
+                    class="text-slate-400 hover:text-red-600 p-2 md:p-0"
+                  >
+                    <i class="fi fi-rr-trash"></i>
+                  </button>
                 </td>
               </tr>
               }
@@ -631,12 +706,12 @@
         <div
           class="bg-slate-50 text-center py-3 text-xs text-slate-500 rounded-b-xl border-t border-slate-100"
         >
-          Hiển thị 5 trên tổng số 150 dòng
+          Hiển thị {{ filteredPreviewData().length }} dòng
         </div>
       </div>
+      }
     </div>
 
-    <!-- Modal Footer -->
     <div
       class="px-4 md:px-8 py-4 md:py-5 border-t border-slate-200 bg-white md:rounded-b-3xl flex flex-col md:flex-row justify-between items-stretch md:items-center gap-3 md:gap-0 shrink-0"
     >
@@ -655,23 +730,31 @@
         >
           HỦY BỎ
         </button>
+
+        @if (importStep() === 2) {
         <button
-          class="border border-blue-200 text-blue-700 px-6 py-2.5 min-h-11 rounded-xl font-semibold text-[15px] hover:bg-blue-50 transition-colors justify-center flex items-center"
+          (click)="resetImport()"
+          class="border border-slate-200 text-slate-600 px-6 py-2.5 min-h-11 rounded-xl font-semibold text-[15px] hover:bg-slate-50 transition-colors justify-center flex items-center"
         >
-          Sửa lỗi (8)
+          Làm lại
         </button>
         <button
+          (click)="confirmImport()"
+          [disabled]="stats().valid === 0"
+          [class.opacity-50]="stats().valid === 0"
           class="bg-blue-700 text-white px-8 py-2.5 min-h-11 rounded-xl font-semibold text-[15px] hover:bg-blue-800 transition-colors shadow-sm flex items-center justify-center gap-2"
         >
-          Nhập 142 từ hợp lệ <i class="fi fi-rr-arrow-right"></i>
+          Nhập {{ stats().valid }} từ hợp lệ
+          <i class="fi fi-rr-arrow-right"></i>
         </button>
+        }
       </div>
     </div>
   </div>
 </div>
 }
 
-<!-- Modal Vocabulary -->
+
 @if (showVocabularyModal()) {
 <div
   class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex flex-col items-center justify-end md:justify-center p-0 md:p-4"

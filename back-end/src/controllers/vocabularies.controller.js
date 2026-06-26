@@ -183,7 +183,7 @@ exports.getVocabulariesByCollectionId = async (req, res) => {
   }
 };
 
-exports.getVocabulariesDetail = async (req, res) => {
+exports.getVocabulariesDetailByCollectionId = async (req, res) => {
   try {
     const { collection_id, user_id } = req.params;
     const vocabularies = await prisma.vocabularies.findMany({
@@ -358,84 +358,91 @@ exports.previewImportTemplate = async (req, res) => {
 
 exports.confirmImportTemplate = async (req, res) => {
   try {
-    if (!req.file) {
-      return res.status(400).json({ message: "Chưa upload file" });
+    const { collection_id, user_id, vocabularies } = req.body;
+
+    if (
+      !vocabularies ||
+      !Array.isArray(vocabularies) ||
+      vocabularies.length === 0
+    ) {
+      return res
+        .status(400)
+        .json({ message: "Dữ liệu import không hợp lệ hoặc trống" });
     }
-    const { collection_id, user_id } = req.params;
-    // đọc file
 
-    const workbook = new ExcelJS.Workbook();
-    await workbook.xlsx.load(req.file.buffer);
-    const worksheet = workbook.getWorksheet(1);
+    if (!collection_id || !user_id) {
+      return res
+        .status(400)
+        .json({ message: "Thiếu collection_id hoặc user_id" });
+    }
 
-    const previewData = [];
-    const validPos = [
-      "noun",
-      "pronoun",
-      "verb",
-      "adjective",
-      "adverb",
-      "preposition",
-      "conjunction",
-      "interjection",
-    ];
-    const vocabData = [];
-    worksheet.eachRow({ includeEmpty: false }, (row, rowNumber) => {
-      if (rowNumber === 1) return;
+    const vocabData = vocabularies.map((item) => ({
+      collection_id: parseInt(collection_id),
+      word: item.word?.toString(),
+      pos: item.pos?.toString(),
+      ipa: item.ipa?.toString(),
+      meaning: item.meaning?.toString(),
+      example_sentence: item.example_sentence?.toString(),
+      example_meaning: item.example_meaning?.toString(),
+    }));
 
-      const word = row.getCell(1).value;
-      const pos = row.getCell(2).value;
-      const ipa = row.getCell(3).value;
-      const meaning = row.getCell(4).value;
-
-      if (!word || !ipa || !meaning) {
-        throw new Error(
-          `Dữ liệu không hợp lệ tại dòng ${rowNumber}: Thiếu thông tin bắt buộc`,
-        );
-      }
-
-      if (pos && !validPos.includes(pos.toString())) {
-        throw new Error(
-          `Dữ liệu không hợp lệ tại dòng ${rowNumber}: Loại từ '${pos}' không hợp lệ`,
-        );
-      }
-      vocabData.push({
-        collection_id: parseInt(collection_id),
-        word: row.getCell(1).value?.toString(),
-        pos: row.getCell(2).value?.toString(),
-        ipa: row.getCell(3).value?.toString(),
-        meaning: row.getCell(4).value?.toString(),
-        example_sentence: row.getCell(5).value?.toString(),
-        example_meaning: row.getCell(6).value?.toString(),
-      });
-    });
-
+    // Create vocabularies
     const result = await prisma.vocabularies.createMany({
       data: vocabData,
       skipDuplicates: true,
     });
 
+    // To create progress, we need the IDs of the newly created (or existing) vocabularies
+    // Since createMany doesn't return IDs, we find them by word and collection_id
+    const words = vocabData.map((v) => v.word);
     const allVocabs = await prisma.vocabularies.findMany({
-      where: { collection_id: parseInt(collection_id) },
+      where: {
+        collection_id: parseInt(collection_id),
+        word: { in: words },
+        is_delete: "0",
+      },
       select: { id: true, word: true, pos: true },
     });
 
     const vocabMap = new Map();
     allVocabs.forEach((v) => vocabMap.set(`${v.word}|${v.pos}`, v.id));
 
-    const progressData = vocabData.map((item) => ({
-      user_id: parseInt(user_id),
-      vocabulary_id: vocabMap.get(`${item.word}|${item.pos}`),
-      status: "learning",
-    }));
-    await prisma.user_vocabulary_progress.createMany({ data: progressData });
+    const progressData = [];
+    for (const item of vocabData) {
+      const vocabId = vocabMap.get(`${item.word}|${item.pos}`);
+      if (vocabId) {
+        // Check if progress already exists to avoid duplicates
+        const existingProgress =
+          await prisma.user_vocabulary_progress.findFirst({
+            where: {
+              user_id: parseInt(user_id),
+              vocabulary_id: vocabId,
+              is_delete: "0",
+            },
+          });
+
+        if (!existingProgress) {
+          progressData.push({
+            user_id: parseInt(user_id),
+            vocabulary_id: vocabId,
+            status: "learning",
+          });
+        }
+      }
+    }
+
+    if (progressData.length > 0) {
+      await prisma.user_vocabulary_progress.createMany({ data: progressData });
+    }
 
     res.status(200).json({
-      message: "Kiểm tra dữ liệu import thành công",
+      message: "Nhập dữ liệu thành công",
       data: result,
     });
   } catch (error) {
     console.error(error);
-    res.status(400).json({ error: error.message });
+    res
+      .status(500)
+      .json({ error: "Lỗi máy chủ nội bộ", message: error.message });
   }
 };

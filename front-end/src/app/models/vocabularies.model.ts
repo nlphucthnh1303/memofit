@@ -9,6 +9,7 @@ export class Vocabularies {
     example_meaning: string | undefined;
     created_at: Date | undefined;
     is_delete: string | undefined;
+    user_vocabulary_progress: any;
 
     constructor(init?: Partial<Vocabularies>) {
         if (init) {
@@ -22,6 +23,7 @@ export class Vocabularies {
             this.example_meaning = init.example_meaning;
             this.created_at = init.created_at ?? new Date();
             this.is_delete = init.is_delete ?? '0';
+            this.user_vocabulary_progress = init.user_vocabulary_progress || [];
         }
     }
 }

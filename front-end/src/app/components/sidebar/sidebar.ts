@@ -23,7 +23,7 @@ import { LayoutService } from "../../services/layout.service";
           [class.hidden]="layout.collapsed"
           [class.pointer-events-none]="layout.collapsed"
         >
-          <!-- Header Logo / Brand -->
+          
           <div class="flex items-center w-full h-12 shrink-0">
             <span
               class="font-bold text-xl text-blue-800 whitespace-nowrap ml-3"
@@ -46,9 +46,9 @@ import { LayoutService } from "../../services/layout.service";
 
       <div class="w-full h-full flex flex-col justify-between relative">
         <div class="w-full flex flex-col items-center">
-          <!-- Navigation Menu -->
+          
           <nav class="space-y-2 font-medium text-[15px] w-full flex flex-col">
-            <!-- Bảng điều khiển -->
+            
             <a
               routerLink="/dashboard/overview"
               routerLinkActive="text-blue-700 bg-blue-50/80 !border-blue-700 font-semibold"
@@ -81,7 +81,7 @@ import { LayoutService } from "../../services/layout.service";
               }
             </a>
 
-            <!-- Luyện tập -->
+            
             <a
               routerLink="/dashboard/practice"
               routerLinkActive="text-blue-700 bg-blue-50/80 !border-blue-700 font-semibold"
@@ -112,8 +112,7 @@ import { LayoutService } from "../../services/layout.service";
                 </div>
               }
             </a>
-
-            <!-- Kho từ vựng -->
+            
             <a
               routerLink="/dashboard/vocabulary"
               routerLinkActive="text-blue-700 bg-blue-50/80 !border-blue-700 font-semibold"
@@ -145,7 +144,7 @@ import { LayoutService } from "../../services/layout.service";
               }
             </a>
 
-            <!-- Tạo câu hỏi -->
+            
             <a
               routerLink="/dashboard/generate-questions"
               routerLinkActive="text-blue-700 bg-blue-50/80 !border-blue-700 font-semibold"
@@ -179,13 +178,13 @@ import { LayoutService } from "../../services/layout.service";
 
             <div class="pt-2 w-full border-t border-slate-200/60 my-1"></div>
 
-            <!-- Cài đặt -->
+            
           </nav>
         </div>
 
-        <!-- Footer actions & CTA -->
+        
         <div class="space-y-4 w-full flex flex-col items-center">
-          <!-- Trợ giúp & Hỗ trợ -->
+          
           <a
             routerLink="/dashboard/settings"
             routerLinkActive="text-blue-700 bg-blue-50/80 !border-blue-700 font-semibold"
@@ -216,24 +215,9 @@ import { LayoutService } from "../../services/layout.service";
               </div>
             }
           </a>
-          <!-- <a href="#" class="flex items-center text-slate-500 hover:text-slate-800 relative group/nav cursor-pointer h-10 px-2.5 w-full"
-             [class.justify-center]="layout.collapsed">
-            <div class="flex items-center justify-center shrink-0 w-8 h-8">
-              <mat-icon class="text-[20px] w-5 h-5 flex items-center justify-center">help_outline</mat-icon> 
-            </div>
-            <span class="whitespace-nowrap overflow-hidden text-[14px] text-slate-600 font-medium"
-                  [class.max-w-0]="layout.collapsed" [class.opacity-0]="layout.collapsed"
-                  [class.max-w-[180px]]="!layout.collapsed" [class.opacity-100]="!layout.collapsed" [class.ml-3]="!layout.collapsed">
-              Trợ giúp & Hỗ trợ
-            </span>
-            @if (layout.collapsed) {
-               <div class="absolute left-16 bg-slate-800 text-white text-xs py-1.5 px-3 rounded-lg font-sans whitespace-nowrap opacity-0 pointer-events-none group-hover/nav:opacity-100 shadow-lg z-50">
-                 Trợ giúp & Hỗ trợ
-               </div>
-            }
-          </a> -->
+          
 
-          <!-- Luyện tập ngay button CTA -->
+          
           <button
             class="bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-sans font-semibold hover:shadow-md active:scale-95 flex items-center justify-center relative group/nav h-11 w-full shrink-0"
             [class.px-1]="layout.collapsed"
@@ -264,7 +248,7 @@ import { LayoutService } from "../../services/layout.service";
       </div>
     </aside>
 
-    <!-- Mobile Bottom Navigation -->
+    
     <nav
       class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 z-50 flex justify-around items-center h-[72px] pb-[env(safe-area-inset-bottom)] px-2 shadow-[0_-4px_20px_rgba(0,0,0,0.05)]"
     >
@@ -290,7 +274,7 @@ import { LayoutService } from "../../services/layout.service";
         >
       </a>
 
-      <!-- Luyện tập (Prominent Button) -->
+      
       <a
         routerLink="/practice"
         routerLinkActive="text-blue-700"

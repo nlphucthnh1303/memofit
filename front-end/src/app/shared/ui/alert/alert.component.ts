@@ -14,7 +14,6 @@ export type AlertType = 'success' | 'error' | 'info' | 'warning';
         class="flex items-start gap-4 p-4 rounded-xl border shadow-sm transition-all duration-300 relative"
         [ngClass]="typeClasses[type]"
       >
-        <!-- Icon -->
         <i class="mt-0.5 text-xl fi" [ngClass]="iconClasses[type]"></i>
         
         <div class="flex-1 pr-6">
