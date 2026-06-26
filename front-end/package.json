@@ -30,6 +30,7 @@
     "motion": "^12.23.24",
     "ngx-alert-message": "^4.0.12",
     "ngx-spinner": "^21.1.0",
+    "onnxruntime-web": "^1.27.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0"
   },

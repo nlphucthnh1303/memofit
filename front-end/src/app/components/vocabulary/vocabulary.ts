@@ -277,8 +277,6 @@ export class Vocabulary implements OnInit {
       meaning: this.vocabularyForm.get('meaning')?.value,
       example_sentence: this.vocabularyForm.get('example_sentence')?.value || '',
       example_meaning: undefined,
-      audio_word_path: undefined,
-      audio_example_path: undefined,
       created_at: undefined,
       is_delete: undefined
     };

@@ -1,6 +1,6 @@
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
-
+const { generateAiQuestion } = require("../services/ai.service");
 exports.getQuestions = async (req, res) => {
   try {
     const questions = await prisma.questions.findMany({
@@ -145,5 +145,173 @@ exports.deleteQuestion = async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
+  }
+};
+
+const prepareQuestionDistribution = (vocabList, targetTotal) => {
+  const totalVocabs = vocabList.length;
+  if (totalVocabs >= targetTotal) {
+    return vocabList
+      .sort(() => 0.5 - Math.random())
+      .slice(0, targetTotal)
+      .map((vocab) => ({
+        vocab: vocab,
+        count: 1,
+      }));
+  } else {
+    const baseCount = Math.floor(targetTotal / totalVocabs);
+    const remainder = targetTotal % totalVocabs;
+    return vocabList.map((vocab, index) => ({
+      vocab: vocab,
+      count: baseCount + (index < remainder ? 1 : 0),
+    }));
+  }
+};
+
+exports.generateAiQuestions = async (req, res) => {
+  try {
+    const { vocabulary_list, config } = req.body;
+
+    if (!vocabulary_list?.length || !config?.question_types) {
+      return res
+        .status(400)
+        .json({ error: "Thiếu dữ liệu đầu vào hoặc cấu hình" });
+    }
+    const allocation = prepareQuestionDistribution(
+      vocabulary_list,
+      config.quantity_question,
+    );
+
+    const BATCH_SIZE = 5;
+    const batches = [];
+    for (let i = 0; i < allocation.length; i += BATCH_SIZE) {
+      batches.push(allocation.slice(i, i + BATCH_SIZE));
+    }
+
+    const aiResults = await Promise.all(
+      batches.map(async (batch) => {
+        return await generateAiQuestion(batch, config.question_types);
+      }),
+    );
+
+    const allQuestions = aiResults.flat().map((q) => ({
+      vocabulary_id: q.vocabulary_id,
+      question_type: q.question_type,
+      question_text: q.question_text,
+      correct_answer: q.correct_answer,
+      wrong_answers: q.wrong_answers,
+      is_ai_generated: true,
+      is_approved: false,
+    }));
+
+    res.status(201).json({ message: "", data: allQuestions });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Lỗi hệ thống khi tạo câu hỏi" });
+  }
+};
+
+const shuffleArray = (array) => {
+  const arr = [...array];
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+};
+
+exports.generateStaticQuestions = async (req, res) => {
+  try {
+    const { vocabulary_list, config } = req.body;
+
+    if (!vocabulary_list?.length || !config?.question_types) {
+      return res
+        .status(400)
+        .json({ error: "Thiếu dữ liệu đầu vào hoặc cấu hình" });
+    }
+
+    const targetType = config.question_types;
+    const totalQuestionsRequested = vocabulary_list.length;
+    const shuffledVocab = shuffleArray(vocabulary_list);
+    const selectedVocab = shuffledVocab.slice(0, totalQuestionsRequested);
+
+    const questions = [];
+
+    for (let i = 0; i < selectedVocab.length; i++) {
+      const item = selectedVocab[i];
+      let questionText = "";
+      let correctAnswer = "";
+      let answerKey = "";
+
+      // 1. Xác định loại câu hỏi
+      switch (targetType) {
+        case "LISTEN_TYPE_MEANING":
+          questionText = item.word;
+          correctAnswer = item.meaning;
+          answerKey = "meaning";
+          break;
+
+        case "LISTEN_TYPE_WORD":
+          questionText = item.word;
+          correctAnswer = item.word;
+          answerKey = "word";
+          break;
+
+        case "SEE_WORD_TYPE_MEANING":
+          questionText = `Nghĩa của ${item.word} là gì ?`;
+          correctAnswer = item.meaning;
+          answerKey = "meaning";
+          break;
+
+        case "SEE_MEANING_TYPE_WORD":
+          questionText = `Tiếng anh của "${item.meaning}" là gì ?`;
+          correctAnswer = item.word;
+          answerKey = "word";
+          break;
+
+        default:
+          questionText = item.word;
+          correctAnswer = item.meaning;
+          answerKey = "meaning";
+      }
+
+      // 2. Call dữ liệu từ Prisma để lấy từ vựng làm đáp án nhiễu (distractors)
+      const dbVocabs = await prisma.vocabularies.findMany({
+        where: {
+          collection_id: item.collection_id,
+          id: { not: item.id },
+          is_delete: "0",
+        },
+        select: {
+          [answerKey]: true,
+        },
+      });
+
+      const rawDistractors = dbVocabs.map((v) => v[answerKey]);
+      const shuffledDistractors = shuffleArray(rawDistractors).slice(0, 3);
+      const options = shuffleArray([...shuffledDistractors, correctAnswer]);
+
+      // 3. Đẩy câu hỏi hoàn chỉnh vào mảng kết quả
+      questions.push({
+        vocabulary_id: item.id,
+        question_type: targetType,
+        question: questionText,
+        ipa: item.ipa,
+        example_sentence: item.example_sentence,
+        example_meaning: item.example_meaning,
+        options: options,
+        correct_answer: correctAnswer,
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      test_duration: config.test_duration || 60,
+      total_questions: questions.length,
+      data: questions,
+    });
+  } catch (error) {
+    console.error("Lỗi Generator:", error);
+    res.status(500).json({ error: "Lỗi hệ thống khi tạo câu hỏi" });
   }
 };

@@ -7,8 +7,6 @@ export class Vocabularies {
     meaning: string | undefined;
     example_sentence: string | undefined;
     example_meaning: string | undefined;
-    audio_word_path: string | undefined;
-    audio_example_path: string | undefined;
     created_at: Date | undefined;
     is_delete: string | undefined;
 
@@ -22,8 +20,6 @@ export class Vocabularies {
             this.meaning = init.meaning;
             this.example_sentence = init.example_sentence;
             this.example_meaning = init.example_meaning;
-            this.audio_word_path = init.audio_word_path;
-            this.audio_example_path = init.audio_example_path;
             this.created_at = init.created_at ?? new Date();
             this.is_delete = init.is_delete ?? '0';
         }

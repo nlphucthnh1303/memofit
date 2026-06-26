@@ -139,8 +139,6 @@ CREATE TABLE "vocabularies" (
     "meaning" TEXT,
     "example_sentence" TEXT,
     "example_meaning" TEXT,
-    "audio_word_path" VARCHAR(255),
-    "audio_example_path" VARCHAR(255),
     "created_at" TIMESTAMP(6) DEFAULT CURRENT_TIMESTAMP,
     "is_delete" BIT(1) NOT NULL DEFAULT B'0',
 

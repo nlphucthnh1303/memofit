@@ -20,6 +20,28 @@ exports.getVocabularies = async (req, res) => {
   }
 };
 
+exports.getVocabulariesSearch = async (req, res) => {
+  try {
+    const { keyword } = req.params;
+    const vocabularies = await prisma.vocabularies.findMany({
+      where: {
+        is_delete: "0",
+        OR: [
+          { word: { contains: keyword } },
+          { meaning: { contains: keyword } },
+        ],
+      },
+    });
+    res.status(200).json({
+      message: "Lấy danh sách từ vựng thành công",
+      data: vocabularies,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Lỗi máy chủ nội bộ" });
+  }
+};
+
 exports.getVocabulary = async (req, res) => {
   try {
     const { id } = req.params;
@@ -66,8 +88,6 @@ exports.createVocabulary = async (req, res) => {
       meaning,
       example_sentence,
       example_meaning,
-      audio_word_path,
-      audio_example_path,
     } = data;
     const vocabulary = await prisma.vocabularies.create({
       data: {
@@ -78,8 +98,6 @@ exports.createVocabulary = async (req, res) => {
         meaning,
         example_sentence,
         example_meaning,
-        audio_word_path,
-        audio_example_path,
       },
     });
     return res.status(201).json({
@@ -106,8 +124,6 @@ exports.updateVocabulary = async (req, res) => {
       meaning,
       example_sentence,
       example_meaning,
-      audio_word_path,
-      audio_example_path,
     } = req.body;
     const vocabulary = await prisma.vocabularies.update({
       where: { id: parseInt(id), is_delete: "0" },
@@ -119,8 +135,6 @@ exports.updateVocabulary = async (req, res) => {
         meaning,
         example_sentence,
         example_meaning,
-        audio_word_path,
-        audio_example_path,
       },
     });
     res.status(200).json({

@@ -138,8 +138,6 @@ model vocabularies {
   meaning                  String?
   example_sentence         String?
   example_meaning          String?
-  audio_word_path          String?                    @db.VarChar(255)
-  audio_example_path       String?                    @db.VarChar(255)
   created_at               DateTime?                  @default(now()) @db.Timestamp(6)
   questions                questions[]
   quiz_results             quiz_results[]

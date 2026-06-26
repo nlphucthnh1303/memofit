@@ -7,6 +7,8 @@ const {
   createQuestion,
   updateQuestion,
   deleteQuestion,
+  generateAiQuestions,
+  generateStaticQuestions,
 } = require("../controllers/questions.controller");
 
 router.route("/").get(getQuestions).post(createQuestion);
@@ -15,5 +17,6 @@ router
   .get(getQuestion)
   .put(updateQuestion)
   .delete(deleteQuestion);
-
+router.route("/generate-ai").post(generateAiQuestions);
+router.route("/generate-static").post(generateStaticQuestions);
 module.exports = router;
