@@ -7,6 +7,7 @@ const {
   createExamQuestion,
   updateExamQuestion,
   deleteExamQuestion,
+  createMultipleExamQuestions,
 } = require("../controllers/exam_questions.controller");
 
 router.route("/").get(getExamQuestions).post(createExamQuestion);
@@ -15,5 +16,7 @@ router
   .get(getExamQuestion)
   .put(updateExamQuestion)
   .delete(deleteExamQuestion);
+
+router.route("/multiple").post(createMultipleExamQuestions);
 
 module.exports = router;

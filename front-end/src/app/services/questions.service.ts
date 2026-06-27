@@ -31,4 +31,15 @@ export class QuestionsService {
     deleteQuestion(id: number): Observable<any> {
         return this.http.delete<any>(`${this.baseApi}/${id}`);
     }
+
+    generateAiQuestions(vocabularyList: any[], config: any): Observable<any> {
+        return this.http.post<any>(`${this.baseApi}/generate-ai`, {
+            vocabulary_list: vocabularyList,
+            config: config
+        });
+    }
+
+    createMultipleQuestions(data: Questions[]): Observable<any> {
+        return this.http.post<any>(`${this.baseApi}/multiple`, data);
+    }
 }

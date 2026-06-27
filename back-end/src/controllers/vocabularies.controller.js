@@ -23,6 +23,7 @@ exports.getVocabularies = async (req, res) => {
 exports.getVocabulariesSearch = async (req, res) => {
   try {
     const { keyword } = req.params;
+    const limit = parseInt(req.params.limit, 10) || 10;
     const vocabularies = await prisma.vocabularies.findMany({
       where: {
         is_delete: "0",
@@ -31,6 +32,7 @@ exports.getVocabulariesSearch = async (req, res) => {
           { meaning: { contains: keyword } },
         ],
       },
+      take: limit,
     });
     res.status(200).json({
       message: "Lấy danh sách từ vựng thành công",

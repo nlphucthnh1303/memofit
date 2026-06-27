@@ -24,6 +24,10 @@ export class ExamQuestionsService {
         return this.http.post<any>(this.baseApi, data);
     }
 
+    createExamQuestions(data: ExamQuestions[]): Observable<any> {
+        return this.http.post<any>(`${this.baseApi}/multiple`, data);
+    }
+
     updateExamQuestion(id: number, data: Partial<ExamQuestions>): Observable<any> {
         return this.http.put<any>(`${this.baseApi}/${id}`, data);
     }

@@ -29,7 +29,7 @@ router
   .put(updateVocabulary)
   .delete(deleteVocabulary);
 router.route("/collection/:id").get(getVocabulariesByCollectionId);
-router.route("/search/:keyword").get(getVocabulariesSearch);
+router.route("/search/:keyword/:limit").get(getVocabulariesSearch);
 router.route("/import/template").get(downloadImportTemplate);
 router
   .route("/import/preview")

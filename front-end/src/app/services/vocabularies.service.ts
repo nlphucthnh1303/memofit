@@ -63,4 +63,8 @@ export class VocabulariesService {
             vocabularies: vocabularies
         });
     }
+
+    getVocabulariesSearch(keyword: string = " ", limit: number = 10): Observable<any> {
+        return this.http.get<any>(`${this.baseApi}/search/${keyword}/${limit}`);
+    }
 }

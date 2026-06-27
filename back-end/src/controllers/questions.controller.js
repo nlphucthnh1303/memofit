@@ -1,6 +1,6 @@
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
-const { generateAiQuestion } = require("../services/ai.service");
+const questionService = require("../services/question.service");
 exports.getQuestions = async (req, res) => {
   try {
     const questions = await prisma.questions.findMany({
@@ -66,6 +66,27 @@ exports.createQuestion = async (req, res) => {
     res.status(201).json({
       message: "Tạo câu hỏi thành công",
       data: question,
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+exports.createMultipleQuestions = async (req, res) => {
+  try {
+    const questions = req.body;
+    if (!questions || !Array.isArray(questions)) {
+      return res.status(400).json({ message: "Dữ liệu không hợp lệ" });
+    }
+
+    const createdQuestions = await prisma.questions.createManyAndReturn({
+      data: questions,
+      skipDuplicates: true,
+    });
+
+    res.status(201).json({
+      message: "Tạo danh sách câu hỏi thành công",
+      data: createdQuestions,
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -173,41 +194,24 @@ exports.generateAiQuestions = async (req, res) => {
     const { vocabulary_list, config } = req.body;
 
     if (!vocabulary_list?.length || !config?.question_types) {
-      return res
-        .status(400)
-        .json({ error: "Thiếu dữ liệu đầu vào hoặc cấu hình" });
+      return res.status(400).json({
+        status: "error",
+        message: "Thiếu dữ liệu đầu vào hoặc cấu hình",
+      });
     }
-    const allocation = prepareQuestionDistribution(
+
+    // Delegate business logic completely to the service layer
+    const aiQuestions = await questionService.processAiQuestions(
       vocabulary_list,
-      config.quantity_question,
+      config,
     );
 
-    const BATCH_SIZE = 5;
-    const batches = [];
-    for (let i = 0; i < allocation.length; i += BATCH_SIZE) {
-      batches.push(allocation.slice(i, i + BATCH_SIZE));
-    }
-
-    const aiResults = await Promise.all(
-      batches.map(async (batch) => {
-        return await generateAiQuestion(batch, config.question_types);
-      }),
-    );
-
-    const allQuestions = aiResults.flat().map((q) => ({
-      vocabulary_id: q.vocabulary_id,
-      question_type: q.question_type,
-      question_text: q.question_text,
-      correct_answer: q.correct_answer,
-      wrong_answers: q.wrong_answers,
-      is_ai_generated: true,
-      is_approved: false,
-    }));
-
-    res.status(201).json({ message: "", data: allQuestions });
+    res.status(200).json({ status: "success", data: aiQuestions });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Lỗi hệ thống khi tạo câu hỏi" });
+    res
+      .status(500)
+      .json({ status: "error", message: "Lỗi hệ thống khi tạo câu hỏi" });
   }
 };
 
