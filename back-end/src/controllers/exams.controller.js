@@ -24,6 +24,17 @@ exports.getExam = async (req, res) => {
 
     const exam = await prisma.exams.findFirst({
       where: { id, is_delete: "0" },
+      include: {
+        exam_questions: {
+          include: {
+            questions: {
+              include: {
+                vocabularies: true
+              }
+            }
+          }
+        }
+      }
     });
 
     if (!exam) {

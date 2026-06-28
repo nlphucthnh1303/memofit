@@ -13,12 +13,10 @@ export class QuizSessions {
 
     constructor(init?: Partial<QuizSessions>) {
         if (init) {
-            this.id = init.id;
-            this.user_id = init.user_id;
-            this.mode = init.mode ?? SessionMode.NORMAL;
-            this.started_at = init.started_at ?? new Date();
-            this.ended_at = init.ended_at;
-            this.is_delete = init.is_delete ?? '0';
+            Object.assign(this, init);
         }
+        if (!this.mode) this.mode = SessionMode.NORMAL;
+        if (!this.started_at) this.started_at = new Date();
+        if (!this.is_delete) this.is_delete = '0';
     }
 }

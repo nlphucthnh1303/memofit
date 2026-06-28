@@ -1,81 +1,295 @@
-import { Component, ChangeDetectionStrategy, signal, inject } from '@angular/core';
+import { Component, ChangeDetectionStrategy, signal, inject, OnInit, OnDestroy } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { LayoutService } from '../../services/layout.service';
-import { Sidebar } from '../sidebar/sidebar';
+import { ExamsService } from '../../services/exams.service';
+import { QuizSessionsService } from '../../services/quiz-sessions.service';
+import { QuizResultsService } from '../../services/quiz-results.service';
+import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { QuizResults } from '../../models/quiz-results.model';
+import { SessionMode, QuizSessions } from '../../models/quiz-sessions.model';
 
 @Component({
   selector: 'app-practice',
-  imports: [RouterLink],
+  standalone: true,
+  imports: [RouterLink, FormsModule, CommonModule],
   templateUrl: './practice.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class Practice {
+export class Practice implements OnInit, OnDestroy {
   layout = inject(LayoutService);
+  examsService = inject(ExamsService);
+  quizSessionsService = inject(QuizSessionsService);
+  quizResultsService = inject(QuizResultsService);
 
   currentView = signal<'list' | 'session'>('list');
   activeFilter = signal<'ALL' | 'IT' | 'GRAMMAR' | 'BUSINESS'>('ALL');
 
+  examsList = signal<any[]>([]);
+  filteredExamsList = signal<any[]>([]);
+
+  // Exam Modal State
+  showEditModal = signal(false);
+  editExamId = signal<number | null>(null);
+  editExamTitle = signal('');
+  editExamDesc = signal('');
+
   // Practice session state
-  sessionType = signal<'cloze' | 'listen_meaning' | 'listen_type' | 'multiple_choice' | 'meaning_word' | 'word_meaning'>('cloze');
+  sessionId = signal<number | null>(null);
+  currentExam = signal<any>(null);
+  currentQuestions = signal<any[]>([]);
+  currentQuestionIndex = signal<number>(0);
+  
+  sessionType = signal<string>('CLOZE_TEST');
   isAnswerRevealed = signal<boolean>(false);
 
-  tests = [
-    {
-      id: 1,
-      title: 'Kiểm tra từ vựng IT',
-      questions: 40,
-      time: 15,
-      difficulty: 'Khó',
-      difficultyBars: 3,
-    },
-    {
-      id: 2,
-      title: 'Đề ôn tập #01',
-      questions: 30,
-      time: 10,
-      difficulty: 'Dễ',
-      difficultyBars: 1,
-    },
-    {
-      id: 3,
-      title: 'Idioms & Phrasal Verbs',
-      questions: 50,
-      time: 25,
-      difficulty: 'TB',
-      difficultyBars: 2,
-    },
-    {
-      id: 4,
-      title: 'Business English Pro',
-      questions: 45,
-      time: 20,
-      difficulty: 'TB',
-      difficultyBars: 2,
-    }
-  ];
+  // User input
+  userClozeInput = signal<string>('');
+  selectedMultipleChoice = signal<string>('');
+  isCorrect = signal<boolean>(false);
 
-  startPractice() {
-    this.currentView.set('session');
-    this.sessionType.set('cloze'); // Start with the first type
-    this.layout.setForceCollapse(true);
+  // Performance stats
+  streak = signal<number>(0);
+  correctCount = signal<number>(0);
+  timerSeconds = signal<number>(0);
+  timerInterval: any;
+
+  ngOnInit() {
+    this.loadExams();
+  }
+
+  ngOnDestroy() {
+    this.stopTimer();
+  }
+
+  loadExams() {
+    this.examsService.getExams().subscribe(res => {
+      if (res.data) {
+        this.examsList.set(res.data);
+        this.filterExams(this.activeFilter());
+      }
+    });
+  }
+
+  openEditModal(exam: any) {
+    this.editExamId.set(exam.id);
+    this.editExamTitle.set(exam.title);
+    this.editExamDesc.set(exam.description || '');
+    this.showEditModal.set(true);
+  }
+
+  closeEditModal() {
+    this.showEditModal.set(false);
+  }
+
+  saveExam() {
+    if (!this.editExamTitle().trim()) {
+      alert('Vui lòng nhập tên đề thi');
+      return;
+    }
+    const id = this.editExamId();
+    if (id) {
+      this.examsService.updateExam(id, { title: this.editExamTitle(), description: this.editExamDesc() }).subscribe({
+        next: () => {
+          this.closeEditModal();
+          this.loadExams();
+        },
+        error: (err) => alert('Lỗi khi cập nhật đề thi: ' + err.message)
+      });
+    }
+  }
+
+  deleteExam(id: number) {
+    if (confirm('Bạn có chắc chắn muốn xóa đề thi này không?')) {
+      this.examsService.deleteExam(id).subscribe({
+        next: () => {
+          this.loadExams();
+        },
+        error: (err) => alert('Lỗi khi xóa đề thi: ' + err.message)
+      });
+    }
+  }
+
+  setFilter(filter: 'ALL' | 'IT' | 'GRAMMAR' | 'BUSINESS') {
+    this.activeFilter.set(filter);
+    this.filterExams(filter);
+  }
+
+  filterExams(filter: string) {
+    if (filter === 'ALL') {
+      this.filteredExamsList.set(this.examsList());
+    } else {
+      // Mock filtering logic using title
+      this.filteredExamsList.set(this.examsList().filter((e: any) => e.title.includes(filter) || e.description?.includes(filter)));
+    }
+  }
+
+  startPractice(examId: number) {
+    this.examsService.getExam(examId).subscribe(res => {
+      if (res.data) {
+        const exam = res.data;
+        console.log('API getExam Response:', exam);
+        this.currentExam.set(exam);
+        
+        let questions = exam.exam_questions?.map((eq: any) => eq.questions).filter((q: any) => q) || [];
+        console.log('Total Questions received from API:', questions.length);
+
+        if (questions.length === 0) {
+            alert('Đề thi này không có câu hỏi nào (Data rỗng)! Vui lòng kiểm tra database.');
+            return;
+        }
+        
+        this.currentQuestions.set(questions);
+        this.currentQuestionIndex.set(0);
+        this.loadCurrentQuestion();
+        
+        // Mock user_id = 1 for now
+        const sessionData = new QuizSessions({ user_id: 1, mode: SessionMode.NORMAL, started_at: new Date() });
+        this.quizSessionsService.createQuizSession(sessionData).subscribe(sessionRes => {
+          if (sessionRes.data) {
+            this.sessionId.set(sessionRes.data.id);
+            this.currentView.set('session');
+            this.layout.setForceCollapse(true);
+            this.startTimer();
+            this.streak.set(0);
+            this.correctCount.set(0);
+          }
+        });
+      }
+    });
   }
 
   exitPractice() {
+    this.stopTimer();
     this.currentView.set('list');
     this.layout.setForceCollapse(false);
   }
 
-  // Method to cycle through test variants to showcase all designs
-  submitAnswer() {
-    if (!this.isAnswerRevealed()) {
-      this.isAnswerRevealed.set(true);
-    } else {
-      this.isAnswerRevealed.set(false);
-      const types: ('cloze' | 'listen_meaning' | 'listen_type' | 'multiple_choice' | 'meaning_word' | 'word_meaning')[] = ['cloze', 'listen_meaning', 'listen_type', 'multiple_choice', 'meaning_word', 'word_meaning'];
-      const currentIndex = types.indexOf(this.sessionType());
-      const nextIndex = (currentIndex + 1) % types.length;
-      this.sessionType.set(types[nextIndex]);
+  startTimer() {
+    this.timerSeconds.set(0);
+    this.timerInterval = setInterval(() => {
+      this.timerSeconds.update(s => s + 1);
+    }, 1000);
+  }
+
+  stopTimer() {
+    if (this.timerInterval) {
+      clearInterval(this.timerInterval);
     }
   }
-}
 
+  get formattedTimer() {
+    const s = this.timerSeconds();
+    const mm = Math.floor(s / 60).toString().padStart(2, '0');
+    const ss = (s % 60).toString().padStart(2, '0');
+    return `${mm}:${ss}`;
+  }
+
+  get accuracy() {
+    if (this.currentQuestionIndex() === 0) return 0;
+    return Math.round((this.correctCount() / this.currentQuestionIndex()) * 100);
+  }
+  
+  get progressPercent() {
+      if (this.currentQuestions().length === 0) return 0;
+      return Math.round((this.currentQuestionIndex() / this.currentQuestions().length) * 100);
+  }
+  
+  loadCurrentQuestion() {
+      const q = this.currentQuestions()[this.currentQuestionIndex()];
+      this.sessionType.set(q.question_type);
+      this.isAnswerRevealed.set(false);
+      this.userClozeInput.set('');
+      this.selectedMultipleChoice.set('');
+      this.isCorrect.set(false);
+  }
+  
+  get currentQuestionObj() {
+      if(this.currentQuestions().length === 0) return null;
+      return this.currentQuestions()[this.currentQuestionIndex()];
+  }
+  
+  // Parse options from string array if it's stored as JSON string
+  get currentMultipleChoiceOptions() {
+      const q = this.currentQuestionObj;
+      if (!q || !q.wrong_answers) return [];
+      let opts = [];
+      try {
+          opts = typeof q.wrong_answers === 'string' ? JSON.parse(q.wrong_answers) : q.wrong_answers;
+          if (!Array.isArray(opts)) opts = [opts];
+      } catch(e) {
+          opts = [];
+      }
+      return opts;
+  }
+  
+  selectMultipleChoice(option: string) {
+      if (this.isAnswerRevealed()) return;
+      this.selectedMultipleChoice.set(option);
+  }
+
+  submitAnswer() {
+    if (this.isAnswerRevealed()) return;
+    const q = this.currentQuestionObj;
+    if (!q) return;
+
+    let correct = false;
+    
+    if (q.question_type === 'CLOZE_TEST') {
+        correct = this.userClozeInput().toLowerCase().trim() === q.correct_answer?.toLowerCase().trim();
+    } else if (q.question_type === 'MULTIPLE_CHOICE') {
+        if (!this.selectedMultipleChoice()) return; // Must select something
+        correct = this.selectedMultipleChoice().trim() === q.correct_answer?.trim();
+    }
+    
+    this.isCorrect.set(correct);
+    if (correct) {
+        this.streak.update(s => s + 1);
+        this.correctCount.update(c => c + 1);
+    } else {
+        this.streak.set(0);
+    }
+    
+    this.isAnswerRevealed.set(true);
+  }
+  
+  saveFeedback(sm2Score: number) {
+      const q = this.currentQuestionObj;
+      if (!q) return;
+
+      let userAnswer = q.question_type === 'CLOZE_TEST' ? this.userClozeInput() : this.selectedMultipleChoice();
+      
+      const resultData = new QuizResults({
+          session_id: this.sessionId() ?? 0,
+          vocabulary_id: q.vocabulary_id,
+          question_id: q.id,
+          user_answer: userAnswer,
+          is_correct: this.isCorrect(),
+          sm2_score: sm2Score,
+          response_time_ms: 0 // Mock stat
+      });
+
+      this.quizResultsService.createQuizResult(resultData).subscribe(() => {
+          this.nextQuestion();
+      });
+  }
+  
+  nextQuestion() {
+      if (this.currentQuestionIndex() < this.currentQuestions().length - 1) {
+          this.currentQuestionIndex.update(i => i + 1);
+          this.loadCurrentQuestion();
+      } else {
+          this.exitPractice();
+          alert('Bạn đã hoàn thành bài tập!');
+      }
+  }
+  
+  clozeParts() {
+      const q = this.currentQuestionObj;
+      if(!q || !q.question_text) return { before: '', after: '' };
+      const split = q.question_text.split('........');
+      if (split.length >= 2) {
+          return { before: split[0], after: split[1] };
+      }
+      return { before: q.question_text, after: '' };
+  }
+}

@@ -18,7 +18,7 @@
         [class.border-slate-200]="activeFilter() !== 'ALL'"
         [class.text-slate-700]="activeFilter() !== 'ALL'"
         [class.hover:bg-slate-50]="activeFilter() !== 'ALL'"
-        (click)="activeFilter.set('ALL')"
+        (click)="setFilter('ALL')"
       >
         Tất cả
       </button>
@@ -31,7 +31,7 @@
         [class.border-slate-200]="activeFilter() !== 'IT'"
         [class.text-slate-700]="activeFilter() !== 'IT'"
         [class.hover:bg-slate-50]="activeFilter() !== 'IT'"
-        (click)="activeFilter.set('IT')"
+        (click)="setFilter('IT')"
       >
         Từ vựng IT
       </button>
@@ -44,7 +44,7 @@
         [class.border-slate-200]="activeFilter() !== 'GRAMMAR'"
         [class.text-slate-700]="activeFilter() !== 'GRAMMAR'"
         [class.hover:bg-slate-50]="activeFilter() !== 'GRAMMAR'"
-        (click)="activeFilter.set('GRAMMAR')"
+        (click)="setFilter('GRAMMAR')"
       >
         Ngữ pháp B2
       </button>
@@ -57,7 +57,7 @@
         [class.border-slate-200]="activeFilter() !== 'BUSINESS'"
         [class.text-slate-700]="activeFilter() !== 'BUSINESS'"
         [class.hover:bg-slate-50]="activeFilter() !== 'BUSINESS'"
-        (click)="activeFilter.set('BUSINESS')"
+        (click)="setFilter('BUSINESS')"
       >
         Giao tiếp Công sở
       </button>
@@ -80,12 +80,21 @@
   <div
     class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6"
   >
-    @for (test of tests; track test.id) {
+    @for (exam of filteredExamsList(); track exam.id) {
     <div
-      class="bg-white border border-slate-200 rounded-2xl p-5 md:p-6 flex flex-col transition-all hover:shadow-md hover:border-blue-200"
+      class="bg-white border border-slate-200 rounded-2xl p-5 md:p-6 flex flex-col transition-all hover:shadow-md hover:border-blue-200 relative group"
     >
-      <h3 class="text-base md:text-lg font-bold text-slate-900 mb-4">
-        {{ test.title }}
+      <div class="absolute top-2 right-2 md:top-3 md:right-3 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+        <button (click)="openEditModal(exam)" class="w-8 h-8 flex items-center justify-center rounded-lg text-blue-500 hover:bg-blue-50 transition-colors" title="Sửa đề thi">
+          <i class="fi fi-rr-edit"></i>
+        </button>
+        <button (click)="deleteExam(exam.id)" class="w-8 h-8 flex items-center justify-center rounded-lg text-red-500 hover:bg-red-50 transition-colors" title="Xóa đề thi">
+          <i class="fi fi-rr-trash"></i>
+        </button>
+      </div>
+
+      <h3 class="text-base md:text-lg font-bold text-slate-900 mb-4 pr-16">
+        {{ exam.title }}
       </h3>
 
       <div class="flex items-center gap-3 md:gap-5 mb-6 md:mb-8 flex-wrap">
@@ -95,19 +104,19 @@
           <i
             class="fi fi-rr-interrogation text-[11px] md:text-[13px] mt-0.5"
           ></i>
-          {{ test.questions }} câu
+          {{ exam.total_questions || exam.exam_questions?.length || 0 }} câu
         </div>
         <div
           class="flex items-center gap-1.5 text-slate-500 text-[12px] md:text-sm font-medium"
         >
           <i class="fi fi-rr-clock text-[11px] md:text-[13px] mt-0.5"></i>
-          {{ test.time }} ph
+          {{ exam.time_limit_minutes }} ph
         </div>
         <div
           class="flex items-center gap-1.5 text-slate-500 text-[12px] md:text-sm font-medium"
         >
           <i class="fi fi-rr-stats text-[11px] md:text-[13px] mt-0.5"></i>
-          {{ test.difficulty }}
+          -
         </div>
       </div>
 
@@ -116,7 +125,7 @@
       >
         <button
           class="flex-1 min-h-11 border shadow-sm border-slate-200 text-blue-700 bg-white hover:bg-slate-50 py-2 md:py-2.5 rounded-xl text-[14px] md:text-[15px] font-bold transition-colors"
-          (click)="startPractice()"
+          (click)="startPractice(exam.id)"
         >
           Luyện tập ngay
         </button>
@@ -154,6 +163,26 @@
       </button>
     </div>
   </div>
+
+  @if (showEditModal()) {
+  <div class="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4">
+    <div class="bg-white rounded-2xl w-full max-w-md p-6 shadow-xl">
+      <h3 class="text-xl font-bold text-slate-900 mb-4">Cập nhật đề thi</h3>
+      <div class="mb-4">
+        <label class="block text-sm font-medium text-slate-700 mb-1.5">Tên đề thi</label>
+        <input type="text" [ngModel]="editExamTitle()" (ngModelChange)="editExamTitle.set($event)" class="w-full border border-slate-300 rounded-xl px-4 py-2.5 text-slate-900 focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100 transition-all bg-white" placeholder="Nhập tên đề thi">
+      </div>
+      <div class="mb-6">
+        <label class="block text-sm font-medium text-slate-700 mb-1.5">Mô tả (Tùy chọn)</label>
+        <textarea [ngModel]="editExamDesc()" (ngModelChange)="editExamDesc.set($event)" rows="3" class="w-full border border-slate-300 rounded-xl px-4 py-2.5 text-slate-900 focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100 transition-all bg-white resize-none" placeholder="Nhập mô tả đề thi"></textarea>
+      </div>
+      <div class="flex justify-end gap-3">
+        <button (click)="closeEditModal()" class="px-5 py-2.5 rounded-xl font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 transition-colors">Hủy</button>
+        <button (click)="saveExam()" class="px-5 py-2.5 rounded-xl font-semibold text-white bg-blue-600 hover:bg-blue-700 transition-colors">Lưu thay đổi</button>
+      </div>
+    </div>
+  </div>
+  }
 </main>
 
 } @else {
@@ -177,10 +206,10 @@
         >
           <span class="hidden md:inline">Session Progress</span>
           <span class="md:hidden">Progress</span>
-          <span class="text-blue-700 md:ml-auto">14/20 Words</span>
+          <span class="text-blue-700 md:ml-auto">{{ currentQuestionIndex() + 1 }}/{{ currentQuestions().length }} Words</span>
         </div>
         <div class="h-1.5 md:h-2 bg-slate-200 rounded-full overflow-hidden">
-          <div class="h-full bg-blue-600 rounded-full" style="width: 70%"></div>
+          <div class="h-full bg-blue-600 rounded-full" [style.width]="progressPercent + '%'"></div>
         </div>
       </div>
     </div>
@@ -192,19 +221,19 @@
         class="flex items-center gap-1.5 md:gap-2 text-blue-700 bg-blue-50 px-2 py-1.5 md:py-1 rounded-md min-h-8"
       >
         <i class="fi fi-rr-clock text-[13px] md:text-[15px] mt-0.5"></i>
-        <span>04:12</span>
+        <span>{{ formattedTimer }}</span>
       </div>
       <div class="flex items-center gap-1 md:gap-2">
         <i class="fi fi-rr-bolt text-orange-500 text-[13px] md:text-[15px]"></i>
-        <span class="hidden md:inline">14 streak</span>
-        <span class="md:hidden">14</span>
+        <span class="hidden md:inline">{{ streak() }} streak</span>
+        <span class="md:hidden">{{ streak() }}</span>
       </div>
       <div class="flex items-center gap-1 md:gap-2">
         <i
           class="fi fi-rr-bullseye text-blue-600 text-[13px] md:text-[15px]"
         ></i>
-        <span class="hidden md:inline">85%</span>
-        <span class="md:hidden">85</span>
+        <span class="hidden md:inline">{{ accuracy }}%</span>
+        <span class="md:hidden">{{ accuracy }}</span>
       </div>
     </div>
   </header>
@@ -226,13 +255,17 @@
         <div
           class="flex items-center gap-2 md:gap-4 text-[15px] md:text-xl text-slate-800 mb-8 md:mb-16 justify-center font-medium leading-loose flex-wrap max-w-2xl mx-auto text-center"
         >
-          <span>The scientist's</span>
+          <span>{{ clozeParts().before }}</span>
           <input
             type="text"
-            class="w-24 md:w-56 h-10 md:h-12 border border-blue-500 rounded-lg px-2 md:px-4 text-center focus:outline-none focus:ring-2 focus:ring-blue-100 transition-all bg-white"
+            [(ngModel)]="userClozeInput"
+            [disabled]="isAnswerRevealed()"
+            [class.bg-green-100]="isAnswerRevealed() && isCorrect()"
+            [class.bg-red-100]="isAnswerRevealed() && !isCorrect()"
+            class="min-w-24 w-auto h-10 md:h-12 border border-blue-500 rounded-lg px-2 md:px-4 text-center focus:outline-none focus:ring-2 focus:ring-blue-100 transition-all bg-white"
             placeholder="........"
           />
-          <span>remained consistent throughout the experiment.</span>
+          <span>{{ clozeParts().after }}</span>
         </div>
 
         <div
@@ -245,8 +278,7 @@
             <p
               class="text-[15px] md:text-[17px] text-slate-600 mb-4 leading-relaxed"
             >
-              "A hipótese do cientista permaneceu consistente durante todo o
-              experimento."
+              "{{ currentQuestionObj()?.vocabularies?.example_meaning || currentQuestionObj()?.vocabularies?.meaning }}"
             </p>
             <div class="inline-flex items-center gap-3">
               <span
@@ -254,7 +286,7 @@
                 >HINT</span
               >
               <span class="font-mono text-sm md:text-[15px] text-slate-700"
-                >Starts with 'h', ends with 'is'</span
+                >Starts with '{{ currentQuestionObj()?.correct_answer?.charAt(0) }}'</span
               >
             </div>
           </div>
@@ -344,71 +376,55 @@
         <h2
           class="text-4xl md:text-5xl font-bold text-slate-900 mb-6 md:mb-10 text-center tracking-tight"
         >
-          Ephemeral
+          {{ currentQuestionObj()?.vocabularies?.word }}
         </h2>
 
         <p
           class="text-[17px] md:text-xl text-slate-600 mb-12 md:mb-16 text-center max-w-2xl leading-relaxed"
         >
-          "The beauty of the sunset is
-          <span class="text-blue-600 font-medium">ephemeral</span>, lasting only
-          a few minutes before the stars emerge."
+          {{ currentQuestionObj()?.question_text || currentQuestionObj()?.vocabularies?.example_sentence }}
         </p>
 
         <div
           class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 lg:gap-8 w-full max-w-4xl mx-auto"
         >
+          @for (opt of currentMultipleChoiceOptions; track opt; let i = $index) {
           <button
-            class="bg-blue-50 border-2 border-blue-600 rounded-xl p-5 md:p-6 text-left flex items-center gap-4 md:gap-6 transition-all w-full relative"
+            class="rounded-xl p-5 md:p-6 text-left flex items-center gap-4 md:gap-6 transition-all w-full relative group"
+            [class.bg-blue-50]="selectedMultipleChoice() === opt"
+            [class.border-blue-600]="selectedMultipleChoice() === opt"
+            [class.border-2]="true"
+            [class.border-slate-200]="selectedMultipleChoice() !== opt"
+            [class.hover:border-blue-400]="!isAnswerRevealed()"
+            [class.bg-white]="selectedMultipleChoice() !== opt"
+            [class.bg-green-100]="isAnswerRevealed() && opt === currentQuestionObj()?.correct_answer"
+            [class.bg-red-100]="isAnswerRevealed() && selectedMultipleChoice() === opt && !isCorrect()"
+            (click)="selectMultipleChoice(opt)"
           >
             <div
-              class="w-8 h-8 md:w-10 md:h-10 rounded bg-blue-600 text-white font-mono text-sm md:text-base font-bold flex items-center justify-center shrink-0"
+              class="w-8 h-8 md:w-10 md:h-10 rounded text-sm md:text-base font-bold flex items-center justify-center shrink-0 font-mono"
+              [class.bg-blue-600]="selectedMultipleChoice() === opt"
+              [class.text-white]="selectedMultipleChoice() === opt"
+              [class.bg-slate-100]="selectedMultipleChoice() !== opt"
+              [class.text-slate-500]="selectedMultipleChoice() !== opt"
+              [class.group-hover:bg-blue-50]="!isAnswerRevealed() && selectedMultipleChoice() !== opt"
+              [class.group-hover:text-blue-600]="!isAnswerRevealed() && selectedMultipleChoice() !== opt"
             >
-              <i class="fi fi-rr-check"></i>
-            </div>
-            <span class="text-blue-900 font-bold text-[15px] md:text-[17px]"
-              >Lasting for a very short time</span
-            >
-          </button>
-          <button
-            class="bg-white border-2 border-slate-200 hover:border-blue-400 rounded-xl p-5 md:p-6 text-left flex items-center gap-4 md:gap-6 transition-all w-full group"
-          >
-            <div
-              class="w-8 h-8 md:w-10 md:h-10 rounded bg-slate-100 text-slate-500 font-mono text-sm md:text-base font-bold flex items-center justify-center shrink-0 group-hover:bg-blue-50 group-hover:text-blue-600"
-            >
-              B
-            </div>
-            <span
-              class="text-slate-900 font-medium text-[15px] md:text-[17px] group-hover:text-blue-700"
-              >Intense and deeply felt</span
-            >
-          </button>
-          <button
-            class="bg-white border-2 border-slate-200 hover:border-blue-400 rounded-xl p-5 md:p-6 text-left flex items-center gap-4 md:gap-6 transition-all w-full group"
-          >
-            <div
-              class="w-8 h-8 md:w-10 md:h-10 rounded bg-slate-100 text-slate-500 font-mono text-sm md:text-base font-bold flex items-center justify-center shrink-0 group-hover:bg-blue-50 group-hover:text-blue-600"
-            >
-              C
+              @if (selectedMultipleChoice() === opt || (isAnswerRevealed() && opt === currentQuestionObj()?.correct_answer)) {
+                <i class="fi fi-rr-check"></i>
+              } @else {
+                {{ ['A', 'B', 'C', 'D'][i] }}
+              }
             </div>
             <span
-              class="text-slate-900 font-medium text-[15px] md:text-[17px] group-hover:text-blue-700"
-              >Easily understood or clear</span
+              class="font-medium text-[15px] md:text-[17px] transition-colors"
+              [class.text-blue-900]="selectedMultipleChoice() === opt"
+              [class.text-slate-900]="selectedMultipleChoice() !== opt"
+              [class.group-hover:text-blue-700]="!isAnswerRevealed() && selectedMultipleChoice() !== opt"
+              >{{ opt }}</span
             >
           </button>
-          <button
-            class="bg-white border-2 border-slate-200 hover:border-blue-400 rounded-xl p-5 md:p-6 text-left flex items-center gap-4 md:gap-6 transition-all w-full group"
-          >
-            <div
-              class="w-8 h-8 md:w-10 md:h-10 rounded bg-slate-100 text-slate-500 font-mono text-sm md:text-base font-bold flex items-center justify-center shrink-0 group-hover:bg-blue-50 group-hover:text-blue-600"
-            >
-              D
-            </div>
-            <span
-              class="text-slate-900 font-medium text-[15px] md:text-[17px] group-hover:text-blue-700"
-              >Belonging to a distant past</span
-            >
-          </button>
+          }
         </div>
       </div>
       } @case ('meaning_word') {
@@ -513,7 +529,7 @@
     >
       <button
         class="bg-red-50 hover:bg-red-100 border border-red-200 text-red-700 rounded-xl py-3 px-2 transition-colors flex flex-col items-center justify-center gap-1.5 group"
-        (click)="submitAnswer()"
+        (click)="saveFeedback(1)"
       >
         <span class="font-bold text-[15px]">Quên</span>
         <div
@@ -524,7 +540,7 @@
       </button>
       <button
         class="bg-orange-50 hover:bg-orange-100 border border-orange-200 text-orange-700 rounded-xl py-3 px-2 transition-colors flex flex-col items-center justify-center gap-1.5 group"
-        (click)="submitAnswer()"
+        (click)="saveFeedback(2)"
       >
         <span class="font-bold text-[15px]">Khó</span>
         <div
@@ -535,7 +551,7 @@
       </button>
       <button
         class="bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-emerald-700 rounded-xl py-3 px-2 transition-colors flex flex-col items-center justify-center gap-1.5 group"
-        (click)="submitAnswer()"
+        (click)="saveFeedback(3)"
       >
         <span class="font-bold text-[15px]">Tốt</span>
         <div
@@ -546,7 +562,7 @@
       </button>
       <button
         class="bg-teal-50 hover:bg-teal-100 border border-teal-200 text-teal-700 rounded-xl py-3 px-2 transition-colors flex flex-col items-center justify-center gap-1.5 group"
-        (click)="submitAnswer()"
+        (click)="saveFeedback(4)"
       >
         <span class="font-bold text-[15px]">Dễ</span>
         <div
