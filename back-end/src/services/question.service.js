@@ -31,7 +31,6 @@ exports.processAiQuestions = async (vocabularyList, config) => {
       }
     } catch (error) {
       console.error(`Lỗi tạo câu hỏi cho từ vựng ID ${vocab.id}:`, error);
-      // Skip this vocabulary if there's an error generating its AI questions, avoiding complete function failure
     }
   }
 

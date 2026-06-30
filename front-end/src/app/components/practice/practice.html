@@ -1,7 +1,6 @@
 @if (currentView() === 'list') {
 
 <main class="flex-1 overflow-y-auto w-full p-4 md:p-10 pb-20 md:pb-10">
-  
   <div
     class="flex flex-col md:flex-row md:justify-between items-stretch md:items-center mb-6 md:mb-8 gap-4"
   >
@@ -76,7 +75,6 @@
     </div>
   </div>
 
-  
   <div
     class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6"
   >
@@ -84,11 +82,21 @@
     <div
       class="bg-white border border-slate-200 rounded-2xl p-5 md:p-6 flex flex-col transition-all hover:shadow-md hover:border-blue-200 relative group"
     >
-      <div class="absolute top-2 right-2 md:top-3 md:right-3 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-        <button (click)="openEditModal(exam)" class="w-8 h-8 flex items-center justify-center rounded-lg text-blue-500 hover:bg-blue-50 transition-colors" title="Sửa đề thi">
+      <div
+        class="absolute top-2 right-2 md:top-3 md:right-3 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity"
+      >
+        <button
+          (click)="openEditModal(exam)"
+          class="w-8 h-8 flex items-center justify-center rounded-lg text-blue-500 hover:bg-blue-50 transition-colors"
+          title="Sửa đề thi"
+        >
           <i class="fi fi-rr-edit"></i>
         </button>
-        <button (click)="deleteExam(exam.id)" class="w-8 h-8 flex items-center justify-center rounded-lg text-red-500 hover:bg-red-50 transition-colors" title="Xóa đề thi">
+        <button
+          (click)="deleteExam(exam.id)"
+          class="w-8 h-8 flex items-center justify-center rounded-lg text-red-500 hover:bg-red-50 transition-colors"
+          title="Xóa đề thi"
+        >
           <i class="fi fi-rr-trash"></i>
         </button>
       </div>
@@ -138,7 +146,6 @@
     </div>
     }
 
-    
     <div
       class="border-2 border-dashed border-slate-300 rounded-2xl p-5 md:p-6 flex flex-col items-center justify-center text-center bg-slate-50/50 hover:bg-blue-50/50 hover:border-blue-300 transition-all group min-h-60"
     >
@@ -156,7 +163,7 @@
         Bạn muốn ôn luyện chủ đề cụ thể? Để AI thiết kế bộ đề riêng.
       </p>
       <button
-        routerLink="/generate-questions"
+        routerLink="/dashboard/generate-questions"
         class="w-full min-h-11 border border-blue-200 text-blue-700 bg-white hover:bg-blue-50 py-2 md:py-2.5 rounded-xl text-[14px] md:text-[15px] font-bold transition-colors shadow-sm mt-auto"
       >
         Khởi tạo ngay
@@ -165,20 +172,48 @@
   </div>
 
   @if (showEditModal()) {
-  <div class="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4">
+  <div
+    class="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4"
+  >
     <div class="bg-white rounded-2xl w-full max-w-md p-6 shadow-xl">
       <h3 class="text-xl font-bold text-slate-900 mb-4">Cập nhật đề thi</h3>
       <div class="mb-4">
-        <label class="block text-sm font-medium text-slate-700 mb-1.5">Tên đề thi</label>
-        <input type="text" [ngModel]="editExamTitle()" (ngModelChange)="editExamTitle.set($event)" class="w-full border border-slate-300 rounded-xl px-4 py-2.5 text-slate-900 focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100 transition-all bg-white" placeholder="Nhập tên đề thi">
+        <label class="block text-sm font-medium text-slate-700 mb-1.5"
+          >Tên đề thi</label
+        >
+        <input
+          type="text"
+          [ngModel]="editExamTitle()"
+          (ngModelChange)="editExamTitle.set($event)"
+          class="w-full border border-slate-300 rounded-xl px-4 py-2.5 text-slate-900 focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100 transition-all bg-white"
+          placeholder="Nhập tên đề thi"
+        />
       </div>
       <div class="mb-6">
-        <label class="block text-sm font-medium text-slate-700 mb-1.5">Mô tả (Tùy chọn)</label>
-        <textarea [ngModel]="editExamDesc()" (ngModelChange)="editExamDesc.set($event)" rows="3" class="w-full border border-slate-300 rounded-xl px-4 py-2.5 text-slate-900 focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100 transition-all bg-white resize-none" placeholder="Nhập mô tả đề thi"></textarea>
+        <label class="block text-sm font-medium text-slate-700 mb-1.5"
+          >Mô tả (Tùy chọn)</label
+        >
+        <textarea
+          [ngModel]="editExamDesc()"
+          (ngModelChange)="editExamDesc.set($event)"
+          rows="3"
+          class="w-full border border-slate-300 rounded-xl px-4 py-2.5 text-slate-900 focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100 transition-all bg-white resize-none"
+          placeholder="Nhập mô tả đề thi"
+        ></textarea>
       </div>
       <div class="flex justify-end gap-3">
-        <button (click)="closeEditModal()" class="px-5 py-2.5 rounded-xl font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 transition-colors">Hủy</button>
-        <button (click)="saveExam()" class="px-5 py-2.5 rounded-xl font-semibold text-white bg-blue-600 hover:bg-blue-700 transition-colors">Lưu thay đổi</button>
+        <button
+          (click)="closeEditModal()"
+          class="px-5 py-2.5 rounded-xl font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 transition-colors"
+        >
+          Hủy
+        </button>
+        <button
+          (click)="saveExam()"
+          class="px-5 py-2.5 rounded-xl font-semibold text-white bg-blue-600 hover:bg-blue-700 transition-colors"
+        >
+          Lưu thay đổi
+        </button>
       </div>
     </div>
   </div>
@@ -188,7 +223,6 @@
 } @else {
 
 <main class="flex-1 flex flex-col bg-white w-full h-dvh">
-  
   <header
     class="flex items-center justify-between px-4 md:px-8 py-3 md:py-5 border-b border-slate-100 shrink-0 bg-white relative z-10 min-h-15"
   >
@@ -206,10 +240,16 @@
         >
           <span class="hidden md:inline">Session Progress</span>
           <span class="md:hidden">Progress</span>
-          <span class="text-blue-700 md:ml-auto">{{ currentQuestionIndex() + 1 }}/{{ currentQuestions().length }} Words</span>
+          <span class="text-blue-700 md:ml-auto"
+            >{{ currentQuestionIndex() + 1 }}/{{ currentQuestions().length }}
+            Words</span
+          >
         </div>
         <div class="h-1.5 md:h-2 bg-slate-200 rounded-full overflow-hidden">
-          <div class="h-full bg-blue-600 rounded-full" [style.width]="progressPercent + '%'"></div>
+          <div
+            class="h-full bg-blue-600 rounded-full"
+            [style.width]="progressPercent + '%'"
+          ></div>
         </div>
       </div>
     </div>
@@ -238,13 +278,11 @@
     </div>
   </header>
 
-  
   <div
     class="flex-1 overflow-y-auto flex items-center justify-center p-4 md:p-12 bg-slate-50/20"
   >
     <div class="w-full max-w-3xl flex flex-col items-center">
-      @switch (sessionType()) { @case ('cloze') {
-      
+      @switch (sessionType()) { @case ('CLOZE_TEST') {
       <div class="flex flex-col items-center w-full">
         <div
           class="text-[9px] md:text-[11px] font-mono font-bold text-blue-600 tracking-[0.2em] md:tracking-[0.25em] mb-8 md:mb-16 uppercase flex justify-center w-full text-center"
@@ -278,7 +316,8 @@
             <p
               class="text-[15px] md:text-[17px] text-slate-600 mb-4 leading-relaxed"
             >
-              "{{ currentQuestionObj()?.vocabularies?.example_meaning || currentQuestionObj()?.vocabularies?.meaning }}"
+              "{{ currentQuestionObj()?.vocabularies?.example_meaning ||
+              currentQuestionObj()?.vocabularies?.meaning }}"
             </p>
             <div class="inline-flex items-center gap-3">
               <span
@@ -286,86 +325,14 @@
                 >HINT</span
               >
               <span class="font-mono text-sm md:text-[15px] text-slate-700"
-                >Starts with '{{ currentQuestionObj()?.correct_answer?.charAt(0) }}'</span
+                >Starts with '{{ currentQuestionObj()?.correct_answer?.charAt(0)
+                }}'</span
               >
             </div>
           </div>
         </div>
       </div>
-      } @case ('listen_meaning') {
-      
-      <div class="flex flex-col items-center">
-        <div
-          class="text-[11px] font-mono font-bold text-blue-600 tracking-[0.25em] mb-4 uppercase"
-        >
-          LISTEN & TYPE MEANING
-        </div>
-        <h2 class="text-[28px] font-bold text-slate-900 mb-10 text-center">
-          Translate what you hear into Vietnamese
-        </h2>
-
-        <div class="flex flex-col items-center mb-10">
-          <button
-            class="w-24 h-24 bg-blue-700 text-white rounded-full flex items-center justify-center shadow-[0_0_30px_-5px_rgba(29,78,216,0.3)] hover:scale-105 hover:bg-blue-800 transition-all"
-          >
-            <i class="fi fi-rr-volume text-4xl ml-2"></i>
-          </button>
-          <p class="mt-6 text-sm font-mono text-slate-500">
-            Press Space or Click to hear
-          </p>
-        </div>
-
-        <div class="w-full max-w-lg relative">
-          <input
-            type="text"
-            class="w-full border border-slate-300 rounded-xl px-5 py-4 text-[15px] text-slate-900 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all bg-white"
-            placeholder="Type the Vietnamese meaning..."
-          />
-          <div
-            class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-300 border border-slate-200 rounded p-1"
-          >
-            <i class="fi fi-rr-keyboard text-sm"></i>
-          </div>
-        </div>
-      </div>
-      } @case ('listen_type') {
-      
-      <div class="flex flex-col items-center">
-        <div
-          class="text-[11px] font-mono font-bold text-blue-600 tracking-[0.25em] mb-4 uppercase"
-        >
-          LISTEN & TYPE
-        </div>
-        <h2 class="text-[28px] font-bold text-slate-900 mb-10 text-center">
-          Spelling Accuracy
-        </h2>
-
-        <div class="flex flex-col items-center mb-10">
-          <button
-            class="w-24 h-24 bg-blue-700 text-white rounded-full flex items-center justify-center shadow-[0_0_30px_-5px_rgba(29,78,216,0.3)] hover:scale-105 hover:bg-blue-800 transition-all"
-          >
-            <i class="fi fi-rr-volume text-4xl ml-2"></i>
-          </button>
-          <p class="mt-6 text-sm font-mono text-slate-500">
-            Press Space or Click to hear
-          </p>
-        </div>
-
-        <div class="w-full max-w-lg relative">
-          <input
-            type="text"
-            class="w-full border border-slate-300 rounded-xl px-5 py-4 text-[15px] text-slate-900 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all bg-white"
-            placeholder="Type What Your Hear..."
-          />
-          <div
-            class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-300 border border-slate-200 rounded p-1"
-          >
-            <i class="fi fi-rr-keyboard text-sm"></i>
-          </div>
-        </div>
-      </div>
-      } @case ('multiple_choice') {
-      
+      } @case ('MULTIPLE_CHOICE') {
       <div class="flex flex-col items-center w-full">
         <div
           class="text-[11px] font-mono font-bold text-blue-600 tracking-[0.25em] mb-6 md:mb-10 uppercase"
@@ -373,22 +340,23 @@
           MULTIPLE CHOICE
         </div>
 
-        <h2
+        <!-- <h2
           class="text-4xl md:text-5xl font-bold text-slate-900 mb-6 md:mb-10 text-center tracking-tight"
         >
-          {{ currentQuestionObj()?.vocabularies?.word }}
-        </h2>
-
+          {{ currentQuestionObj?.vocabularies?.word }}
+        </h2> -->
         <p
           class="text-[17px] md:text-xl text-slate-600 mb-12 md:mb-16 text-center max-w-2xl leading-relaxed"
         >
-          {{ currentQuestionObj()?.question_text || currentQuestionObj()?.vocabularies?.example_sentence }}
+          {{ currentQuestionObj?.question_text ||
+          currentQuestionObj?.vocabularies?.example_sentence }}
         </p>
 
         <div
           class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 lg:gap-8 w-full max-w-4xl mx-auto"
         >
-          @for (opt of currentMultipleChoiceOptions; track opt; let i = $index) {
+          @for (opt of currentMultipleChoiceOptions; track opt; let i = $index)
+          {
           <button
             class="rounded-xl p-5 md:p-6 text-left flex items-center gap-4 md:gap-6 transition-all w-full relative group"
             [class.bg-blue-50]="selectedMultipleChoice() === opt"
@@ -397,7 +365,7 @@
             [class.border-slate-200]="selectedMultipleChoice() !== opt"
             [class.hover:border-blue-400]="!isAnswerRevealed()"
             [class.bg-white]="selectedMultipleChoice() !== opt"
-            [class.bg-green-100]="isAnswerRevealed() && opt === currentQuestionObj()?.correct_answer"
+            [class.bg-green-100]="isAnswerRevealed() && opt === currentQuestionObj?.correct_answer"
             [class.bg-red-100]="isAnswerRevealed() && selectedMultipleChoice() === opt && !isCorrect()"
             (click)="selectMultipleChoice(opt)"
           >
@@ -410,11 +378,10 @@
               [class.group-hover:bg-blue-50]="!isAnswerRevealed() && selectedMultipleChoice() !== opt"
               [class.group-hover:text-blue-600]="!isAnswerRevealed() && selectedMultipleChoice() !== opt"
             >
-              @if (selectedMultipleChoice() === opt || (isAnswerRevealed() && opt === currentQuestionObj()?.correct_answer)) {
-                <i class="fi fi-rr-check"></i>
-              } @else {
-                {{ ['A', 'B', 'C', 'D'][i] }}
-              }
+              @if (selectedMultipleChoice() === opt || (isAnswerRevealed() &&
+              opt === currentQuestionObj?.correct_answer)) {
+              <i class="fi fi-rr-check"></i>
+              } @else { {{ ['A', 'B', 'C', 'D'][i] }} }
             </div>
             <span
               class="font-medium text-[15px] md:text-[17px] transition-colors"
@@ -427,152 +394,252 @@
           }
         </div>
       </div>
-      } @case ('meaning_word') {
-      
-      <div class="flex flex-col items-center">
-        <div
-          class="text-[11px] font-mono font-bold text-blue-600 tracking-[0.25em] mb-4 uppercase"
-        >
-          SEE MEANING &rarr; TYPE WORD
-        </div>
+      }
+      <!-- @case ('listen_meaning') {
+          <div class="flex flex-col items-center">
+            <div
+              class="text-[11px] font-mono font-bold text-blue-600 tracking-[0.25em] mb-4 uppercase"
+            >
+              LISTEN & TYPE MEANING
+            </div>
+            <h2 class="text-[28px] font-bold text-slate-900 mb-10 text-center">
+              Translate what you hear into Vietnamese
+            </h2>
 
-        <h2
-          class="text-4xl font-bold text-slate-900 mb-4 text-center tracking-tight"
-        >
-          Sự kiên trì, bền bỉ
-        </h2>
-        <p
-          class="text-slate-500 mb-12 text-center max-w-md text-[16px] leading-relaxed"
-        >
-          The quality of being persistent; determination to keep doing something
-          despite difficulties.
-        </p>
+            <div class="flex flex-col items-center mb-10">
+              <button
+                class="w-24 h-24 bg-blue-700 text-white rounded-full flex items-center justify-center shadow-[0_0_30px_-5px_rgba(29,78,216,0.3)] hover:scale-105 hover:bg-blue-800 transition-all"
+              >
+                <i class="fi fi-rr-volume text-4xl ml-2"></i>
+              </button>
+              <p class="mt-6 text-sm font-mono text-slate-500">
+                Press Space or Click to hear
+              </p>
+            </div>
 
-        <div class="w-full max-w-lg">
-          <input
-            type="text"
-            class="w-full border border-blue-500 rounded-xl px-5 py-4 text-[17px] text-slate-900 text-center focus:outline-none focus:ring-2 focus:ring-blue-100 transition-all bg-white"
-            placeholder="Type the English word..."
-          />
-        </div>
-      </div>
-      } @case ('word_meaning') {
-      
-      <div class="flex flex-col items-center">
-        <div
-          class="text-[11px] font-mono font-bold text-blue-600 tracking-[0.25em] mb-4 uppercase"
-        >
-          SEE WORD &rarr; TYPE MEANING
-        </div>
-
-        <h2
-          class="text-5xl font-bold text-slate-900 mb-2 text-center tracking-tight"
-        >
-          Ambiguous
-        </h2>
-        <div class="flex items-center gap-2 mb-12 text-slate-700">
-          <button
-            class="text-blue-600 hover:text-blue-800 transition-colors p-1"
-          >
-            <i class="fi fi-rr-volume text-sm"></i>
-          </button>
-          <span class="font-mono text-sm font-medium tracking-wide"
-            >/æmˈbɪɡ.ju.əs/</span
-          >
-        </div>
-
-        <div class="w-full max-w-lg relative">
-          <input
-            type="text"
-            class="w-full border border-blue-500 rounded-xl pl-5 pr-16 py-4 text-[17px] text-slate-900 text-center focus:outline-none focus:ring-2 focus:ring-blue-100 transition-all bg-white"
-            placeholder="Nhập nghĩa tiếng Việt..."
-          />
-          <div
-            class="absolute right-3 top-1/2 -translate-y-1/2 bg-slate-200/60 px-2 py-1 rounded text-slate-600 text-[9px] font-mono font-bold tracking-widest border border-slate-200"
-          >
-            ENTER
+            <div class="w-full max-w-lg relative">
+              <input
+                type="text"
+                class="w-full border border-slate-300 rounded-xl px-5 py-4 text-[15px] text-slate-900 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all bg-white"
+                placeholder="Type the Vietnamese meaning..."
+              />
+              <div
+                class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-300 border border-slate-200 rounded p-1"
+              >
+                <i class="fi fi-rr-keyboard text-sm"></i>
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
-      } }
+        } @case ('listen_type') {
+          <div class="flex flex-col items-center">
+            <div
+              class="text-[11px] font-mono font-bold text-blue-600 tracking-[0.25em] mb-4 uppercase"
+            >
+              LISTEN & TYPE
+            </div>
+            <h2 class="text-[28px] font-bold text-slate-900 mb-10 text-center">
+              Spelling Accuracy
+            </h2>
+
+            <div class="flex flex-col items-center mb-10">
+              <button
+                class="w-24 h-24 bg-blue-700 text-white rounded-full flex items-center justify-center shadow-[0_0_30px_-5px_rgba(29,78,216,0.3)] hover:scale-105 hover:bg-blue-800 transition-all"
+              >
+                <i class="fi fi-rr-volume text-4xl ml-2"></i>
+              </button>
+              <p class="mt-6 text-sm font-mono text-slate-500">
+                Press Space or Click to hear
+              </p>
+            </div>
+
+            <div class="w-full max-w-lg relative">
+              <input
+                type="text"
+                class="w-full border border-slate-300 rounded-xl px-5 py-4 text-[15px] text-slate-900 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all bg-white"
+                placeholder="Type What Your Hear..."
+              />
+              <div
+                class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-300 border border-slate-200 rounded p-1"
+              >
+                <i class="fi fi-rr-keyboard text-sm"></i>
+              </div>
+            </div>
+          </div>
+        }  @case ('meaning_word') {
+          <div class="flex flex-col items-center">
+            <div
+              class="text-[11px] font-mono font-bold text-blue-600 tracking-[0.25em] mb-4 uppercase"
+            >
+              SEE MEANING &rarr; TYPE WORD
+            </div>
+
+            <h2
+              class="text-4xl font-bold text-slate-900 mb-4 text-center tracking-tight"
+            >
+              Sự kiên trì, bền bỉ
+            </h2>
+            <p
+              class="text-slate-500 mb-12 text-center max-w-md text-[16px] leading-relaxed"
+            >
+              The quality of being persistent; determination to keep doing something
+              despite difficulties.
+            </p>
+
+            <div class="w-full max-w-lg">
+              <input
+                type="text"
+                class="w-full border border-blue-500 rounded-xl px-5 py-4 text-[17px] text-slate-900 text-center focus:outline-none focus:ring-2 focus:ring-blue-100 transition-all bg-white"
+                placeholder="Type the English word..."
+              />
+            </div>
+          </div>
+        } @case ('word_meaning') {
+          <div class="flex flex-col items-center">
+            <div
+              class="text-[11px] font-mono font-bold text-blue-600 tracking-[0.25em] mb-4 uppercase"
+            >
+              SEE WORD &rarr; TYPE MEANING
+            </div>
+
+            <h2
+              class="text-5xl font-bold text-slate-900 mb-2 text-center tracking-tight"
+            >
+              Ambiguous
+            </h2>
+            <div class="flex items-center gap-2 mb-12 text-slate-700">
+              <button
+                class="text-blue-600 hover:text-blue-800 transition-colors p-1"
+              >
+                <i class="fi fi-rr-volume text-sm"></i>
+              </button>
+              <span class="font-mono text-sm font-medium tracking-wide"
+                >/æmˈbɪɡ.ju.əs/</span
+              >
+            </div>
+
+            <div class="w-full max-w-lg relative">
+              <input
+                type="text"
+                class="w-full border border-blue-500 rounded-xl pl-5 pr-16 py-4 text-[17px] text-slate-900 text-center focus:outline-none focus:ring-2 focus:ring-blue-100 transition-all bg-white"
+                placeholder="Nhập nghĩa tiếng Việt..."
+              />
+              <div
+                class="absolute right-3 top-1/2 -translate-y-1/2 bg-slate-200/60 px-2 py-1 rounded text-slate-600 text-[9px] font-mono font-bold tracking-widest border border-slate-200"
+              >
+                ENTER
+              </div>
+            </div>
+          </div>
+        }  -->
+      }
     </div>
   </div>
 
-  
-  @if (!isAnswerRevealed()) {
   <footer
-    class="p-4 py-6 md:p-8 md:pb-12 flex items-center justify-between shrink-0 max-w-4xl w-full mx-auto bg-transparent relative z-10"
+    class="p-4 py-6 px-6 md:p-8 md:pb-12 flex items-center justify-end shrink-0 max-w-4xl w-full mx-auto bg-transparent relative z-10"
   >
-    <button
-      class="flex items-center gap-2 text-emerald-600 hover:text-emerald-700 font-bold px-4 py-2 text-[13px] md:text-[15px] font-mono transition-colors"
-    >
-      <i class="fi fi-rr-lightbulb text-lg md:text-xl"></i> Get a Hint
-    </button>
-    <button
+    <div class="flex items-center justify-between">
+      <button
+        class="text-gray-400 md:py-4 md:px-5 mx-2 flex items-center rounded-xl font-bold hover:bg-gray-100 text-[15px] md:text-[17px] transition-colors shadow-sm"
+        (click)="prevQuestion()"
+      >
+        <mat-icon class="text-sm scale-100 items-center">chevron_left</mat-icon>
+      </button>
+
+      <button
+        class="text-gray-400 md:py-4 md:px-5 mx-2 flex items-center rounded-xl font-bold hover:bg-gray-100 text-[15px] md:text-[17px] transition-colors shadow-sm"
+        (click)="nextQuestion()"
+      >
+        <mat-icon class="text-sm scale-100">chevron_right</mat-icon>
+      </button>
+    </div>
+
+    <!-- <button
       class="bg-blue-700 text-white px-8 md:px-10 py-3 md:py-4 rounded-xl font-bold hover:bg-blue-800 text-[15px] md:text-[17px] transition-colors shadow-sm"
       (click)="submitAnswer()"
     >
       Submit
-    </button>
+    </button> -->
   </footer>
-  } @else {
+
+  <!-- @else {
   <footer
-    class="p-4 py-6 md:p-8 md:pb-12 flex flex-col items-center justify-center shrink-0 w-full mx-auto bg-white/90 backdrop-blur-md relative z-10 border-t border-slate-200"
+    class="p-4 py-6 md:p-6 flex flex-col sm:flex-row items-center justify-between shrink-0 w-full max-w-4xl mx-auto bg-white/90 backdrop-blur-md relative z-10 border-t border-slate-200 gap-4"
   >
-    <div
-      class="text-[11px] font-mono font-bold text-slate-500 uppercase tracking-widest mb-4"
+    <button
+      class="w-full sm:w-auto px-6 py-3 rounded-xl font-medium text-sm flex items-center justify-center gap-2 border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 active:bg-slate-100 transition-all shadow-sm disabled:opacity-50 disabled:pointer-events-none"
+      [disabled]="currentQuestionIndex() === 0"
+     
     >
-      Bạn đánh giá câu hỏi này thế nào?
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke-width="2"
+        stroke="currentColor"
+        class="w-4 h-4"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M15.75 19.5L8.25 12l7.5-7.5"
+        />
+      </svg>
+      Câu trước đó
+    </button>
+
+    <div class="text-sm font-medium text-slate-500 order-first sm:order-none">
+      Câu
+      <span class="text-slate-800 font-semibold"
+        >{{ currentQuestionIndex() + 1 }}</span
+      >
+      trên <span class="font-semibold">{{ currentQuestions().length }}</span>
     </div>
-    <div
-      class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 w-full max-w-2xl px-4 md:px-0"
+
+    @if (currentQuestionIndex() < currentQuestions().length - 1) {
+    <button
+      class="w-full sm:w-auto px-6 py-3 rounded-xl font-medium text-sm flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white transition-all shadow-sm shadow-indigo-100"
+      (click)="nextQuestion()"
     >
-      <button
-        class="bg-red-50 hover:bg-red-100 border border-red-200 text-red-700 rounded-xl py-3 px-2 transition-colors flex flex-col items-center justify-center gap-1.5 group"
-        (click)="saveFeedback(1)"
+      Câu tiếp theo
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke-width="2"
+        stroke="currentColor"
+        class="w-4 h-4"
       >
-        <span class="font-bold text-[15px]">Quên</span>
-        <div
-          class="hidden md:flex items-center justify-center bg-white border border-red-200 text-red-500 w-7 h-7 rounded-md text-[11px] font-mono group-hover:bg-red-200 group-hover:text-red-700 transition-colors shadow-sm font-bold"
-        >
-          1
-        </div>
-      </button>
-      <button
-        class="bg-orange-50 hover:bg-orange-100 border border-orange-200 text-orange-700 rounded-xl py-3 px-2 transition-colors flex flex-col items-center justify-center gap-1.5 group"
-        (click)="saveFeedback(2)"
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M8.25 4.5l7.5 7.5-7.5 7.5"
+        />
+      </svg>
+    </button>
+    } @else {
+    <button
+      class="w-full sm:w-auto px-6 py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white transition-all shadow-sm shadow-emerald-100"
+      /* (click)="submitExam()" */
+    >
+      Nộp bài thi
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke-width="2.5"
+        stroke="currentColor"
+        class="w-4 h-4"
       >
-        <span class="font-bold text-[15px]">Khó</span>
-        <div
-          class="hidden md:flex items-center justify-center bg-white border border-orange-200 text-orange-500 w-7 h-7 rounded-md text-[11px] font-mono group-hover:bg-orange-200 group-hover:text-orange-700 transition-colors shadow-sm font-bold"
-        >
-          2
-        </div>
-      </button>
-      <button
-        class="bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-emerald-700 rounded-xl py-3 px-2 transition-colors flex flex-col items-center justify-center gap-1.5 group"
-        (click)="saveFeedback(3)"
-      >
-        <span class="font-bold text-[15px]">Tốt</span>
-        <div
-          class="hidden md:flex items-center justify-center bg-white border border-emerald-200 text-emerald-500 w-7 h-7 rounded-md text-[11px] font-mono group-hover:bg-emerald-200 group-hover:text-emerald-700 transition-colors shadow-sm font-bold"
-        >
-          3
-        </div>
-      </button>
-      <button
-        class="bg-teal-50 hover:bg-teal-100 border border-teal-200 text-teal-700 rounded-xl py-3 px-2 transition-colors flex flex-col items-center justify-center gap-1.5 group"
-        (click)="saveFeedback(4)"
-      >
-        <span class="font-bold text-[15px]">Dễ</span>
-        <div
-          class="hidden md:flex items-center justify-center bg-white border border-teal-200 text-teal-500 w-7 h-7 rounded-md text-[11px] font-mono group-hover:bg-teal-200 group-hover:text-teal-700 transition-colors shadow-sm font-bold"
-        >
-          4
-        </div>
-      </button>
-    </div>
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M4.5 12.75l6 6 9-13.5"
+        />
+      </svg>
+    </button>
+    }
   </footer>
-  }
+  } -->
 </main>
 }

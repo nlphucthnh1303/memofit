@@ -33,6 +33,13 @@ exports.getVocabulariesSearch = async (req, res) => {
         ],
       },
       take: limit,
+      include: {
+        collections: {
+          where: {
+            is_delete: "0",
+          },
+        },
+      },
     });
     res.status(200).json({
       message: "Lấy danh sách từ vựng thành công",

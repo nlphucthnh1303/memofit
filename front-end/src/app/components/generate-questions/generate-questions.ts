@@ -14,7 +14,8 @@ import { Exams } from '../../models/exams.model';
 import { Questions } from '../../models/questions.model';
 import { ExamQuestionsService } from '../../services/exam-questions.service';
 import { ExamQuestions } from '../../models/exam-questions.model';
-
+import { DialogService } from '../../shared/ui/dialog/dialog.service';
+import { ConfirmDialogComponent } from '../demo-ui/demo-ui';
 @Component({
   selector: 'app-generate-questions',
   imports: [NgxSpinnerModule, FormsModule, CommonModule],
@@ -72,7 +73,7 @@ export class GenerateQuestions implements OnInit, OnDestroy {
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   private cdr = inject(ChangeDetectorRef);
-
+  private dialogService = inject(DialogService);
   constructor() { }
 
   ngOnInit() {
@@ -138,10 +139,11 @@ export class GenerateQuestions implements OnInit, OnDestroy {
       next: (res: any) => {
         if (res && res.data) {
           this.words = res.data.map((w: any) => ({
-            id: w.id,
-            target: w.word,
-            meaning: w.meaning,
-            collection: w.collection_id ? `Bộ ST ${w.collection_id}` : 'General',
+            // id: w.id,
+            // target: w.word,
+            // meaning: w.meaning,
+            ...w,
+            collection: w.collection_id ? `${w.collections.title}` : 'General',
             selected: this.selectedWords.some(sw => sw.id === w.id)
           }));
         }
@@ -267,10 +269,26 @@ export class GenerateQuestions implements OnInit, OnDestroy {
   }
 
   deleteQuestion(index: number) {
-    const list = [...this.generatedQuestions()];
-    list.splice(index, 1);
-    this.generatedQuestions.set(list);
-    this.cdr.markForCheck();
+    const dialogRef = this.dialogService.open(ConfirmDialogComponent, {
+      width: '450px',
+      data: {
+        title: 'Xóa câu hỏi',
+        message: 'Bạn có chắc chắn muốn xóa câu hỏi này?'
+      }
+    });
+    dialogRef.afterClosed$.subscribe(result => {
+      if (result) {
+        const list = [...this.generatedQuestions()];
+        list.splice(index, 1);
+        this.generatedQuestions.set(list);
+        this.toastService.show('Câu hỏi đã được xóa thành công', 'success');
+        this.cdr.markForCheck();
+      }
+    });
+
+
+
+
   }
 
   updateQuestionData(index: number, field: string, event: Event) {

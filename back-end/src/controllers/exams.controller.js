@@ -29,12 +29,12 @@ exports.getExam = async (req, res) => {
           include: {
             questions: {
               include: {
-                vocabularies: true
-              }
-            }
-          }
-        }
-      }
+                vocabularies: true,
+              },
+            },
+          },
+        },
+      },
     });
 
     if (!exam) {
