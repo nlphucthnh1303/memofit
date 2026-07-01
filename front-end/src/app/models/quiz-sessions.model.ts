@@ -10,6 +10,7 @@ export class QuizSessions {
     started_at: Date | undefined;
     ended_at: Date | undefined;
     is_delete: string | undefined;
+    exam_id: number | undefined;
 
     constructor(init?: Partial<QuizSessions>) {
         if (init) {

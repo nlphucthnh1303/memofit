@@ -1,207 +1,117 @@
 <main class="flex-1 p-4 md:p-8 lg:p-10 w-full overflow-y-auto">
-  <div class="max-w-5xl mx-auto space-y-8">
-    
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-      
-      <div class="lg:col-span-2 space-y-8">
-        
-        <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-100">
-          <div class="flex items-center gap-4 mb-4">
-            <i class="fi fi-rr-brain text-blue-600 text-2xl"></i>
-            <h3 class="text-xl font-bold text-slate-900">Thuật toán SM-2</h3>
-          </div>
-          <p class="text-slate-600 text-[15px] mb-8 leading-relaxed max-w-xl">
-            Tối ưu hóa thời gian ghi nhớ của bạn bằng cách lên lịch các buổi ôn
-            tập trong những giờ bạn tỉnh táo nhất.
-          </p>
+  <div class="max-w-5xl mx-auto space-y-6 md:space-y-8">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
+      <div
+        class="bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-slate-100 flex flex-col"
+      >
+        <div class="flex items-center gap-4 mb-4">
+          <i class="fi fi-rr-brain text-blue-600 text-2xl"></i>
+          <h3 class="text-xl font-bold text-slate-900">Thuật toán SM-2</h3>
+        </div>
+        <p class="text-slate-600 text-[15px] mb-8 leading-relaxed flex-1">
+          Tối ưu hóa thời gian ghi nhớ của bạn bằng cách lên lịch các buổi ôn
+          tập trong những giờ bạn tỉnh táo nhất.
+        </p>
 
+        <div>
           <div
             class="font-mono text-xs font-bold text-slate-800 uppercase tracking-widest mb-3"
           >
             Nhắc nhở giờ vàng
           </div>
-          <div class="flex items-center gap-4">
+          <div
+            class="flex flex-col sm:flex-row items-start sm:items-center gap-4"
+          >
             <input
               type="text"
               value="08 : 00 AM"
-              class="bg-white border border-slate-300 px-4 py-3 rounded-xl w-40 text-sm font-mono focus:ring-2 focus:ring-blue-500/20 focus:outline-none text-slate-800 font-medium"
+              class="bg-white border border-slate-300 px-4 py-3 rounded-xl w-full sm:w-40 text-sm font-mono focus:ring-2 focus:ring-blue-500/20 focus:outline-none text-slate-800 font-medium"
             />
             <div
-              class="bg-blue-50/80 text-blue-700 px-5 py-3 rounded-xl text-sm font-mono font-bold"
+              class="bg-blue-50/80 text-blue-700 px-5 py-3 rounded-xl text-sm font-mono font-bold w-full sm:w-auto text-center"
             >
               Gợi ý: 07:00 - 09:00
             </div>
           </div>
         </div>
-
-        
-        <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-100">
-          <div class="flex items-center gap-4 mb-6">
-            <i class="fi fi-rr-bell-ring text-emerald-600 text-2xl"></i>
-            <h3 class="text-xl font-bold text-slate-900">Thông báo</h3>
-          </div>
-
-          <div
-            class="flex justify-between items-center bg-slate-50/80 rounded-2xl p-6 border border-slate-100"
-          >
-            <div class="pr-8">
-              <div class="font-bold text-slate-900 mb-1">
-                Thông báo hệ thống
-              </div>
-              <div class="text-[15px] text-slate-600 leading-relaxed max-w-sm">
-                Nhận thông báo trên máy tính cho các chuỗi mục tiêu hàng ngày và
-                nhắc nhở ôn tập.
-              </div>
-            </div>
-            <button
-              class="w-12 h-6 rounded-full bg-blue-600 relative shrink-0 transition-colors"
-            >
-              <div
-                class="w-4 h-4 rounded-full bg-white absolute right-1 top-1 shadow-sm"
-              ></div>
-            </button>
-          </div>
-        </div>
       </div>
 
-      
-      <div class="lg:col-span-1 h-full">
+      <div
+        class="bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-slate-100 flex flex-col"
+      >
+        <div class="flex items-center gap-4 mb-6">
+          <i class="fi fi-rr-bell-ring text-emerald-600 text-2xl"></i>
+          <h3 class="text-xl font-bold text-slate-900">Thông báo</h3>
+        </div>
+
         <div
-          class="bg-white p-8 rounded-3xl shadow-sm border border-slate-100 h-full flex flex-col"
+          class="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-slate-50/80 rounded-2xl p-5 sm:p-6 border border-slate-100 gap-4 mt-auto"
         >
-          <div class="flex items-center gap-4 mb-8">
-            <i class="fi fi-rr-cloud-download text-sky-500 text-2xl"></i>
-            <h3 class="text-xl font-bold text-slate-900">Sao lưu</h3>
-          </div>
-
-          <div class="space-y-4 flex-1">
-            <div
-              class="p-5 border border-slate-200 rounded-2xl hover:border-blue-300 hover:shadow-sm flex items-center justify-between cursor-pointer group transition-all"
-            >
-              <div class="flex items-center gap-4">
-                <div
-                  class="text-slate-400 group-hover:text-blue-600 transition-colors"
-                >
-                  <i class="fi fi-rr-database text-xl"></i>
-                </div>
-                <div>
-                  <div class="font-bold text-slate-900 text-[15px] mb-0.5">
-                    Xuất SQLite
-                  </div>
-                  <div class="text-[13px] text-slate-500">
-                    Sao lưu toàn bộ cơ sở dữ liệu cục bộ
-                  </div>
-                </div>
-              </div>
-              <i
-                class="fi fi-rr-angle-small-right text-slate-300 group-hover:text-blue-600 text-xl"
-              ></i>
-            </div>
-
-            <div
-              class="p-5 border border-slate-200 rounded-2xl hover:border-blue-300 hover:shadow-sm flex items-center justify-between cursor-pointer group transition-all"
-            >
-              <div class="flex items-center gap-4">
-                <div
-                  class="text-slate-400 group-hover:text-blue-600 transition-colors"
-                >
-                  <i class="fi fi-rr-upload text-xl"></i>
-                </div>
-                <div>
-                  <div class="font-bold text-slate-900 text-[15px] mb-0.5">
-                    Nhập cơ sở dữ liệu
-                  </div>
-                  <div class="text-[13px] text-slate-500">
-                    Khôi phục từ tệp .sqlite hoặc .json
-                  </div>
-                </div>
-              </div>
-              <i
-                class="fi fi-rr-angle-small-right text-slate-300 group-hover:text-blue-600 text-xl"
-              ></i>
+          <div>
+            <div class="font-bold text-slate-900 mb-1">Thông báo hệ thống</div>
+            <div class="text-[15px] text-slate-600 leading-relaxed max-w-sm">
+              Nhận thông báo trên máy tính cho các chuỗi mục tiêu hàng ngày và
+              nhắc nhở ôn tập.
             </div>
           </div>
-
-          <div
-            class="text-[10px] text-slate-400 font-mono text-center pt-8 uppercase tracking-widest font-bold"
-          >
-            LẦN SAO LƯU CUỐI: 2 GIỜ TRƯỚC
-          </div>
-        </div>
-      </div>
-    </div>
-
-    
-    <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-100">
-      <div class="flex items-center gap-4 mb-8">
-        <i class="fi fi-rr-headset text-blue-700 text-2xl"></i>
-        <h3 class="text-xl font-bold text-slate-900">
-          Cài đặt Giọng đọc (TTS)
-        </h3>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-20">
-        <div>
-          <div
-            class="font-mono text-[11px] font-bold text-slate-800 uppercase tracking-widest mb-3"
-          >
-            Công cụ giọng nói
-          </div>
-          <div class="relative mb-6">
-            <select
-              class="w-full bg-white border border-slate-300 px-5 py-3.5 rounded-xl text-[15px] text-slate-800 font-medium focus:ring-2 focus:ring-blue-500/20 focus:outline-none appearance-none"
-            >
-              <option>Azure Neural HD - Christopher</option>
-            </select>
-            <i
-              class="fi fi-rr-angle-small-down absolute right-5 top-1/2 -translate-y-1/2 text-slate-400 text-lg pointer-events-none"
-            ></i>
-          </div>
-
           <button
-            class="bg-blue-50/80 hover:bg-blue-100 text-blue-700 px-6 py-3.5 rounded-xl font-semibold text-[15px] transition-colors flex items-center gap-3"
+            class="w-12 h-6 rounded-full bg-blue-600 relative shrink-0 transition-colors self-end sm:self-auto mt-2 sm:mt-0"
           >
-            <i class="fi fi-rr-play-circle text-lg"></i> Nghe thử giọng đã chọn
+            <div
+              class="w-4 h-4 rounded-full bg-white absolute right-1 top-1 shadow-sm"
+            ></div>
           </button>
         </div>
-
-        <div>
-          <div class="flex justify-between items-center mb-6">
-            <div
-              class="font-mono text-[11px] font-bold text-slate-800 uppercase tracking-widest"
-            >
-              Tốc độ phát
-            </div>
-            <div
-              class="bg-blue-100/80 text-blue-700 px-3 py-1.5 rounded text-sm font-mono font-bold"
-            >
-              1.15x
-            </div>
-          </div>
-
-          <div class="relative py-2 mt-4">
-            <div
-              class="h-1.5 w-full bg-blue-100/80 rounded-full overflow-hidden"
-            >
-              <div class="h-full bg-blue-300 w-[60%]"></div>
-            </div>
-            <div
-              class="absolute top-1/2 left-[60%] -translate-x-1/2 -translate-y-1/2 w-4 h-4 bg-white border-2 border-blue-400 rounded-full shadow-sm cursor-pointer hover:scale-110 transition-transform"
-            ></div>
-          </div>
-
-          <div
-            class="flex justify-between text-[10px] text-slate-400 font-mono uppercase font-bold mt-4 tracking-widest"
-          >
-            <span>Chậm</span>
-            <span>Bình thường</span>
-            <span>Nhanh</span>
-          </div>
-        </div>
       </div>
     </div>
 
-    
+    <div class="flex flex-col lg:flex-row gap-6 md:gap-8">
+      <div
+        class="bg-white p-6 md:p-8 lg:p-12 rounded-3xl shadow-sm border border-slate-100 flex flex-col w-full lg:w-2/3"
+      >
+        <div class="flex items-center gap-4 mb-4">
+          <i class="fi fi-rr-lock text-blue-600 text-2xl"></i>
+          <h3 class="text-xl font-bold text-slate-900">
+            Đổi mật khẩu tài khoản
+          </h3>
+        </div>
+        <p
+          class="text-[15px] text-slate-600 leading-relaxed mb-8 md:mb-10 flex-1"
+        >
+          Chúng tôi khuyên bạn nên sử dụng mật khẩu mạnh bao gồm chữ cái, số và
+          ký tự đặc biệt để đảm bảo an toàn cho dữ liệu học tập. Đổi mật khẩu
+          định kỳ giúp tăng cường bảo mật.
+        </p>
+
+        <button
+          class="bg-blue-600 hover:bg-blue-700 text-white px-8 md:px-10 py-4 rounded-xl font-semibold text-[15px] transition-colors flex items-center justify-center gap-3 w-full sm:w-fit"
+        >
+          <i class="fi fi-rr-password-lock text-lg"></i> Đổi mật khẩu ngay
+        </button>
+      </div>
+
+      <div
+        class="bg-blue-50/70 p-6 md:p-8 lg:p-12 rounded-3xl flex flex-col justify-between w-full lg:w-1/3 gap-8 md:gap-10 lg:gap-0"
+      >
+        <div>
+          <div class="flex items-center gap-4 mb-4">
+            <i class="fi fi-rr-enter text-blue-600 text-2xl"></i>
+            <h3 class="text-xl font-bold text-slate-900">Đăng xuất</h3>
+          </div>
+          <p class="text-[15px] text-slate-600 leading-relaxed">
+            Đăng xuất khỏi thiết bị này. Đảm bảo bạn đã lưu các tiến trình học
+            tập hiện tại.
+          </p>
+        </div>
+
+        <button
+          class="bg-white hover:bg-slate-50 border border-slate-100 text-blue-700 px-8 py-4 rounded-xl font-semibold text-[15px] transition-colors flex items-center justify-center gap-3 w-full"
+        >
+          <i class="fi fi-rr-enter text-lg"></i> Đăng xuất
+        </button>
+      </div>
+    </div>
+
     <div
       class="bg-red-50/30 p-6 md:p-8 rounded-3xl border border-red-200 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-6"
     >
@@ -215,7 +125,7 @@
         </p>
       </div>
       <button
-        class="shrink-0 bg-red-700 text-white px-8 py-3.5 rounded-xl font-sans font-semibold hover:bg-red-800 transition duration-200 shadow-sm"
+        class="shrink-0 w-full md:w-auto bg-red-700 text-white px-8 py-3.5 rounded-xl font-sans font-semibold hover:bg-red-800 transition duration-200 shadow-sm text-center"
       >
         Thiết lập lại ứng dụng
       </button>

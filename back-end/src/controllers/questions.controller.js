@@ -319,3 +319,42 @@ exports.generateStaticQuestions = async (req, res) => {
     res.status(500).json({ error: "Lỗi hệ thống khi tạo câu hỏi" });
   }
 };
+
+exports.getQuizBySessionIdAndExamId = async (req, res) => {
+  try {
+    const { exam_id, session_id, user_id } = req.params;
+
+    if (
+      Number.isNaN(exam_id) ||
+      Number.isNaN(session_id) ||
+      Number.isNaN(user_id)
+    ) {
+      user_id;
+      return res
+        .status(400)
+        .json({ message: "ID phiên làm bài tập hoặc ID đề thi không hợp lệ" });
+    }
+
+    const data = await prisma.quiz_sessions.findMany({
+      where: {
+        id: parseInt(session_id),
+        exam_id: parseInt(exam_id),
+        user_id: parseInt(user_id),
+        quiz_results: {
+          some: {},
+        },
+      },
+      include: {
+        quiz_results: true,
+      },
+      relationLoadStrategy: "join",
+    });
+
+    res.status(200).json({
+      message: "Lấy thông tin phiên làm bài tập thành công",
+      data: session,
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};

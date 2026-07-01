@@ -5,6 +5,7 @@ import {
   inject,
   OnInit,
   OnDestroy,
+  computed,
 } from "@angular/core";
 import { RouterLink } from "@angular/router";
 import { LayoutService } from "../../services/layout.service";
@@ -50,7 +51,7 @@ export class Practice implements OnInit, OnDestroy {
   currentExam = signal<any>(null);
   currentQuestions = signal<any[]>([]);
   currentQuestionIndex = signal<number>(0);
-
+  progressIndex = computed(() => this.currentQuestionIndex() + 1);
   sessionType = signal<"CLOZE_TEST" | "MULTIPLE_CHOICE">("CLOZE_TEST");
   isAnswerRevealed = signal<boolean>(false);
 
@@ -63,6 +64,8 @@ export class Practice implements OnInit, OnDestroy {
   timerSeconds = signal<number>(0);
   private timerInterval: any = null;
   private startTime: number = 0;
+
+  endTest = signal<boolean>(false);
 
 
   ngOnInit() {
@@ -186,7 +189,8 @@ export class Practice implements OnInit, OnDestroy {
           const sessionData = new QuizSessions({
             user_id: this.getUserLogin().user.id,
             mode: SessionMode.NORMAL,
-            started_at: new Date()
+            started_at: new Date(),
+            exam_id: examId
           });
           return this.quizSessionsService.createQuizSession(sessionData);
         })
@@ -238,7 +242,7 @@ export class Practice implements OnInit, OnDestroy {
   get progressPercent() {
     if (this.currentQuestions().length === 0) return 0;
     return Math.round(
-      (this.currentQuestionIndex() / this.currentQuestions().length) * 100,
+      (this.progressIndex() / this.currentQuestions().length) * 100,
     );
   }
 
@@ -277,10 +281,10 @@ export class Practice implements OnInit, OnDestroy {
   selectMultipleChoice(option: string) {
     if (this.isAnswerRevealed()) return;
     this.selectedMultipleChoice.set(option);
-    this.submitAnswer();
+    this.checkAnswer();
   }
 
-  submitAnswer() {
+  checkAnswer() {
     if (this.isAnswerRevealed()) return;
     const q = this.currentQuestionObj;
     if (!q) return;
@@ -324,6 +328,14 @@ export class Practice implements OnInit, OnDestroy {
     this.quizResultsService.createQuizResult(resultData).subscribe();
   }
 
+  submitExam() {
+    if (this.isAnswerRevealed()) return;
+    console.log(this.currentExam());
+    console.log(this.sessionId());
+
+
+  }
+
   startTimer() {
     this.stopTimer();
     this.startTime = Date.now();
@@ -352,10 +364,13 @@ export class Practice implements OnInit, OnDestroy {
       this.loadCurrentQuestion();
       this.startTimer();
     } else {
-      this.exitPractice();
-      alert("Bạn đã hoàn thành bài tập!");
+      this.endTest.set(true);
+      // this.exitPractice();
     }
   }
+
+
+
 
   prevQuestion() {
     if (this.currentQuestionIndex() > 0) {

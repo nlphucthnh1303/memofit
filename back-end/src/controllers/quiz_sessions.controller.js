@@ -19,7 +19,9 @@ exports.getQuizSession = async (req, res) => {
   try {
     const id = parseInt(req.params.id, 10);
     if (Number.isNaN(id)) {
-      return res.status(400).json({ message: "ID phiên làm bài tập không hợp lệ" });
+      return res
+        .status(400)
+        .json({ message: "ID phiên làm bài tập không hợp lệ" });
     }
 
     const session = await prisma.quiz_sessions.findFirst({
@@ -27,7 +29,9 @@ exports.getQuizSession = async (req, res) => {
     });
 
     if (!session) {
-      return res.status(404).json({ message: "Không tìm thấy phiên làm bài tập" });
+      return res
+        .status(404)
+        .json({ message: "Không tìm thấy phiên làm bài tập" });
     }
 
     res.status(200).json({
@@ -63,7 +67,9 @@ exports.updateQuizSession = async (req, res) => {
   try {
     const id = parseInt(req.params.id, 10);
     if (Number.isNaN(id)) {
-      return res.status(400).json({ message: "ID phiên làm bài tập không hợp lệ" });
+      return res
+        .status(400)
+        .json({ message: "ID phiên làm bài tập không hợp lệ" });
     }
 
     const existing = await prisma.quiz_sessions.findFirst({
@@ -71,7 +77,9 @@ exports.updateQuizSession = async (req, res) => {
     });
 
     if (!existing) {
-      return res.status(404).json({ message: "Không tìm thấy phiên làm bài tập" });
+      return res
+        .status(404)
+        .json({ message: "Không tìm thấy phiên làm bài tập" });
     }
 
     const { user_id, mode, started_at, ended_at } = req.body;
@@ -97,7 +105,9 @@ exports.deleteQuizSession = async (req, res) => {
   try {
     const id = parseInt(req.params.id, 10);
     if (Number.isNaN(id)) {
-      return res.status(400).json({ message: "ID phiên làm bài tập không hợp lệ" });
+      return res
+        .status(400)
+        .json({ message: "ID phiên làm bài tập không hợp lệ" });
     }
 
     const existing = await prisma.quiz_sessions.findFirst({
@@ -105,7 +115,9 @@ exports.deleteQuizSession = async (req, res) => {
     });
 
     if (!existing) {
-      return res.status(404).json({ message: "Không tìm thấy phiên làm bài tập" });
+      return res
+        .status(404)
+        .json({ message: "Không tìm thấy phiên làm bài tập" });
     }
 
     const deletedSession = await prisma.quiz_sessions.update({

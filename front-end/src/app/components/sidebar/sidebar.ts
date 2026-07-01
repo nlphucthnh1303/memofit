@@ -184,7 +184,6 @@ import { LayoutService } from "../../services/layout.service";
 
         
         <div class="space-y-4 w-full flex flex-col items-center">
-          
           <a
             routerLink="/dashboard/settings"
             routerLinkActive="text-blue-700 bg-blue-50/80 !border-blue-700 font-semibold"
