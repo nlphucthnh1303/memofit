@@ -1,7 +1,7 @@
 @if (currentView() === 'list') {
 
 <main class="flex-1 overflow-y-auto w-full p-4 md:p-10 pb-20 md:pb-10">
-  <div
+  <!-- <div
     class="flex flex-col md:flex-row md:justify-between items-stretch md:items-center mb-6 md:mb-8 gap-4"
   >
     <div
@@ -73,7 +73,7 @@
         <i class="fi fi-rr-angle-small-down text-xs mt-0.5"></i>
       </button>
     </div>
-  </div>
+  </div> -->
 
   <div
     class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6"
@@ -127,6 +127,9 @@
           -
         </div>
       </div>
+      <p class="text-slate-500 text-[13px] md:text-sm mb-4 md:mb-6">
+        {{ exam.description }}
+      </p>
 
       <div
         class="mt-auto flex flex-col sm:flex-row md:flex-col lg:flex-row xl:flex-col gap-2 md:gap-3"
@@ -137,11 +140,11 @@
         >
           Luyện tập ngay
         </button>
-        <button
+        <!-- <button
           class="flex-1 min-h-11 border border-slate-200 text-slate-500 bg-white hover:text-slate-700 py-2 md:py-2.5 rounded-xl text-[14px] md:text-[15px] font-bold transition-colors"
         >
           Xem lại
-        </button>
+        </button> -->
       </div>
     </div>
     }
@@ -220,7 +223,7 @@
   }
 </main>
 
-} @else {
+} @else if(currentView() === 'session') {
 
 <main class="flex-1 flex flex-col bg-white w-full h-dvh">
   <header
@@ -268,13 +271,6 @@
         <span class="hidden md:inline">{{ streak() }} streak</span>
         <span class="md:hidden">{{ streak() }}</span>
       </div>
-      <div class="flex items-center gap-1 md:gap-2">
-        <i
-          class="fi fi-rr-bullseye text-blue-600 text-[13px] md:text-[15px]"
-        ></i>
-        <span class="hidden md:inline">{{ accuracy }}%</span>
-        <span class="md:hidden">{{ accuracy }}</span>
-      </div>
     </div>
   </header>
 
@@ -289,7 +285,11 @@
         >
           CLOZE TEST
         </div>
-
+        <!-- <h3
+          class="font-bold text-slate-900 mb-6 md:mb-10 text-center tracking-tight"
+        >
+          Hoàn thành câu sau
+        </h3> -->
         <div
           class="flex items-center gap-2 md:gap-4 text-[15px] md:text-xl text-slate-800 mb-8 md:mb-16 justify-center font-medium leading-loose flex-wrap max-w-2xl mx-auto text-center"
         >
@@ -306,7 +306,7 @@
           <span>{{ clozeParts().after }}</span>
         </div>
 
-        <div
+        <!-- <div
           class="bg-white border border-slate-200 rounded-xl p-6 md:p-8 shadow-sm w-full max-w-xl self-center flex gap-4 md:gap-6 text-left"
         >
           <div class="shrink-0 text-blue-600 mt-1 md:mt-0">
@@ -330,7 +330,7 @@
               >
             </div>
           </div>
-        </div>
+        </div> -->
       </div>
       } @case ('MULTIPLE_CHOICE') {
       <div class="flex flex-col items-center w-full">
@@ -355,8 +355,8 @@
         <div
           class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 lg:gap-8 w-full max-w-4xl mx-auto"
         >
-          @for (opt of currentMultipleChoiceOptions; track opt; let i = $index)
-          {
+          @if(!currentQuestionObj!.is_selected){ @for (opt of
+          listMultipleChoiceOptions; track opt; let i = $index) {
           <button
             class="rounded-xl p-5 md:p-6 text-left flex items-center gap-4 md:gap-6 transition-all w-full relative group"
             [class.bg-blue-50]="selectedMultipleChoice() === opt"
@@ -365,8 +365,6 @@
             [class.border-slate-200]="selectedMultipleChoice() !== opt"
             [class.hover:border-blue-400]="!isAnswerRevealed()"
             [class.bg-white]="selectedMultipleChoice() !== opt"
-            [class.bg-green-100]="isAnswerRevealed() && opt === currentQuestionObj?.correct_answer"
-            [class.bg-red-100]="isAnswerRevealed() && selectedMultipleChoice() === opt && !isCorrect()"
             (click)="selectMultipleChoice(opt)"
           >
             <div
@@ -391,7 +389,37 @@
               >{{ opt }}</span
             >
           </button>
-          }
+          } } @else { @for (opt of currentQuestionObj!.options ; track opt; let
+          i = $index) {
+          <button
+            class="rounded-xl p-5 md:p-6 text-left flex items-center gap-4 md:gap-6 transition-all w-full relative group"
+            [class.border-2]="true"
+            [class.border-slate-200]="currentQuestionObj?.user_answer !== opt && currentQuestionObj?.correct_answer !== opt"
+            [class.border-blue-600]="(opt === currentQuestionObj?.correct_answer) || opt === currentQuestionObj?.user_answer && currentQuestionObj?.user_answer !== currentQuestionObj?.correct_answer"
+            [class.bg-green-100]="opt === currentQuestionObj?.correct_answer"
+            [class.bg-red-100]="opt === currentQuestionObj?.user_answer && currentQuestionObj?.user_answer !== currentQuestionObj?.correct_answer"
+          >
+            <div
+              class="w-8 h-8 md:w-10 md:h-10 rounded text-sm md:text-base font-bold flex items-center justify-center shrink-0 font-mono"
+              [class.bg-blue-600]="currentQuestionObj?.user_answer === opt || currentQuestionObj?.correct_answer === opt"
+              [class.text-white]="currentQuestionObj?.user_answer === opt || currentQuestionObj?.correct_answer === opt"
+            >
+              @if (opt === currentQuestionObj?.correct_answer) {
+              <i class="fi fi-rr-check"></i>
+              } @else if (opt === currentQuestionObj?.user_answer &&
+              currentQuestionObj?.user_answer !==
+              currentQuestionObj?.correct_answer) {
+              <i class="fi fi-rr-cross"></i>
+
+              } @else { {{ ['A', 'B', 'C', 'D'][i] }} }
+            </div>
+            <span
+              class="font-medium text-[15px] md:text-[17px] transition-colors"
+              >{{ opt }}</span
+            >
+          </button>
+
+          }}
         </div>
       </div>
       }
@@ -563,85 +591,171 @@
     </div>
     }
   </footer>
-
-  <!-- @else {
-  <footer
-    class="p-4 py-6 md:p-6 flex flex-col sm:flex-row items-center justify-between shrink-0 w-full max-w-4xl mx-auto bg-white/90 backdrop-blur-md relative z-10 border-t border-slate-200 gap-4"
+</main>
+} @else {
+<main class="flex-1 flex flex-col bg-white w-full h-dvh">
+  <div
+    class="min-h-screen bg-slate-50 flex items-center justify-center p-6 font-sans"
   >
-    <button
-      class="w-full sm:w-auto px-6 py-3 rounded-xl font-medium text-sm flex items-center justify-center gap-2 border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 active:bg-slate-100 transition-all shadow-sm disabled:opacity-50 disabled:pointer-events-none"
-      [disabled]="currentQuestionIndex() === 0"
-     
-    >
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke-width="2"
-        stroke="currentColor"
-        class="w-4 h-4"
-      >
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          d="M15.75 19.5L8.25 12l7.5-7.5"
-        />
-      </svg>
-      Câu trước đó
-    </button>
+    <div class="w-full max-w-3xl space-y-6">
+      <div class="bg-[#1d5def] rounded-2xl p-8 text-white shadow-lg">
+        <span
+          class="inline-block px-3 py-1 bg-white/20 rounded-full text-xs font-bold tracking-wider mb-5"
+        >
+          HOÀN THÀNH KIỂM TRA
+        </span>
+        <h1 class="text-3xl font-bold mb-3">Bạn Làm Tốt Lắm !</h1>
+        <p class="text-blue-100 text-[15px] mb-8 max-w-lg leading-relaxed">
+          Bạn đang dần nắm vững ngôn ngữ này hơn rồi đấy. Thuật toán SM-2 vừa
+          cập nhật lại hồ sơ ghi nhớ của bạn
+        </p>
+      </div>
 
-    <div class="text-sm font-medium text-slate-500 order-first sm:order-none">
-      Câu
-      <span class="text-slate-800 font-semibold"
-        >{{ currentQuestionIndex() + 1 }}</span
-      >
-      trên <span class="font-semibold">{{ currentQuestions().length }}</span>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div
+          class="bg-white rounded-xl border border-gray-200 p-6 flex flex-col items-center justify-center flex-row md:justify-start md:flex-row shadow-sm"
+        >
+          <div
+            class="w-14 h-14 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center mb-3 md:mb-0 md:mr-4 shrink-0"
+          >
+            <svg
+              class="w-7 h-7"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M13 10V3L4 14h7v7l9-11h-7z"
+              ></path>
+            </svg>
+          </div>
+          <div class="text-center md:text-left">
+            <p class="text-gray-500 text-sm font-medium mb-1">Độ Chính Xác</p>
+            <p class="text-3xl font-bold text-slate-800">{{ accuracy() }}%</p>
+          </div>
+        </div>
+
+        <div
+          class="bg-white rounded-xl border border-gray-200 p-6 flex flex-col items-center justify-center flex-row md:justify-start md:flex-row shadow-sm"
+        >
+          <div
+            class="w-14 h-14 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center mb-3 md:mb-0 md:mr-4 shrink-0"
+          >
+            <svg
+              class="w-7 h-7"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+              ></path>
+            </svg>
+          </div>
+          <div class="text-center md:text-left">
+            <p class="text-gray-500 text-sm font-medium mb-1">Thời Gian</p>
+            <p class="text-3xl font-bold text-slate-800">
+              {{ formattedTimer }}
+            </p>
+          </div>
+        </div>
+
+        <div
+          class="bg-white rounded-xl border border-gray-200 p-6 flex flex-col items-center justify-center flex-row md:justify-start md:flex-row shadow-sm"
+        >
+          <div
+            class="w-14 h-14 rounded-full bg-green-50 text-green-600 flex items-center justify-center mb-3 md:mb-0 md:mr-4 shrink-0"
+          >
+            <svg
+              class="w-7 h-7"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
+              ></path>
+            </svg>
+          </div>
+          <div class="text-center md:text-left">
+            <p class="text-gray-500 text-sm font-medium mb-1">Số Câu Đúng</p>
+            <p class="text-3xl font-bold text-slate-800">
+              {{ quantityCorrect() }}/{{ currentQuestions().length }} Câu
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
+        <a
+          routerLink="/dashboard/overview"
+          class="flex items-center justify-center space-x-2 bg-white border border-gray-200 text-slate-700 font-semibold py-3.5 px-4 rounded-xl hover:bg-gray-50 hover:border-gray-300 transition-all shadow-sm"
+        >
+          <svg
+            class="w-5 h-5 text-gray-500"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"
+            ></path>
+          </svg>
+          <span>Back to Dashboard</span>
+        </a>
+
+        <a
+          routerLink="/dashboard/vocabulary"
+          class="flex items-center justify-center space-x-2 bg-white border border-gray-200 text-slate-700 font-semibold py-3.5 px-4 rounded-xl hover:bg-gray-50 hover:border-gray-300 transition-all shadow-sm"
+        >
+          <svg
+            class="w-5 h-5 text-gray-500"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"
+            ></path>
+          </svg>
+          <span>View Collection</span>
+        </a>
+
+        <button
+          class="flex items-center justify-center space-x-2 bg-[#0e51dd] text-white font-semibold py-3.5 px-4 rounded-xl hover:bg-blue-800 transition-all shadow-md hover:shadow-lg"
+          (click)="exitPractice()"
+        >
+          <svg
+            class="w-5 h-5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+            ></path>
+          </svg>
+          <span>Practice Again</span>
+        </button>
+      </div>
     </div>
-
-    @if (currentQuestionIndex() < currentQuestions().length - 1) {
-    <button
-      class="w-full sm:w-auto px-6 py-3 rounded-xl font-medium text-sm flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white transition-all shadow-sm shadow-indigo-100"
-      (click)="nextQuestion()"
-    >
-      Câu tiếp theo
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke-width="2"
-        stroke="currentColor"
-        class="w-4 h-4"
-      >
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          d="M8.25 4.5l7.5 7.5-7.5 7.5"
-        />
-      </svg>
-    </button>
-    } @else {
-    <button
-      class="w-full sm:w-auto px-6 py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white transition-all shadow-sm shadow-emerald-100"
-      /* (click)="submitExam()" */
-    >
-      Nộp bài thi
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke-width="2.5"
-        stroke="currentColor"
-        class="w-4 h-4"
-      >
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          d="M4.5 12.75l6 6 9-13.5"
-        />
-      </svg>
-    </button>
-    }
-  </footer>
-  } -->
+  </div>
 </main>
 }

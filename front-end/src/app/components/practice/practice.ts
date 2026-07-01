@@ -6,6 +6,8 @@ import {
   OnInit,
   OnDestroy,
   computed,
+  effect,
+  ChangeDetectorRef,
 } from "@angular/core";
 import { RouterLink } from "@angular/router";
 import { LayoutService } from "../../services/layout.service";
@@ -22,6 +24,11 @@ import { switchMap } from "rxjs/internal/operators/switchMap";
 import { throwError } from "rxjs/internal/observable/throwError";
 import { EMPTY } from "rxjs/internal/observable/empty";
 import { MatIconModule } from "@angular/material/icon";
+import { QuestionsService } from "../../services/questions.service";
+import moment from 'moment';
+import { tap } from "rxjs/internal/operators/tap";
+import { map } from "rxjs/internal/operators/map";
+import { catchError, of } from "rxjs";
 @Component({
   selector: "app-practice",
   standalone: true,
@@ -30,13 +37,13 @@ import { MatIconModule } from "@angular/material/icon";
 })
 export class Practice implements OnInit, OnDestroy {
   layout = inject(LayoutService);
-  xamsService = inject(ExamsService);
   toastService = inject(ToastService);
   examsService = inject(ExamsService);
+  quizesService = inject(QuestionsService)
   quizSessionsService = inject(QuizSessionsService);
   quizResultsService = inject(QuizResultsService);
 
-  currentView = signal<"list" | "session">("list");
+  currentView = signal<"list" | "session" | 'finish'>("list");
   activeFilter = signal<"ALL" | "IT" | "GRAMMAR" | "BUSINESS">("ALL");
 
   examsList = signal<any[]>([]);
@@ -52,6 +59,8 @@ export class Practice implements OnInit, OnDestroy {
   currentQuestions = signal<any[]>([]);
   currentQuestionIndex = signal<number>(0);
   progressIndex = computed(() => this.currentQuestionIndex() + 1);
+
+
   sessionType = signal<"CLOZE_TEST" | "MULTIPLE_CHOICE">("CLOZE_TEST");
   isAnswerRevealed = signal<boolean>(false);
 
@@ -62,14 +71,61 @@ export class Practice implements OnInit, OnDestroy {
   streak = signal<number>(0);
   correctCount = signal<number>(0);
   timerSeconds = signal<number>(0);
+  timerSessions = signal<number>(0);
+  private timerSessionsInterval: any = null;
+
+
+
   private timerInterval: any = null;
   private startTime: number = 0;
 
   endTest = signal<boolean>(false);
+  listMultipleChoiceOptions: any[] = [];
+
+  constructor(private cdr: ChangeDetectorRef) {
+    effect(() => {
+      const currentIndex = this.currentQuestionIndex();
+      this.multipleChoiceOptions();
+    });
+  }
+
+  multipleChoiceOptions() {
+    const q = this.currentQuestionObj;
+    if (!q || !q.wrong_answers) {
+      this.listMultipleChoiceOptions = [];
+      return;
+    }
+
+    let opts: any[] = [];
+    try {
+      opts = typeof q.wrong_answers === "string"
+        ? JSON.parse(q.wrong_answers)
+        : q.wrong_answers;
+
+      if (!Array.isArray(opts)) opts = [opts];
+    } catch (e) {
+      opts = [];
+    }
+
+    const combinedOptions = [q.correct_answer, ...opts];
+    for (let i = combinedOptions.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [combinedOptions[i], combinedOptions[j]] = [combinedOptions[j], combinedOptions[i]];
+    }
+
+    this.listMultipleChoiceOptions = combinedOptions;
+  }
+
 
 
   ngOnInit() {
     this.loadExams();
+    let st = Date.now();
+    this.timerSessions.set(0);
+    this.timerSessionsInterval = setInterval(() => {
+      const elapsedSeconds = Math.floor((Date.now() - st) / 1000);
+      this.timerSessions.set(elapsedSeconds);
+    }, 1000);
   }
 
   ngOnDestroy() {
@@ -83,6 +139,7 @@ export class Practice implements OnInit, OnDestroy {
         this.filterExams(this.activeFilter());
       }
     });
+
   }
 
   openEditModal(exam: any) {
@@ -174,8 +231,17 @@ export class Practice implements OnInit, OnDestroy {
             const exam = firstRes.data;
             this.currentExam.set(exam);
 
-            let questions = exam.exam_questions?.map((eq: any) => eq.questions).filter((q: any) => q) || [];
-            console.log('Total Questions received from API:', questions);
+            let questions = exam.exam_questions?.map((eq: any) => {
+              return {
+                is_selected: false,
+                is_correct: false,
+                user_answer: undefined,
+                options: [],
+                ...eq.questions
+              }
+            })?.filter((q: any) => q) || [];
+
+
 
             if (questions.length === 0) {
               this.toastService.show("Đề thi này không có câu hỏi nào (Data rỗng)! Vui lòng kiểm tra database.", "warning");
@@ -216,15 +282,11 @@ export class Practice implements OnInit, OnDestroy {
   }
 
   exitPractice() {
-    this.stopTimer();
-    this.currentView.set("list");
-    this.layout.setForceCollapse(false);
+    window.location.reload();
   }
 
-
-
   get formattedTimer() {
-    const s = this.timerSeconds();
+    const s = this.timerSessions();
     const mm = Math.floor(s / 60)
       .toString()
       .padStart(2, "0");
@@ -232,12 +294,6 @@ export class Practice implements OnInit, OnDestroy {
     return `${mm}:${ss}`;
   }
 
-  get accuracy() {
-    if (this.currentQuestionIndex() === 0) return 0;
-    return Math.round(
-      (this.correctCount() / this.currentQuestionIndex()) * 100,
-    );
-  }
 
   get progressPercent() {
     if (this.currentQuestions().length === 0) return 0;
@@ -249,6 +305,7 @@ export class Practice implements OnInit, OnDestroy {
   loadCurrentQuestion() {
     const q = this.currentQuestions()[this.currentQuestionIndex()];
     console.log(this.currentQuestionObj);
+
     this.sessionType.set(q.question_type);
     this.isAnswerRevealed.set(false);
     this.userClozeInput.set("");
@@ -261,22 +318,7 @@ export class Practice implements OnInit, OnDestroy {
     return this.currentQuestions()[this.currentQuestionIndex()];
   }
 
-  get currentMultipleChoiceOptions() {
-    const q = this.currentQuestionObj;
-    if (!q || !q.wrong_answers) return [];
-    let opts = [];
-    try {
-      opts =
-        typeof q.wrong_answers === "string"
-          ? JSON.parse(q.wrong_answers)
-          : q.wrong_answers;
-      if (!Array.isArray(opts)) opts = [opts];
-    } catch (e) {
-      opts = [];
-    }
-    opts = [q.correct_answer, ...opts];
-    return opts;
-  }
+
 
   selectMultipleChoice(option: string) {
     if (this.isAnswerRevealed()) return;
@@ -324,16 +366,57 @@ export class Practice implements OnInit, OnDestroy {
       sm2_score: undefined,
       response_time_ms: this.getResponseTimeMs(),
     });
-
+    this.currentQuestions()[this.currentQuestionIndex()].user_answer = userAnswer;
+    this.currentQuestions()[this.currentQuestionIndex()].is_correct = this.isCorrect();
+    this.currentQuestions()[this.currentQuestionIndex()].is_selected = true;
+    this.currentQuestions()[this.currentQuestionIndex()].options = this.listMultipleChoiceOptions;
+    console.log(this.currentQuestionObj)
     this.quizResultsService.createQuizResult(resultData).subscribe();
   }
 
+
+  finishExam = signal<boolean>(false);
+  accuracy = signal<number>(0);
+  quantityCorrect = signal<number>(0);
+
+
+
   submitExam() {
-    if (this.isAnswerRevealed()) return;
-    console.log(this.currentExam());
-    console.log(this.sessionId());
+    this.quizesService.getQuizBySessionIdAndExamId(
+      this.currentExam()?.id,
+      this.sessionId(),
+      this.getUserLogin().user.id
+    ).pipe(
 
+      tap(() => {
+        this.finishExam.set(true);
+        this.currentView.set('finish');
+        this.toastService.show("Hoàn Thành Bài Kiểm Tra", "success");
+      }),
+      map(res => {
+        const quizes = res?.data?.quiz_results || [];
+        console.log(res)
+        if (quizes.length === 0) return { count: 0, total: 0 };
 
+        const count = quizes.reduce((acc: number, curr: { is_correct: any; }) => curr.is_correct ? acc + 1 : acc, 0);
+        return { count, total: quizes.length, start_at: res.data.started_at };
+      }),
+      catchError(err => {
+        console.error("Error fetching quiz:", err);
+        this.toastService.show(err.error?.messages || "Có lỗi xảy ra", "error");
+        return of(null);
+      })
+    ).subscribe(result => {
+      if (!result) return;
+
+      this.quantityCorrect.set(result.count);
+      this.accuracy.set(result.total > 0 ? Math.round((result.count / result.total) * 100) : 0);
+      if (this.timerSessionsInterval) {
+        clearInterval(this.timerSessionsInterval);
+        this.timerSessionsInterval = null;
+      }
+      this.quizSessionsService.updateTimeEndQuizSession(this.sessionId(), { ended_at: moment(result.start_at).add(this.timerSessions(), 'seconds') }).subscribe();
+    });
   }
 
   startTimer() {
@@ -359,6 +442,7 @@ export class Practice implements OnInit, OnDestroy {
   }
 
   nextQuestion() {
+
     if (this.currentQuestionIndex() < this.currentQuestions().length - 1) {
       this.currentQuestionIndex.update((i) => i + 1);
       this.loadCurrentQuestion();
@@ -373,6 +457,7 @@ export class Practice implements OnInit, OnDestroy {
 
 
   prevQuestion() {
+
     if (this.currentQuestionIndex() > 0) {
       this.currentQuestionIndex.update((i) => i - 1);
       this.loadCurrentQuestion();

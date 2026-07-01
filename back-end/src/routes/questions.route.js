@@ -28,6 +28,6 @@ router
   .delete(deleteQuestion);
 
 // --- 4. Quiz Routes ---
-router.get("/quiz/:exam_id/:session_id/:user_id", getQuizBySessionIdAndExamId);
+router.get("/quizs/:exam_id/:session_id/:user_id", getQuizBySessionIdAndExamId);
 
 module.exports = router;

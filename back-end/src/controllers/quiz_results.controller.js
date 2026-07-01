@@ -27,7 +27,9 @@ exports.getQuizResult = async (req, res) => {
     });
 
     if (!result) {
-      return res.status(404).json({ message: "Không tìm thấy kết quả bài tập" });
+      return res
+        .status(404)
+        .json({ message: "Không tìm thấy kết quả bài tập" });
     }
 
     res.status(200).json({
@@ -83,7 +85,9 @@ exports.updateQuizResult = async (req, res) => {
     });
 
     if (!existing) {
-      return res.status(404).json({ message: "Không tìm thấy kết quả bài tập" });
+      return res
+        .status(404)
+        .json({ message: "Không tìm thấy kết quả bài tập" });
     }
 
     const {
@@ -129,7 +133,9 @@ exports.deleteQuizResult = async (req, res) => {
     });
 
     if (!existing) {
-      return res.status(404).json({ message: "Không tìm thấy kết quả bài tập" });
+      return res
+        .status(404)
+        .json({ message: "Không tìm thấy kết quả bài tập" });
     }
 
     const deletedResult = await prisma.quiz_results.update({

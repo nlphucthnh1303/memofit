@@ -7,6 +7,7 @@ const {
   createQuizSession,
   updateQuizSession,
   deleteQuizSession,
+  updateTimeEndQuizSession,
 } = require("../controllers/quiz_sessions.controller");
 
 router.route("/").get(getQuizSessions).post(createQuizSession);
@@ -15,5 +16,6 @@ router
   .get(getQuizSession)
   .put(updateQuizSession)
   .delete(deleteQuizSession);
+router.route("/time-end/:id").put(updateTimeEndQuizSession);
 
 module.exports = router;

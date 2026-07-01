@@ -28,6 +28,10 @@ export class QuizSessionsService {
         return this.http.put<any>(`${this.baseApi}/${id}`, data);
     }
 
+    updateTimeEndQuizSession(id: number | any, data: { ended_at: any }): Observable<any> {
+        return this.http.put<any>(`${this.baseApi}/time-end/${id}`, data);
+    }
+
     deleteQuizSession(id: number): Observable<any> {
         return this.http.delete<any>(`${this.baseApi}/${id}`);
     }

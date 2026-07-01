@@ -45,13 +45,14 @@ exports.getQuizSession = async (req, res) => {
 
 exports.createQuizSession = async (req, res) => {
   try {
-    const { user_id, mode, started_at, ended_at } = req.body;
+    const { user_id, mode, started_at, ended_at, exam_id } = req.body;
     const session = await prisma.quiz_sessions.create({
       data: {
         user_id,
         mode,
         started_at,
         ended_at,
+        exam_id,
       },
     });
     res.status(201).json({
@@ -82,7 +83,7 @@ exports.updateQuizSession = async (req, res) => {
         .json({ message: "Không tìm thấy phiên làm bài tập" });
     }
 
-    const { user_id, mode, started_at, ended_at } = req.body;
+    const { user_id, mode, started_at, ended_at, exam_id } = req.body;
     const updatedSession = await prisma.quiz_sessions.update({
       where: { id: parseInt(id) },
       data: {
@@ -90,10 +91,45 @@ exports.updateQuizSession = async (req, res) => {
         mode,
         started_at,
         ended_at,
+        exam_id,
       },
     });
     res.status(200).json({
       message: "Cập nhật thông tin phiên làm bài tập thành công",
+      data: updatedSession,
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+exports.updateTimeEndQuizSession = async (req, res) => {
+  try {
+    const id = parseInt(req.params.id, 10);
+    if (Number.isNaN(id)) {
+      return res
+        .status(400)
+        .json({ message: "ID phiên làm bài tập không hợp lệ" });
+    }
+
+    const existing = await prisma.quiz_sessions.findFirst({
+      where: { id: parseInt(id), is_delete: "0" },
+    });
+
+    if (!existing) {
+      return res
+        .status(404)
+        .json({ message: "Không tìm thấy phiên làm bài tập" });
+    }
+
+    const { ended_at } = req.body;
+    const updatedSession = await prisma.quiz_sessions.update({
+      where: { id: parseInt(id) },
+      data: {
+        ended_at,
+      },
+    });
+    res.status(200).json({
+      message: "Cập nhật thời gian kết phiên thành công",
       data: updatedSession,
     });
   } catch (error) {
