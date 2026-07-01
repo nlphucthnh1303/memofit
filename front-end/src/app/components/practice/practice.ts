@@ -469,7 +469,7 @@ export class Practice implements OnInit, OnDestroy {
   clozeParts() {
     const q = this.currentQuestionObj;
     if (!q || !q.question_text) return { before: "", after: "" };
-    const split = q.question_text.split("........");
+    const split = q.question_text.split("___");
     if (split.length >= 2) {
       return { before: split[0], after: split[1] };
     }

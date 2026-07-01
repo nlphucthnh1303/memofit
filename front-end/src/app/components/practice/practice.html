@@ -291,46 +291,27 @@
           Hoàn thành câu sau
         </h3> -->
         <div
-          class="flex items-center gap-2 md:gap-4 text-[15px] md:text-xl text-slate-800 mb-8 md:mb-16 justify-center font-medium leading-loose flex-wrap max-w-2xl mx-auto text-center"
+          class="max-w-2xl mx-auto text-center text-[15px] md:text-xl text-slate-800 mb-4 md:mb-8 font-medium leading-loose"
         >
-          <span>{{ clozeParts().before }}</span>
+          <span class="inline">{{ clozeParts().before }}</span>
+
           <input
             type="text"
             [(ngModel)]="userClozeInput"
-            [disabled]="isAnswerRevealed()"
             [class.bg-green-100]="isAnswerRevealed() && isCorrect()"
             [class.bg-red-100]="isAnswerRevealed() && !isCorrect()"
-            class="min-w-24 w-auto h-10 md:h-12 border border-blue-500 rounded-lg px-2 md:px-4 text-center focus:outline-none focus:ring-2 focus:ring-blue-100 transition-all bg-white"
+            class="inline-block align-middle min-w-24 w-auto h-8 md:h-10 border border-blue-500 rounded-lg px-3 mx-1 text-center focus:outline-none focus:ring-2 focus:ring-blue-100 transition-all bg-white"
             placeholder="........"
           />
-          <span>{{ clozeParts().after }}</span>
-        </div>
 
-        <!-- <div
-          class="bg-white border border-slate-200 rounded-xl p-6 md:p-8 shadow-sm w-full max-w-xl self-center flex gap-4 md:gap-6 text-left"
+          <span class="inline">{{ clozeParts().after }}</span>
+        </div>
+        <button
+          (click)="checkAnswer()"
+          class="text-blue-500 bg-white border border-blue-500 px-6 md:px-6 py-3 md:py-2 rounded-xl font-bold hover:bg-blue-100 hover:text-blue-700 text-[15px] md:text-[17px] transition-colors shadow-sm"
         >
-          <div class="shrink-0 text-blue-600 mt-1 md:mt-0">
-            <i class="fi fi-rr-language text-xl md:text-2xl"></i>
-          </div>
-          <div>
-            <p
-              class="text-[15px] md:text-[17px] text-slate-600 mb-4 leading-relaxed"
-            >
-              "{{ currentQuestionObj()?.vocabularies?.example_meaning ||
-              currentQuestionObj()?.vocabularies?.meaning }}"
-            </p>
-            <div class="inline-flex items-center gap-3">
-              <span
-                class="bg-blue-50 text-slate-500 text-[10px] md:text-[11px] font-bold font-mono tracking-wider px-2 py-1 rounded"
-                >HINT</span
-              >
-              <span class="font-mono text-sm md:text-[15px] text-slate-700"
-                >Starts with '{{ currentQuestionObj()?.correct_answer?.charAt(0)
-                }}'</span
-              >
-            </div>
-          </div>
-        </div> -->
+          Kiểm tra
+        </button>
       </div>
       } @case ('MULTIPLE_CHOICE') {
       <div class="flex flex-col items-center w-full">
