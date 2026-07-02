@@ -28,7 +28,8 @@ import { QuestionsService } from "../../services/questions.service";
 import moment from 'moment';
 import { tap } from "rxjs/internal/operators/tap";
 import { map } from "rxjs/internal/operators/map";
-import { catchError, of } from "rxjs";
+import { catchError, of, Subject, debounceTime, distinctUntilChanged } from "rxjs";
+
 @Component({
   selector: "app-practice",
   standalone: true,
@@ -48,6 +49,10 @@ export class Practice implements OnInit, OnDestroy {
 
   examsList = signal<any[]>([]);
   filteredExamsList = signal<any[]>([]);
+
+  searchExam = signal<string>('');
+  sortExam = signal<string>('desc');
+  private searchSubject = new Subject<string>();
 
   showEditModal = signal(false);
   editExamId = signal<number | null>(null);
@@ -119,6 +124,14 @@ export class Practice implements OnInit, OnDestroy {
 
 
   ngOnInit() {
+    this.searchSubject.pipe(
+      debounceTime(300),
+      distinctUntilChanged()
+    ).subscribe((searchTerm) => {
+      this.searchExam.set(searchTerm);
+      this.loadExams();
+    });
+
     this.loadExams();
     let st = Date.now();
     this.timerSessions.set(0);
@@ -132,14 +145,22 @@ export class Practice implements OnInit, OnDestroy {
     this.stopTimer();
   }
 
+  onSearchChange(event: any) {
+    this.searchSubject.next(event.target.value);
+  }
+
+  toggleSortExam() {
+    this.sortExam.set(this.sortExam() === 'desc' ? 'asc' : 'desc');
+    this.loadExams();
+  }
+
   loadExams() {
-    this.examsService.getExams().subscribe((res) => {
+    this.examsService.getExams(this.searchExam(), this.sortExam()).subscribe((res) => {
       if (res.data) {
         this.examsList.set(res.data);
         this.filterExams(this.activeFilter());
       }
     });
-
   }
 
   openEditModal(exam: any) {
@@ -304,13 +325,21 @@ export class Practice implements OnInit, OnDestroy {
 
   loadCurrentQuestion() {
     const q = this.currentQuestions()[this.currentQuestionIndex()];
-    console.log(this.currentQuestionObj);
-
     this.sessionType.set(q.question_type);
-    this.isAnswerRevealed.set(false);
-    this.userClozeInput.set("");
-    this.selectedMultipleChoice.set("");
-    this.isCorrect.set(false);
+    if (q.is_selected) {
+      this.isAnswerRevealed.set(true);
+      if (q.question_type === "CLOZE_TEST") {
+        this.userClozeInput.set(q.user_answer || "");
+      } else if (q.question_type === "MULTIPLE_CHOICE") {
+        this.selectedMultipleChoice.set(q.user_answer || "");
+      }
+      this.isCorrect.set(q.is_correct);
+    } else {
+      this.isAnswerRevealed.set(false);
+      this.userClozeInput.set("");
+      this.selectedMultipleChoice.set("");
+      this.isCorrect.set(false);
+    }
   }
 
   get currentQuestionObj() {
@@ -334,6 +363,7 @@ export class Practice implements OnInit, OnDestroy {
     let correct = false;
 
     if (q.question_type === "CLOZE_TEST") {
+      if (!this.userClozeInput() || !this.userClozeInput().trim()) return;
       correct = this.userClozeInput().toLowerCase().trim() === q.correct_answer?.toLowerCase().trim();
     } else if (q.question_type === "MULTIPLE_CHOICE") {
       if (!this.selectedMultipleChoice()) {
@@ -344,9 +374,11 @@ export class Practice implements OnInit, OnDestroy {
 
     this.isCorrect.set(correct);
     if (correct) {
+      this.toastService.show('Chính xác!', 'success');
       this.streak.update((s) => s + 1);
       this.correctCount.update((c) => c + 1);
     } else {
+      this.toastService.show('Sai rồi!', 'error');
       this.streak.set(0);
     }
     this.isAnswerRevealed.set(true);
@@ -370,7 +402,6 @@ export class Practice implements OnInit, OnDestroy {
     this.currentQuestions()[this.currentQuestionIndex()].is_correct = this.isCorrect();
     this.currentQuestions()[this.currentQuestionIndex()].is_selected = true;
     this.currentQuestions()[this.currentQuestionIndex()].options = this.listMultipleChoiceOptions;
-    console.log(this.currentQuestionObj)
     this.quizResultsService.createQuizResult(resultData).subscribe();
   }
 
@@ -379,13 +410,10 @@ export class Practice implements OnInit, OnDestroy {
   accuracy = signal<number>(0);
   quantityCorrect = signal<number>(0);
 
-
-
   submitExam() {
     this.quizesService.getQuizBySessionIdAndExamId(
       this.currentExam()?.id,
-      this.sessionId(),
-      this.getUserLogin().user.id
+      this.sessionId()
     ).pipe(
 
       tap(() => {

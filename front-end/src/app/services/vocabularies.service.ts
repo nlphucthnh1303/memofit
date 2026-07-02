@@ -36,12 +36,12 @@ export class VocabulariesService {
         return this.http.delete<any>(`${this.baseApi}/${id}`);
     }
 
-    getVocabulariesDetailByCollectionId(collectionId: number, userId: number): Observable<any> {
-        return this.http.get<any>(`${this.baseApi}/detail/collection/${collectionId}/${userId}`);
+    getVocabulariesDetailByCollectionId(collectionId: number): Observable<any> {
+        return this.http.get<any>(`${this.baseApi}/detail/collection/${collectionId}}`);
     }
 
-    getVocabularyDetail(vocabularyId: number, userId: number): Observable<any> {
-        return this.http.get<any>(`${this.baseApi}/detail/${vocabularyId}/${userId}`);
+    getVocabularyDetail(vocabularyId: number): Observable<any> {
+        return this.http.get<any>(`${this.baseApi}/detail/${vocabularyId}`);
     }
 
     downloadImportTemplate(): Observable<Blob> {

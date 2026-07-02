@@ -1,13 +1,8 @@
 <main class="flex-1 w-full overflow-y-auto">
-  
-
   <div class="p-4 md:p-10 max-w-300 mx-auto">
-    
-
     <div
       class="flex items-center justify-between gap-4 mb-2 md:mb-8 pb-6 md:pb-"
     >
-      
       <button
         class="text-slate-400 hover:text-blue-700 transition-colors text-sm font-medium flex items-center gap-1 min-h-11 shrink-0"
         (click)="goBackToCollections()"
@@ -16,9 +11,7 @@
         <span class="hidden sm:inline">Quay lại</span>
       </button>
 
-      
       <div class="flex items-center gap-3">
-        
         <div class="relative w-32 md:w-64">
           <i
             class="fi fi-rr-search absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 text-sm"
@@ -31,7 +24,6 @@
           />
         </div>
 
-        
         <button
           class="bg-white border border-slate-200 text-slate-700 px-3 md:px-5 py-2.5 min-h-11 rounded-xl text-sm font-semibold hover:bg-slate-50 transition-colors shadow-sm flex items-center justify-center gap-2"
           (click)="openImportModal()"
@@ -50,7 +42,6 @@
       </div>
     </div>
 
-    
     <div
       class="hidden md:block bg-white rounded-2xl border border-slate-200 shadow-sm overflow-x-auto text-sm"
     >
@@ -108,7 +99,6 @@
               </div>
             </td>
             <td class="px-6 py-3 align-center">
-              
               <div class="mb-3">
                 <span
                   class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded font-medium text-xs font-mono"
@@ -119,7 +109,6 @@
                     'bg-red-100 text-red-800': word.user_vocabulary_progress[0]?.status === 'expired'
                   }"
                 >
-                  
                   <div
                     class="w-1.5 h-1.5 rounded-full"
                     [ngClass]="{
@@ -159,7 +148,6 @@
                   Không tìm thấy dữ liệu
                 </h3>
 
-                
                 <p class="text-sm text-slate-500 mb-4 leading-relaxed">
                   Hệ thống hiện tại chưa ghi nhận thông tin hoặc dữ liệu mà bạn
                   đang tìm kiếm. Vui lòng thử tải lại trang hoặc thêm mới dữ
@@ -172,7 +160,6 @@
         </tbody>
       </table>
 
-      
       <div
         class="px-6 py-6 border-t border-slate-200 flex justify-center items-center gap-2"
       >
@@ -317,7 +304,6 @@
     </div>
   </div>
 </main>
-
 
 @if (showImportModal()) {
 <div
@@ -752,10 +738,7 @@
     </div>
   </div>
 </div>
-}
-
-
-@if (showVocabularyModal()) {
+} @if (showVocabularyModal()) {
 <div
   class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex flex-col items-center justify-end md:justify-center p-0 md:p-4"
 >

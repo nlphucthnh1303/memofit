@@ -43,7 +43,7 @@ export class QuestionsService {
         return this.http.post<any>(`${this.baseApi}/multiple`, data);
     }
 
-    getQuizBySessionIdAndExamId(examId: number, sessionId: number | any, userId: number | any): Observable<any> {
-        return this.http.get<any>(`${this.baseApi}/quizs/${examId}/${sessionId}/${userId}`);
+    getQuizBySessionIdAndExamId(examId: number, sessionId: number | any): Observable<any> {
+        return this.http.get<any>(`${this.baseApi}/quizs/${examId}/${sessionId}`);
     }
 }

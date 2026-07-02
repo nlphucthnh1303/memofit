@@ -19,7 +19,7 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 // --- 3. Routes ---
 app.get("/", (req, res) => res.send("Hello from Express backend!"));
 app.use("/api/auth", require("./routes/auth.route"));
-
+app.use("/api/dashboard", require("./routes/dashboard.route"));
 app.use("/api/users", require("./routes/users.route"));
 app.use("/api/collections", require("./routes/collections.route"));
 app.use("/api/vocabularies", require("./routes/vocabularies.route"));
@@ -32,6 +32,7 @@ app.use("/api/exam-questions", require("./routes/exam_questions.route"));
 app.use("/api/questions", require("./routes/questions.route"));
 app.use("/api/quiz-sessions", require("./routes/quiz_sessions.route"));
 app.use("/api/quiz-results", require("./routes/quiz_results.route"));
+app.use("/api/notifications", require("./routes/notifications.route"));
 
 // --- 4. Error Handling ---
 app.use((err, req, res, next) => {

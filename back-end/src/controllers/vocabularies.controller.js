@@ -194,7 +194,8 @@ exports.getVocabulariesByCollectionId = async (req, res) => {
 
 exports.getVocabulariesDetailByCollectionId = async (req, res) => {
   try {
-    const { collection_id, user_id } = req.params;
+    const { collection_id } = req.params;
+    const user_id = req.user.userId;
     const vocabularies = await prisma.vocabularies.findMany({
       where: {
         collection_id: parseInt(collection_id),
@@ -222,7 +223,8 @@ exports.getVocabulariesDetailByCollectionId = async (req, res) => {
 
 exports.getVocabularyDetail = async (req, res) => {
   try {
-    const { vocabulary_id, user_id } = req.params;
+    const { vocabulary_id } = req.params;
+    const user_id = req.user.userId;
     const vocabulary = await prisma.vocabularies.findUnique({
       where: {
         id: parseInt(vocabulary_id),

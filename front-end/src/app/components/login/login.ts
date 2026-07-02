@@ -47,6 +47,8 @@ export class Login {
 
             localStorage.setItem('storage_type', rememberMe ? 'local' : 'session');
             storage.setItem('user_login', JSON.stringify(response));
+            localStorage.setItem('access_token', response.token);
+
 
             const isVerified = response?.user?.isOtpVerify === true;
             storage.setItem('is_otp_verified', isVerified ? 'true' : 'false');

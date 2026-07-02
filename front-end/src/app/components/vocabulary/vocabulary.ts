@@ -168,7 +168,7 @@ export class Vocabulary implements OnInit {
 
   getVocabularies(collectionId: number): void {
     this.spinner.show();
-    this.vocabulariesService.getVocabulariesDetailByCollectionId(collectionId, this.getUserLogin().user.id).subscribe({
+    this.vocabulariesService.getVocabulariesDetailByCollectionId(collectionId).subscribe({
       next: (res) => {
         this.wordsList.set(res.data || []);
         this.searchVocabularies("");
@@ -320,7 +320,9 @@ export class Vocabulary implements OnInit {
       width: '450px',
       data: {
         title: 'Xóa Từ Vựng',
-        message: 'Bạn có chắc chắn muốn xóa từ vựng này?'
+        message: 'Bạn có chắc chắn muốn xóa từ vựng này?',
+        type: 'error',
+        confirmText: 'Xóa ngay'
       }
     });
 

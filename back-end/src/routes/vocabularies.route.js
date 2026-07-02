@@ -15,14 +15,14 @@ const {
   confirmImportTemplate,
   getVocabulariesSearch,
 } = require("../controllers/vocabularies.controller");
-const auth = require("../middleware/auth");
+const authcheck = require("../middleware/authcheck");
 const multer = require("multer");
 const upload = multer({ storage: multer.memoryStorage() });
 router.route("/").get(getVocabularies).post(createVocabulary);
 router
-  .route("/detail/collection/:collection_id/:user_id")
-  .get(getVocabulariesDetailByCollectionId);
-router.route("/detail/:vocabulary_id/:user_id").get(getVocabularyDetail);
+  .route("/detail/collection/:collection_id/")
+  .get(authcheck, getVocabulariesDetailByCollectionId);
+router.route("/detail/:vocabulary_id/").get(authcheck, getVocabularyDetail);
 router
   .route("/:id")
   .get(getVocabulary)

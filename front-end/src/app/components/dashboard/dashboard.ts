@@ -3,6 +3,7 @@ import { Sidebar } from '../sidebar/sidebar';
 import { ActivatedRoute, NavigationEnd, Router, RouterOutlet } from "@angular/router";
 import { Header } from "../header/header";
 import { filter } from 'rxjs/internal/operators/filter';
+import { NotificationService } from '../../services/notification.service';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -13,11 +14,14 @@ import { filter } from 'rxjs/internal/operators/filter';
 export class Dashboard implements OnInit {
   private router = inject(Router);
   private activatedRoute = inject(ActivatedRoute);
-  private cdr = inject(ChangeDetectorRef); // Cần thiết đối với OnPush
+  private cdr = inject(ChangeDetectorRef);
+  private notificationService = inject(NotificationService);
 
   headerTitle: string = '';
 
   ngOnInit(): void {
+    this.notificationService.fetchDueReviews();
+
     this.updateHeaderTitle();
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd)
@@ -36,6 +40,4 @@ export class Dashboard implements OnInit {
     this.headerTitle = routeTitle;
     this.cdr.markForCheck();
   }
-
-
 }

@@ -10,7 +10,7 @@ export class DialogService {
 
   open<T>(component: Type<T>, config?: DialogConfig): DialogRef {
     const dialogRef = new DialogRef((id) => this.removeDialog(id));
-    
+
     const newDialog: DialogItem = {
       id: dialogRef.id,
       component,

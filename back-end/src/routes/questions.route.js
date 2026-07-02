@@ -11,7 +11,7 @@ const {
   deleteQuestion,
   getQuizBySessionIdAndExamId,
 } = require("../controllers/questions.controller");
-
+const authcheck = require("../middleware/authcheck");
 // --- 1. Specific Routes (Must be before parameterized routes) ---
 router.post("/multiple", createMultipleQuestions);
 router.post("/generate-ai", generateAiQuestions);
@@ -28,6 +28,10 @@ router
   .delete(deleteQuestion);
 
 // --- 4. Quiz Routes ---
-router.get("/quizs/:exam_id/:session_id/:user_id", getQuizBySessionIdAndExamId);
+router.get(
+  "/quizs/:exam_id/:session_id",
+  authcheck,
+  getQuizBySessionIdAndExamId,
+);
 
 module.exports = router;

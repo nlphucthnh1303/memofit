@@ -12,8 +12,11 @@ export class CollectionsService {
 
     constructor(private http: HttpClient) { }
 
-    getCollections(): Observable<any> {
-        return this.http.get<any>(this.baseApi);
+    getCollections(search?: string, sort?: string): Observable<any> {
+        let params: any = {};
+        if (search) params.search = search;
+        if (sort) params.sort = sort;
+        return this.http.get<any>(this.baseApi, { params });
     }
 
     getCollection(id: number): Observable<any> {

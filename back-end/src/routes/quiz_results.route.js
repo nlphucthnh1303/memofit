@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-
+const authcheck = require("../middleware/authcheck");
 const {
   getQuizResults,
   getQuizResult,
@@ -9,7 +9,7 @@ const {
   deleteQuizResult,
 } = require("../controllers/quiz_results.controller");
 
-router.route("/").get(getQuizResults).post(createQuizResult);
+router.route("/").get(getQuizResults).post(authcheck, createQuizResult);
 router
   .route("/:id")
   .get(getQuizResult)

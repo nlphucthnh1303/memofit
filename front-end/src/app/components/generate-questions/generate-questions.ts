@@ -273,7 +273,9 @@ export class GenerateQuestions implements OnInit, OnDestroy {
       width: '450px',
       data: {
         title: 'Xóa câu hỏi',
-        message: 'Bạn có chắc chắn muốn xóa câu hỏi này?'
+        message: 'Bạn có chắc chắn muốn xóa câu hỏi này?',
+        type: 'error',
+        confirmText: 'Xóa ngay'
       }
     });
     dialogRef.afterClosed$.subscribe(result => {

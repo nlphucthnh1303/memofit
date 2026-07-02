@@ -8,7 +8,7 @@ import { DialogService } from '../../shared/ui/dialog/dialog.service';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { ConfirmDialogComponent } from '../demo-ui/demo-ui';
 import { Collections } from '../../models/collections.model';
-import { concatMap, finalize, of } from 'rxjs';
+import { concatMap, finalize, of, Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 import { Router } from '@angular/router';
 
 @Component({
@@ -24,6 +24,10 @@ export class Collection implements OnInit {
   showCollectionModal = signal<boolean>(false);
   isEditMode = signal<boolean>(false);
   currentCollectionId = signal<number | null>(null);
+
+  searchCollection = signal<string>('');
+  sortCollection = signal<string>('desc');
+  private searchSubject = new Subject<string>();
 
   imagePreview: string | SafeUrl | null = null;
   imageUrl: string = '';
@@ -42,6 +46,14 @@ export class Collection implements OnInit {
   ngOnInit(): void {
     this.initForm();
     this.getCollectionsList();
+
+    this.searchSubject.pipe(
+      debounceTime(300),
+      distinctUntilChanged()
+    ).subscribe((searchTerm) => {
+      this.searchCollection.set(searchTerm);
+      this.getCollectionsList();
+    });
   }
 
   private initForm(): void {
@@ -56,9 +68,18 @@ export class Collection implements OnInit {
     this.router.navigate(['/dashboard/vocabulary', collectionId]);
   }
 
+  onSearchChange(event: any) {
+    this.searchSubject.next(event.target.value);
+  }
+
+  toggleSortCollection() {
+    this.sortCollection.set(this.sortCollection() === 'desc' ? 'asc' : 'desc');
+    this.getCollectionsList();
+  }
+
   getCollectionsList(): void {
     this.spinner.show();
-    this.collectionsService.getCollections().subscribe({
+    this.collectionsService.getCollections(this.searchCollection(), this.sortCollection()).subscribe({
       next: (res) => {
         this.collectionsList.set(res.data || []);
         this.spinner.hide();
@@ -74,7 +95,13 @@ export class Collection implements OnInit {
   onDeleteCollection(id: number): void {
     const dialogRef = this.dialogService.open(ConfirmDialogComponent, {
       width: '450px',
-      data: { title: 'Xóa Bộ Sưu Tập', message: 'Bạn có chắc chắn muốn xóa bộ sưu tập này? Hành động này không thể hoàn tác.' }
+      data: {
+        title: 'Xóa Bộ Sưu Tập',
+        message: 'Bạn có chắc chắn muốn xóa bộ sưu tập này? Hành động này không thể hoàn tác.',
+        type: 'error',
+        confirmText: 'Xóa ngay'
+      }
+
     });
 
     dialogRef.afterClosed$.subscribe(result => {

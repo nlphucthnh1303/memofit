@@ -322,8 +322,8 @@ exports.generateStaticQuestions = async (req, res) => {
 
 exports.getQuizBySessionIdAndExamId = async (req, res) => {
   try {
-    const { exam_id, session_id, user_id } = req.params;
-
+    const { exam_id, session_id } = req.params;
+    const user_id = req.user.userId;
     if (
       Number.isNaN(exam_id) ||
       Number.isNaN(session_id) ||

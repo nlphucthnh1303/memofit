@@ -77,7 +77,7 @@
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 flex-1">
             @for (col of collections; track col.id) {
             <div
-              class="border rounded-2xl p-5 cursor-pointer relative group transition-all"
+              class="border rounded-2xl p-5 h-[140px] cursor-pointer relative group transition-all"
               [class.border-blue-400]="selectedCollectionId() === col.id"
               [class.bg-blue-50/50]="selectedCollectionId() === col.id"
               [class.border-slate-200]="selectedCollectionId() !== col.id"

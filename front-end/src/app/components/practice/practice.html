@@ -1,79 +1,35 @@
 @if (currentView() === 'list') {
 
 <main class="flex-1 overflow-y-auto w-full p-4 md:p-10 pb-20 md:pb-10">
-  <!-- <div
-    class="flex flex-col md:flex-row md:justify-between items-stretch md:items-center mb-6 md:mb-8 gap-4"
+  <div
+    class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 md:mb-8 mt-4"
   >
-    <div
-      class="flex overflow-x-auto gap-2 md:gap-3 pb-2 md:pb-0 hide-scrollbar"
-      style="-webkit-overflow-scrolling: touch"
-    >
-      <button
-        class="shrink-0 px-4 md:px-5 py-2 min-h-11 rounded-full text-xs md:text-sm font-semibold transition-colors"
-        [class.bg-blue-600]="activeFilter() === 'ALL'"
-        [class.text-white]="activeFilter() === 'ALL'"
-        [class.bg-white]="activeFilter() !== 'ALL'"
-        [class.border]="activeFilter() !== 'ALL'"
-        [class.border-slate-200]="activeFilter() !== 'ALL'"
-        [class.text-slate-700]="activeFilter() !== 'ALL'"
-        [class.hover:bg-slate-50]="activeFilter() !== 'ALL'"
-        (click)="setFilter('ALL')"
-      >
-        Tất cả
-      </button>
-      <button
-        class="shrink-0 px-4 md:px-5 py-2 min-h-11 rounded-full text-xs md:text-sm font-semibold transition-colors"
-        [class.bg-blue-600]="activeFilter() === 'IT'"
-        [class.text-white]="activeFilter() === 'IT'"
-        [class.bg-white]="activeFilter() !== 'IT'"
-        [class.border]="activeFilter() !== 'IT'"
-        [class.border-slate-200]="activeFilter() !== 'IT'"
-        [class.text-slate-700]="activeFilter() !== 'IT'"
-        [class.hover:bg-slate-50]="activeFilter() !== 'IT'"
-        (click)="setFilter('IT')"
-      >
-        Từ vựng IT
-      </button>
-      <button
-        class="shrink-0 px-4 md:px-5 py-2 min-h-11 rounded-full text-xs md:text-sm font-semibold transition-colors"
-        [class.bg-blue-600]="activeFilter() === 'GRAMMAR'"
-        [class.text-white]="activeFilter() === 'GRAMMAR'"
-        [class.bg-white]="activeFilter() !== 'GRAMMAR'"
-        [class.border]="activeFilter() !== 'GRAMMAR'"
-        [class.border-slate-200]="activeFilter() !== 'GRAMMAR'"
-        [class.text-slate-700]="activeFilter() !== 'GRAMMAR'"
-        [class.hover:bg-slate-50]="activeFilter() !== 'GRAMMAR'"
-        (click)="setFilter('GRAMMAR')"
-      >
-        Ngữ pháp B2
-      </button>
-      <button
-        class="shrink-0 px-4 md:px-5 py-2 min-h-11 rounded-full text-xs md:text-sm font-semibold transition-colors"
-        [class.bg-blue-600]="activeFilter() === 'BUSINESS'"
-        [class.text-white]="activeFilter() === 'BUSINESS'"
-        [class.bg-white]="activeFilter() !== 'BUSINESS'"
-        [class.border]="activeFilter() !== 'BUSINESS'"
-        [class.border-slate-200]="activeFilter() !== 'BUSINESS'"
-        [class.text-slate-700]="activeFilter() !== 'BUSINESS'"
-        [class.hover:bg-slate-50]="activeFilter() !== 'BUSINESS'"
-        (click)="setFilter('BUSINESS')"
-      >
-        Giao tiếp Công sở
-      </button>
+    <div class="relative w-full md:w-64">
+      <i
+        class="fi fi-rr-search absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 text-sm"
+      ></i>
+      <input
+        type="search"
+        [value]="searchExam()"
+        (input)="onSearchChange($event)"
+        placeholder="Tìm kiếm đề thi..."
+        class="w-full bg-white border border-slate-200 pl-9 pr-3 py-2.5 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all shadow-sm"
+      />
     </div>
 
-    <div class="flex items-center gap-3">
+    <div class="flex items-center gap-3 w-full md:w-auto">
       <span class="hidden md:inline text-sm text-slate-500 font-medium"
         >Sắp xếp:</span
       >
       <button
-        class="w-full md:w-auto bg-white border border-slate-200 px-4 py-2 min-h-11 rounded-xl text-sm font-medium text-slate-700 flex items-center justify-between md:justify-start gap-2 hover:bg-slate-50 transition-colors shadow-sm"
+        class="w-full md:w-auto bg-white border border-slate-200 px-4 py-2.5 min-h-11 rounded-xl text-sm font-medium text-slate-700 flex items-center justify-center gap-2 hover:bg-slate-50 transition-colors shadow-sm"
+        (click)="toggleSortExam()"
       >
-        <span>Mới nhất</span>
-        <i class="fi fi-rr-angle-small-down text-xs mt-0.5"></i>
+        <i class="fi fi-rr-sort-alt text-slate-500"></i>
+        <span>{{ sortExam() === 'desc' ? 'Mới nhất' : 'Cũ nhất' }}</span>
       </button>
     </div>
-  </div> -->
+  </div>
 
   <div
     class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6"
@@ -297,21 +253,41 @@
 
           <input
             type="text"
-            [(ngModel)]="userClozeInput"
-            [class.bg-green-100]="isAnswerRevealed() && isCorrect()"
-            [class.bg-red-100]="isAnswerRevealed() && !isCorrect()"
-            class="inline-block align-middle min-w-24 w-auto h-8 md:h-10 border border-blue-500 rounded-lg px-3 mx-1 text-center focus:outline-none focus:ring-2 focus:ring-blue-100 transition-all bg-white"
+            [ngModel]="userClozeInput()"
+            (ngModelChange)="userClozeInput.set($event)"
+            [disabled]="currentQuestionObj?.is_selected"
+            [class.border-green-500]="currentQuestionObj?.is_selected && (currentQuestionObj?.correct_answer === currentQuestionObj?.user_answer)"
+            [class.border-red-500]="currentQuestionObj?.is_selected && (currentQuestionObj?.correct_answer !== currentQuestionObj?.user_answer)"
+            class="inline-block align-middle min-w-24 w-auto h-8 md:h-10 border border-blue-500 rounded-lg px-3 mx-1 text-center focus:outline-none focus:ring-2 focus:ring-blue-100 transition-all bg-white disabled:pointer-events-none"
             placeholder="........"
           />
 
           <span class="inline">{{ clozeParts().after }}</span>
         </div>
+
+        @if (currentQuestionObj?.is_selected) { @if
+        (!currentQuestionObj?.is_correct) {
+        <div class="mt-4 text-center">
+          <p class="text-sm text-slate-500 mb-1">Đáp án đúng:</p>
+          <p class="text-lg font-bold text-green-600">
+            {{ currentQuestionObj?.correct_answer }}
+          </p>
+        </div>
+        } @else {
+        <div class="mt-4 text-center">
+          <p class="text-lg font-bold text-green-600">
+            Tuyệt vời! Bạn đã trả lời đúng.
+          </p>
+        </div>
+        } } @else {
         <button
           (click)="checkAnswer()"
-          class="text-blue-500 bg-white border border-blue-500 px-6 md:px-6 py-3 md:py-2 rounded-xl font-bold hover:bg-blue-100 hover:text-blue-700 text-[15px] md:text-[17px] transition-colors shadow-sm"
+          [disabled]="!userClozeInput().trim()"
+          class="text-blue-500 bg-white border border-blue-500 px-6 md:px-6 py-3 md:py-2 rounded-xl font-bold hover:bg-blue-100 hover:text-blue-700 text-[15px] md:text-[17px] transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
         >
           Kiểm tra
         </button>
+        }
       </div>
       } @case ('MULTIPLE_CHOICE') {
       <div class="flex flex-col items-center w-full">

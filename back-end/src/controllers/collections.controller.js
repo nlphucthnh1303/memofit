@@ -3,8 +3,21 @@ const prisma = new PrismaClient({});
 
 exports.getCollections = async (req, res) => {
   try {
+    const { search, sort = "desc" } = req.query;
+
+    const whereClause = { is_delete: "0" };
+    if (search) {
+      whereClause.title = {
+        contains: search,
+        mode: "insensitive",
+      };
+    }
+
     const collections = await prisma.collections.findMany({
-      where: { is_delete: "0" },
+      where: whereClause,
+      orderBy: {
+        created_at: sort === "asc" ? "asc" : "desc",
+      },
     });
     res.status(200).json({
       message: "Lấy danh sách bộ sưu tập thành công",
