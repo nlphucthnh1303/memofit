@@ -159,3 +159,44 @@ exports.deleteUser = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+exports.resetUserData = async (req, res) => {
+  try {
+    const userId = req.user.userId;
+
+    await prisma.user_vocabulary_progress.deleteMany({
+      where: { user_id: userId },
+    });
+
+    await prisma.quiz_results.deleteMany({
+      where: {
+        quiz_sessions: {
+          user_id: userId,
+        },
+      },
+    });
+
+    await prisma.quiz_sessions.deleteMany({
+      where: { user_id: userId },
+    });
+
+    await prisma.collections.deleteMany({
+      where: { user_id: userId },
+    });
+
+    await prisma.users.update({
+      where: { id: userId },
+      data: {
+        current_streak: 0,
+        longest_streak: 0,
+      },
+    });
+
+    res.status(200).json({
+      success: true,
+      message: "Xóa toàn bộ dữ liệu học tập thành công. Tài khoản đã được thiết lập lại.",
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};

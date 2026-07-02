@@ -39,5 +39,7 @@ export class UsersService {
         return this.http.delete<any>(`${this.baseApi}/users/${id}`);
     }
 
-
+    resetUserData(): Observable<any> {
+        return this.http.post<any>(`${this.baseApi}/users/reset-data`, {});
+    }
 }
