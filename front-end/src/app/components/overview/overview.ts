@@ -24,7 +24,13 @@ export class Overview implements OnInit {
   private dashboardService = inject(DashboardService);
   private spinner = inject(NgxSpinnerService)
   private cdr = inject(ChangeDetectorRef)
-  stats = signal<DashboardStats | undefined>(undefined);
+  private _stats = signal<DashboardStats | undefined>(undefined);
+  public get stats() {
+    return this._stats;
+  }
+  public set stats(value) {
+    this._stats = value;
+  }
   charts = signal<DashboardCharts | undefined>(undefined);
   recentlyReviewed = signal<RecentVocabItem[]>([]);
   isLoading = true;

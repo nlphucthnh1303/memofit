@@ -220,7 +220,7 @@ import { LayoutService } from "../../services/layout.service";
           <button
             class="bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-sans font-semibold hover:shadow-md active:scale-95 flex items-center justify-center relative group/nav h-11 w-full shrink-0"
             [class.px-1]="layout.collapsed"
-            routerLink="/practice"
+            routerLink="/dashboar/practice"
           >
             <div class="flex items-center justify-center shrink-0 w-8 h-8">
               <mat-icon class="text-[20px]">play_arrow</mat-icon>
@@ -252,7 +252,7 @@ import { LayoutService } from "../../services/layout.service";
       class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 z-50 flex justify-around items-center h-[72px] pb-[env(safe-area-inset-bottom)] px-2 shadow-[0_-4px_20px_rgba(0,0,0,0.05)]"
     >
       <a
-        routerLink="/dashboard"
+        routerLink="/dashboard/overview"
         routerLinkActive="text-blue-700"
         [routerLinkActiveOptions]="{ exact: true }"
         class="flex flex-col items-center justify-center w-[20%] h-full text-slate-500 hover:text-blue-600 transition-colors"
@@ -263,7 +263,7 @@ import { LayoutService } from "../../services/layout.service";
         >
       </a>
       <a
-        routerLink="/vocabulary"
+        routerLink="/dashboard/vocabulary"
         routerLinkActive="text-blue-700"
         class="flex flex-col items-center justify-center w-[20%] h-full text-slate-500 hover:text-blue-600 transition-colors"
       >
@@ -275,7 +275,7 @@ import { LayoutService } from "../../services/layout.service";
 
       
       <a
-        routerLink="/practice"
+        routerLink="/dashboard/practice"
         routerLinkActive="text-blue-700"
         class="flex flex-col items-center justify-center w-[20%] h-full text-slate-500 hover:text-blue-600 transition-colors relative"
       >
@@ -290,7 +290,7 @@ import { LayoutService } from "../../services/layout.service";
       </a>
 
       <a
-        routerLink="/generate-questions"
+        routerLink="/dashboard/generate-questions"
         routerLinkActive="text-blue-700"
         class="flex flex-col items-center justify-center w-[20%] h-full text-slate-500 hover:text-blue-600 transition-colors"
       >
@@ -300,7 +300,7 @@ import { LayoutService } from "../../services/layout.service";
         >
       </a>
       <a
-        routerLink="/settings"
+        routerLink="/dashboard/settings"
         routerLinkActive="text-blue-700"
         class="flex flex-col items-center justify-center w-[20%] h-full text-slate-500 hover:text-blue-600 transition-colors"
       >
