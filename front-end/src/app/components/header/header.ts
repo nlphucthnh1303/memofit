@@ -18,7 +18,7 @@ import {
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-header',
-  imports: [DatePipe],
+  imports: [],
   templateUrl: './header.html',
 })
 export class Header {
@@ -27,9 +27,7 @@ export class Header {
   protected readonly notificationService = inject(NotificationService);
   private readonly router = inject(Router);
   private readonly elementRef = inject(ElementRef);
-
   readonly isDropdownOpen = signal(false);
-
   readonly notifications = this.notificationService.notifications;
   readonly unreadCount = this.notificationService.unreadCount;
 

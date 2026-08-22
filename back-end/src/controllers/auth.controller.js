@@ -26,7 +26,6 @@ exports.register = async (req, res) => {
   try {
     const { username, email, password } = req.body;
 
-    // Check if user already exists
     const existingUser = await prisma.users.findUnique({
       where: { email },
     });
@@ -37,7 +36,6 @@ exports.register = async (req, res) => {
 
     password_hash = await bcrypt.hash(password, 10);
 
-    // Create new user
     const user = await prisma.users.create({
       data: {
         username,
@@ -138,38 +136,137 @@ exports.sendRegisterAuthOTP = async (req, res) => {
       to: email,
       subject: "Mã xác thực tài khoản Memofit",
       html: `
-      <div style="background-color: #f9f9f9; padding: 40px 20px; font-family: 'Segoe UI', Arial, sans-serif;">
-        <table align="center" width="100%" max-width="500px" style="background-color: #ffffff; border: 1px solid #e0e0e0; border-radius: 8px; padding: 40px; text-align: center; border-spacing: 0;">
-            <tr>
-            <td>
-                <h2 style="color: #333; margin-bottom: 20px;">Xác thực tài khoản của bạn</h2>
-                
-                <p style="color: #555; line-height: 1.6; margin-bottom: 30px;">
-                Chào bạn, đây là mã xác thực (OTP) của bạn để hoàn tất quy trình bảo mật tại <strong>Memofit</strong>. Mã này sẽ hết hạn trong 5 phút.
-                </p>
+      <!DOCTYPE html>
+      <html lang="vi">
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Xác thực mã OTP - Memofit</title>
+        <!-- Nhúng font chữ tối ưu cho thiết bị hỗ trợ -->
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+        <style>
+          body {
+            margin: 0;
+            padding: 0;
+            width: 100% !important;
+            background-color: #213145; /* Phối màu inverse-surface làm nền bao ngoài như mẫu */
+            -webkit-text-size-adjust: 100%;
+            -ms-text-size-adjust: 100%;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+          }
+          img {
+            line-height: 100%;
+            outline: none;
+            text-decoration: none;
+            border: 0;
+          }
+          table {
+            border-collapse: collapse !important;
+          }
+          .main-card {
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+          }
+        </style>
+      </head>
+      <body style="background-color: #213145; padding: 40px 16px;">
 
-                <div style="background-color: #f4f7fe; border: 1px solid #d1d9e6; border-radius: 8px; padding: 25px; margin-bottom: 25px;">
-                <span style="font-size: 40px; font-weight: bold; color: #1a73e8; letter-spacing: 10px;">
-                    ${new_otp}
-                </span>
-                </div>
-
-                <div style="display: inline-block; background-color: #fce8e6; color: #d93025; padding: 8px 16px; border-radius: 20px; font-size: 14px; margin-bottom: 30px;">
-                Hết hạn sau 03:00
-                </div>
-
-                <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
-                <p style="color: #888; font-size: 13px; text-align: left;">
-                🛡 Nếu bạn không thực hiện yêu cầu này, vui lòng bỏ qua email này hoặc liên hệ với bộ phận hỗ trợ nếu bạn lo ngại về bảo mật.
-                </p>
-            </td>
-            </tr>
-        </table>
-        
-        <p style="text-align: center; color: #aaa; font-size: 12px; margin-top: 20px;">
-            © 2026 Memofit
-        </p>
+        <!-- Văn bản xem trước ẩn (Preheader) cải thiện tỷ lệ click -->
+        <div style="display: none; max-height: 0px; overflow: hidden;">
+          Sử dụng mã OTP này để xác thực tài khoản Memofit của bạn. Có hiệu lực trong 3 phút.
         </div>
+
+        <table border="0" cellpadding="0" cellspacing="0" width="100%" style="table-layout: fixed;">
+          <tr>
+            <td align="center">
+              
+              <!-- Khung nội dung chính mô phỏng theo cấu trúc chuẩn của image_ffd31e.png -->
+              <table class="main-card" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 520px; background-color: #ffffff; border-radius: 12px; overflow: hidden; border: 1px solid #c3c6d7;">
+                
+                <!-- Header Banner (Dải tiêu đề pastel phía trên như mẫu) -->
+                <tr>
+                  <td align="center" style="background-color: #d3e4fe; padding: 24px 32px; border-bottom: 1px solid #c3c6d7;">
+                    <h1 style="color: #0b1c30; font-family: 'Inter', sans-serif; font-size: 22px; font-weight: 700; margin: 0; letter-spacing: -0.01em;">
+                      Xác thực mã OTP của bạn
+                    </h1>
+                  </td>
+                </tr>
+
+                <!-- Nội dung chi tiết thư -->
+                <tr>
+                  <td style="padding: 36px 32px; background-color: #ffffff;">
+                    
+                    <!-- Lời chào & Nội dung dẫn nhập -->
+                    <h3 style="color: #0b1c30; font-size: 16px; font-weight: 700; margin-top: 0; margin-bottom: 12px;">
+                      Chào bạn,
+                    </h3>
+                    <p style="color: #434655; font-size: 15px; line-height: 1.6; margin-top: 0; margin-bottom: 24px;">
+                      Bạn vừa thực hiện yêu cầu xác thực tài khoản tại <strong>Memofit</strong>.<br>
+                      Để đảm bảo an toàn & bảo mật thông tin, vui lòng sử dụng mã OTP dưới đây để xác nhận phiên đăng nhập của bạn:
+                    </p>
+
+                    <!-- Khu vực hiển thị mã OTP nổi bật, trực quan -->
+                    <table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin-bottom: 24px;">
+                      <tr>
+                        <td align="center" style="background-color: #eff4ff; border: 1px solid #c3c6d7; border-radius: 8px; padding: 20px;">
+                          <span style="font-family: 'JetBrains Mono', 'Courier New', monospace; font-size: 38px; font-weight: 700; color: #004ac6; letter-spacing: 12px; display: inline-block; padding-left: 12px;">
+                            ${new_otp}
+                          </span>
+                        </td>
+                      </tr>
+                    </table>
+
+                    <!-- Cảnh báo thời gian hiệu lực -->
+                    <p style="color: #434655; font-size: 14.5px; line-height: 1.5; margin-top: 0; margin-bottom: 24px;">
+                      Vui lòng nhập mã OTP này trong vòng <strong style="color: #ba1a1a;">5 phút</strong> kể từ khi nhận được email để hoàn tất tiến trình xác nhận.
+                    </p>
+
+                    <!-- Lưu ý bảo mật dạng tinh gọn của hệ thống -->
+                    <p style="color: #737686; font-size: 13px; line-height: 1.5; font-style: italic; margin-top: 0; margin-bottom: 28px;">
+                      Nếu bạn không thực hiện yêu cầu này, vui lòng bỏ qua thư này hoặc liên hệ ngay với hỗ trợ: 
+                      <a href="mailto:support@memofit.vn" style="color: #004ac6; text-decoration: none; font-weight: 500;">support@memofit.vn</a>.
+                    </p>
+
+                    <!-- Chữ ký người gửi -->
+                    <p style="color: #434655; font-size: 14.5px; line-height: 1.5; margin-top: 0; margin-bottom: 0;">
+                      Trân trọng,<br>
+                      <strong style="color: #0b1c30;">Đội ngũ Memofit</strong>
+                    </p>
+
+                    <!-- Đường phân cách mảnh -->
+                    <hr style="border: 0; border-top: 1px solid #c3c6d7; margin: 28px 0 20px 0;">
+
+                    <!-- Khu vực thương hiệu & Chân trang -->
+                    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                      <tr>
+                        <td align="center" style="padding-bottom: 8px;">
+                          <!-- Logo Memofit kết hợp phối màu chuẩn chỉ -->
+                          <span style="font-family: 'Inter', sans-serif; font-size: 20px; font-weight: 800; color: #004ac6; letter-spacing: -0.5px;">
+                            Memofit
+                          </span>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td align="center">
+                          <p style="color: #737686; font-size: 11px; margin: 4px 0 0 0;">
+                            © 2026 memofit.vn. Mọi quyền được bảo lưu.
+                          </p>
+                          <p style="color: #737686; font-size: 11px; margin: 4px 0 0 0;">
+                            Đây là email tự động từ hệ thống bảo mật, vui lòng không trả lời thư này.
+                          </p>
+                        </td>
+                      </tr>
+                    </table>
+
+                  </td>
+                </tr>
+              </table>
+              
+            </td>
+          </tr>
+        </table>
+
+      </body>
+      </html>
       `,
     });
     res.status(201).json({
@@ -207,38 +304,137 @@ exports.sendForgotAuthOTP = async (req, res) => {
       to: email,
       subject: "Mã xác thực tài khoản Memofit",
       html: `
-      <div style="background-color: #f9f9f9; padding: 40px 20px; font-family: 'Segoe UI', Arial, sans-serif;">
-        <table align="center" width="100%" max-width="500px" style="background-color: #ffffff; border: 1px solid #e0e0e0; border-radius: 8px; padding: 40px; text-align: center; border-spacing: 0;">
-            <tr>
-            <td>
-                <h2 style="color: #333; margin-bottom: 20px;">Xác thực tài khoản của bạn</h2>
-                
-                <p style="color: #555; line-height: 1.6; margin-bottom: 30px;">
-                Chào bạn, đây là mã xác thực (OTP) của bạn để hoàn tất quy trình bảo mật tại <strong>Memofit</strong>. Mã này sẽ hết hạn trong 5 phút.
-                </p>
+      <!DOCTYPE html>
+      <html lang="vi">
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Xác thực mã OTP - Memofit</title>
+        <!-- Nhúng font chữ tối ưu cho thiết bị hỗ trợ -->
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+        <style>
+          body {
+            margin: 0;
+            padding: 0;
+            width: 100% !important;
+            background-color: #213145; /* Phối màu inverse-surface làm nền bao ngoài như mẫu */
+            -webkit-text-size-adjust: 100%;
+            -ms-text-size-adjust: 100%;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+          }
+          img {
+            line-height: 100%;
+            outline: none;
+            text-decoration: none;
+            border: 0;
+          }
+          table {
+            border-collapse: collapse !important;
+          }
+          .main-card {
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+          }
+        </style>
+      </head>
+      <body style="background-color: #213145; padding: 40px 16px;">
 
-                <div style="background-color: #f4f7fe; border: 1px solid #d1d9e6; border-radius: 8px; padding: 25px; margin-bottom: 25px;">
-                <span style="font-size: 40px; font-weight: bold; color: #1a73e8; letter-spacing: 10px;">
-                    ${new_otp}
-                </span>
-                </div>
-
-                <div style="display: inline-block; background-color: #fce8e6; color: #d93025; padding: 8px 16px; border-radius: 20px; font-size: 14px; margin-bottom: 30px;">
-                Hết hạn sau 03:00
-                </div>
-
-                <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
-                <p style="color: #888; font-size: 13px; text-align: left;">
-                🛡 Nếu bạn không thực hiện yêu cầu này, vui lòng bỏ qua email này hoặc liên hệ với bộ phận hỗ trợ nếu bạn lo ngại về bảo mật.
-                </p>
-            </td>
-            </tr>
-        </table>
-        
-        <p style="text-align: center; color: #aaa; font-size: 12px; margin-top: 20px;">
-            © 2026 Memofit
-        </p>
+        <!-- Văn bản xem trước ẩn (Preheader) cải thiện tỷ lệ click -->
+        <div style="display: none; max-height: 0px; overflow: hidden;">
+          Sử dụng mã OTP này để xác thực tài khoản Memofit của bạn. Có hiệu lực trong 3 phút.
         </div>
+
+        <table border="0" cellpadding="0" cellspacing="0" width="100%" style="table-layout: fixed;">
+          <tr>
+            <td align="center">
+              
+              <!-- Khung nội dung chính mô phỏng theo cấu trúc chuẩn của image_ffd31e.png -->
+              <table class="main-card" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 520px; background-color: #ffffff; border-radius: 12px; overflow: hidden; border: 1px solid #c3c6d7;">
+                
+                <!-- Header Banner (Dải tiêu đề pastel phía trên như mẫu) -->
+                <tr>
+                  <td align="center" style="background-color: #d3e4fe; padding: 24px 32px; border-bottom: 1px solid #c3c6d7;">
+                    <h1 style="color: #0b1c30; font-family: 'Inter', sans-serif; font-size: 22px; font-weight: 700; margin: 0; letter-spacing: -0.01em;">
+                      Xác thực mã OTP của bạn
+                    </h1>
+                  </td>
+                </tr>
+
+                <!-- Nội dung chi tiết thư -->
+                <tr>
+                  <td style="padding: 36px 32px; background-color: #ffffff;">
+                    
+                    <!-- Lời chào & Nội dung dẫn nhập -->
+                    <h3 style="color: #0b1c30; font-size: 16px; font-weight: 700; margin-top: 0; margin-bottom: 12px;">
+                      Chào bạn,
+                    </h3>
+                    <p style="color: #434655; font-size: 15px; line-height: 1.6; margin-top: 0; margin-bottom: 24px;">
+                      Bạn vừa thực hiện yêu cầu xác thực tài khoản tại <strong>Memofit</strong>.<br>
+                      Để đảm bảo an toàn & bảo mật thông tin, vui lòng sử dụng mã OTP dưới đây để xác nhận phiên đăng nhập của bạn:
+                    </p>
+
+                    <!-- Khu vực hiển thị mã OTP nổi bật, trực quan -->
+                    <table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin-bottom: 24px;">
+                      <tr>
+                        <td align="center" style="background-color: #eff4ff; border: 1px solid #c3c6d7; border-radius: 8px; padding: 20px;">
+                          <span style="font-family: 'JetBrains Mono', 'Courier New', monospace; font-size: 38px; font-weight: 700; color: #004ac6; letter-spacing: 12px; display: inline-block; padding-left: 12px;">
+                            ${new_otp}
+                          </span>
+                        </td>
+                      </tr>
+                    </table>
+
+                    <!-- Cảnh báo thời gian hiệu lực -->
+                    <p style="color: #434655; font-size: 14.5px; line-height: 1.5; margin-top: 0; margin-bottom: 24px;">
+                      Vui lòng nhập mã OTP này trong vòng <strong style="color: #ba1a1a;">5 phút</strong> kể từ khi nhận được email để hoàn tất tiến trình xác nhận.
+                    </p>
+
+                    <!-- Lưu ý bảo mật dạng tinh gọn của hệ thống -->
+                    <p style="color: #737686; font-size: 13px; line-height: 1.5; font-style: italic; margin-top: 0; margin-bottom: 28px;">
+                      Nếu bạn không thực hiện yêu cầu này, vui lòng bỏ qua thư này hoặc liên hệ ngay với hỗ trợ: 
+                      <a href="mailto:support@memofit.vn" style="color: #004ac6; text-decoration: none; font-weight: 500;">support@memofit.vn</a>.
+                    </p>
+
+                    <!-- Chữ ký người gửi -->
+                    <p style="color: #434655; font-size: 14.5px; line-height: 1.5; margin-top: 0; margin-bottom: 0;">
+                      Trân trọng,<br>
+                      <strong style="color: #0b1c30;">Đội ngũ Memofit</strong>
+                    </p>
+
+                    <!-- Đường phân cách mảnh -->
+                    <hr style="border: 0; border-top: 1px solid #c3c6d7; margin: 28px 0 20px 0;">
+
+                    <!-- Khu vực thương hiệu & Chân trang -->
+                    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                      <tr>
+                        <td align="center" style="padding-bottom: 8px;">
+                          <!-- Logo Memofit kết hợp phối màu chuẩn chỉ -->
+                          <span style="font-family: 'Inter', sans-serif; font-size: 20px; font-weight: 800; color: #004ac6; letter-spacing: -0.5px;">
+                            Memofit
+                          </span>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td align="center">
+                          <p style="color: #737686; font-size: 11px; margin: 4px 0 0 0;">
+                            © 2026 memofit.vn. Mọi quyền được bảo lưu.
+                          </p>
+                          <p style="color: #737686; font-size: 11px; margin: 4px 0 0 0;">
+                            Đây là email tự động từ hệ thống bảo mật, vui lòng không trả lời thư này.
+                          </p>
+                        </td>
+                      </tr>
+                    </table>
+
+                  </td>
+                </tr>
+              </table>
+              
+            </td>
+          </tr>
+        </table>
+
+      </body>
+      </html>
       `,
     });
     res.status(201).json({
