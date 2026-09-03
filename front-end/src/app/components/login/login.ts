@@ -5,6 +5,7 @@ import { ToastService } from '../../shared/ui/toast/toast.service';
 import { Router } from '@angular/router';
 import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 import { isPlatformBrowser } from '@angular/common';
+import { NotificationService } from '../../services/notification.service';
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'app-login',
@@ -20,6 +21,7 @@ export class Login {
   private spinner = inject(NgxSpinnerService)
   private platformId = inject(PLATFORM_ID);
   private cdr = inject(ChangeDetectorRef);
+  private notificationService = inject(NotificationService);
   constructor() { }
 
 
@@ -49,6 +51,9 @@ export class Login {
             storage.setItem('user_login', JSON.stringify(response));
             localStorage.setItem('access_token', response.token);
 
+            // Tải thông báo ngay sau khi đăng nhập thành công
+            this.notificationService.fetchOnStartup();
+            this.notificationService.startReminderScheduler();
 
             const isVerified = response?.user?.isOtpVerify === true;
             storage.setItem('is_otp_verified', isVerified ? 'true' : 'false');

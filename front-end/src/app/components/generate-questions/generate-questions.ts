@@ -27,7 +27,7 @@ export class GenerateQuestions implements OnInit, OnDestroy {
   sourceType = signal<'collection' | 'words'>('collection');
 
   questionCount = signal<number>(15);
-  timeLimit = signal<number>(10);
+  timeLimit = signal<number>(5);
 
   selectedCollectionId = signal<number | null>(null);
   selectedQuestionType = signal<string>('MULTIPLE_CHOICE');

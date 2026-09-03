@@ -164,39 +164,67 @@ exports.resetUserData = async (req, res) => {
   try {
     const userId = req.user.userId;
 
-    await prisma.user_vocabulary_progress.deleteMany({
-      where: { user_id: userId },
-    });
+    await prisma.$transaction(async (tx) => {
+      const userCollections = await tx.collections.findMany({
+        where: { user_id: userId },
+        select: { id: true },
+      });
+      const collectionIds = userCollections.map((c) => c.id);
 
-    await prisma.quiz_results.deleteMany({
-      where: {
-        quiz_sessions: {
-          user_id: userId,
+      await tx.user_vocabulary_progress.deleteMany({
+        where: { user_id: userId },
+      });
+
+      if (collectionIds.length > 0) {
+        await tx.quiz_results.deleteMany({
+          where: {
+            vocabularies: {
+              collection_id: { in: collectionIds },
+            },
+          },
+        });
+      }
+
+      await tx.quiz_results.deleteMany({
+        where: {
+          quiz_sessions: {
+            user_id: userId,
+          },
         },
-      },
-    });
+      });
 
-    await prisma.quiz_sessions.deleteMany({
-      where: { user_id: userId },
-    });
+      await tx.quiz_sessions.deleteMany({
+        where: { user_id: userId },
+      });
 
-    await prisma.collections.deleteMany({
-      where: { user_id: userId },
-    });
+      if (collectionIds.length > 0) {
+        await tx.vocabularies.deleteMany({
+          where: {
+            collection_id: { in: collectionIds },
+          },
+        });
+      }
 
-    await prisma.users.update({
-      where: { id: userId },
-      data: {
-        current_streak: 0,
-        longest_streak: 0,
-      },
+      await tx.collections.deleteMany({
+        where: { user_id: userId },
+      });
+
+      await tx.password_resets.deleteMany({
+        where: { user_id: userId },
+      });
+
+      await tx.users.deleteMany({
+        where: { id: userId },
+      });
     });
 
     res.status(200).json({
       success: true,
-      message: "Xóa toàn bộ dữ liệu học tập thành công. Tài khoản đã được thiết lập lại.",
+      message:
+        "Xóa toàn bộ dữ liệu học tập thành công. Tài khoản đã được thiết lập lại.",
     });
   } catch (error) {
+    console.error("Lỗi resetUserData:", error);
     res.status(500).json({ message: error.message });
   }
 };
