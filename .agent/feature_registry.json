@@ -1,0 +1,20 @@
+{
+  "lastUpdated": "2026-10-25T07:47:24.941Z",
+  "counters": {
+    "AUTH": 1
+  },
+  "features": [
+    {
+      "featureCode": "FEAT-AUTH-001",
+      "name": "Xác thực người dùng",
+      "status": "COMPLETED",
+      "docPath": "docs/02-features/feat-auth-001-xac-thuc-nguoi-dung/01-plan.md",
+      "relatedFiles": [
+        "src/routes/auth.route.js",
+        "src/controllers/auth.controller.js"
+      ],
+      "createdAt": "2026-10-25",
+      "updatedAt": "2026-10-25T07:47:24.941Z"
+    }
+  ]
+}

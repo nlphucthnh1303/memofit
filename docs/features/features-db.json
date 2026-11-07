@@ -1,0 +1,30 @@
+{
+  "features": [
+    {
+      "featureCode": "FEAT-AUTH-001",
+      "module": "AUTH",
+      "number": 1,
+      "title": "Xác thực người dùng",
+      "slug": "xac-thuc-nguoi-dung",
+      "status": "Completed",
+      "planPath": "docs/02-features/feat-auth-001-xac-thuc-nguoi-dung/01-plan.md",
+      "docPath": "docs/02-features/feat-auth-001-xac-thuc-nguoi-dung/02-flow.md",
+      "changelogPath": "docs/02-features/feat-auth-001-xac-thuc-nguoi-dung/03-changelog.md",
+      "createdAt": "2026-10-25T07:47:24",
+      "updatedAt": "2026-10-25T07:47:24"
+    },
+    {
+      "featureCode": "FEAT-SYSTEM-001",
+      "module": "SYSTEM",
+      "number": 1,
+      "title": "Tai cau truc he sinh thai 3 project va khoi tao nen tang hoc tieng Anh",
+      "slug": "tai-cau-truc-he-sinh-thai-3-project-va-khoi-tao-nen-tang-hoc-tieng-anh",
+      "status": "Completed",
+      "planPath": "docs/features/system/FEAT-SYSTEM-001-tai-cau-truc-he-sinh-thai-3-project-va-khoi-tao-nen-tang-hoc-tieng-anh/plan.md",
+      "docPath": "docs/features/system/FEAT-SYSTEM-001-tai-cau-truc-he-sinh-thai-3-project-va-khoi-tao-nen-tang-hoc-tieng-anh/technical-spec.md",
+      "changelogPath": "docs/features/system/FEAT-SYSTEM-001-tai-cau-truc-he-sinh-thai-3-project-va-khoi-tao-nen-tang-hoc-tieng-anh/changelog.md",
+      "createdAt": "2026-11-02T21:23:52",
+      "updatedAt": "2026-11-02T22:04:28"
+    }
+  ]
+}

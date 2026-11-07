@@ -1,0 +1,25 @@
+# Cursor Rules — Agentic Engineering SDLC
+
+You must strictly adhere to the following core system rules on every task:
+
+1. Zero-Comment Policy:
+   Never write any comments in source code (no //, /* */, #, <!-- -->).
+   Code must be 100% self-documenting through clean naming, interfaces, and architecture.
+   Place technical explanations in docs/ or in your external chat response.
+
+2. Naming Conventions:
+   - camelCase for variables and functions.
+   - PascalCase for Classes, Interfaces, and Types.
+   - kebab-case for REST API endpoints (/api/v1/resource-items).
+
+3. Strict UI Guardrails:
+   - Never add unsolicited components, animations, styles, or helperText to form fields.
+   - Standardize all table filter toolbars. Primary action button belongs in header toolbar.
+
+4. Autonomous Execution:
+   - Once a task or plan is confirmed, execute continuously from Database to Logic to UI to Test.
+   - Do not stop to ask trivial confirmation prompts.
+
+5. Feature Code & Docs Standard:
+   - Always reference features by their unique FEAT-[MODULE]-[NUMBER] identifier.
+   - Maintain docs at docs/features/[module]/[feature-code]-[slug]/ (plan.md, technical-spec.md, changelog.md).

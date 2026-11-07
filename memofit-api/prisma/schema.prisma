@@ -117,10 +117,15 @@ model users {
   created_at               DateTime?                  @default(now()) @db.Timestamp(6)
   is_delete                String                     @default("0")
   isOtpVerify              Boolean                    @default(false)
+  role                     user_role                  @default(USER)
+  hearts                   Int?                       @default(5)
+  exp_points               Int?                       @default(0)
   collections              collections[]
   password_resets          password_resets[]
   quiz_sessions            quiz_sessions[]
   user_vocabulary_progress user_vocabulary_progress[]
+  subscription_orders      subscription_orders[]
+  user_path_progress       user_path_progress[]
 }
 
 model password_resets {
@@ -174,3 +179,86 @@ enum status_type {
   warning
   expired
 }
+
+enum user_role {
+  USER
+  PRO_USER
+  MODERATOR
+  ADMIN
+  SUPER_ADMIN
+}
+
+model learning_paths {
+  id          Int           @id @default(autoincrement())
+  title       String        @db.VarChar(255)
+  target_band String        @db.VarChar(50)
+  description String?
+  order_index Int           @default(0)
+  is_delete   String        @default("0") @db.Bit(1)
+  created_at  DateTime?     @default(now()) @db.Timestamp(6)
+  stages      path_stages[]
+}
+
+model path_stages {
+  id                 Int                  @id @default(autoincrement())
+  path_id            Int
+  title              String               @db.VarChar(255)
+  order_index        Int                  @default(0)
+  collection_id      Int?
+  video_id           Int?
+  exam_id            Int?
+  is_delete          String               @default("0") @db.Bit(1)
+  created_at         DateTime?            @default(now()) @db.Timestamp(6)
+  path               learning_paths       @relation(fields: [path_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  user_path_progress user_path_progress[]
+}
+
+model user_path_progress {
+  id           Int         @id @default(autoincrement())
+  user_id      Int
+  stage_id     Int
+  is_completed Boolean     @default(false)
+  score        Int?        @default(0)
+  completed_at DateTime?   @db.Timestamp(6)
+  users        users       @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  stage        path_stages @relation(fields: [stage_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([user_id, stage_id])
+}
+
+model interactive_videos {
+  id         Int               @id @default(autoincrement())
+  title      String            @db.VarChar(255)
+  video_url  String            @db.VarChar(500)
+  duration_s Int?
+  level      String?           @db.VarChar(50)
+  category   String?           @db.VarChar(100)
+  is_delete  String            @default("0") @db.Bit(1)
+  created_at DateTime?         @default(now()) @db.Timestamp(6)
+  subtitles  video_subtitles[]
+}
+
+model video_subtitles {
+  id           Int                @id @default(autoincrement())
+  video_id     Int
+  start_time_s Float
+  end_time_s   Float
+  text_en      String
+  text_vi      String?
+  created_at   DateTime?          @default(now()) @db.Timestamp(6)
+  video        interactive_videos @relation(fields: [video_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model subscription_orders {
+  id                    Int       @id @default(autoincrement())
+  user_id               Int
+  order_code            BigInt    @unique
+  plan_type             String    @db.VarChar(50)
+  amount                Int
+  status                String    @default("PENDING") @db.VarChar(50)
+  payos_payment_link_id String?   @db.VarChar(255)
+  created_at            DateTime  @default(now()) @db.Timestamp(6)
+  paid_at               DateTime? @db.Timestamp(6)
+  users                 users     @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
